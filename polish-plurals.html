@@ -87,6 +87,12 @@ Tester.prototype.giveHint = function() {
     Y.one('#output').set('innerHTML', outstr);
 }
 
+Tester.prototype.showAnswer = function(){
+    var str = this.currentPolishSentence();
+
+    Y.one('#output').set('innerHTML', str);
+}
+
 Tester.prototype.showImagesIsChecked = function(){
 
     var tmpValue;
@@ -161,7 +167,7 @@ var nounData = [
  [ 'bench', 'benches', 'ławka', 'ławki', 'f' ], 
  [ 'book', 'books', 'książka', 'książki', 'f' ], 
  [ 'daughter', 'daughters', 'córka', 'córki', 'f' ], 
- [ 'tshirt', 't-shirs', 'koszulka', 'koszulki', 'f' ], 
+ [ 't-shirt', 't-shirs', 'koszulka', 'koszulki', 'f' ], 
  [ 'skirt', 'skirts', 'spódnica', 'spódnice', 'f' ], 
  [ 'street', 'streets', 'ulica', 'ulice', 'f' ], 
  [ 'road', 'roads', 'droga', 'drogi', 'f' ], 
@@ -239,6 +245,10 @@ Y.on('click', function(e){
 Y.on('click', function(e){
     tester.askQuestion();
     }, '#go-again', Y
+);
+Y.on('click', function(e){
+    tester.showAnswer();
+    }, '#show-answer', Y
 );
 });
 
