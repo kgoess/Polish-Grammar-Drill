@@ -122,7 +122,9 @@ Tester.prototype.currentPolishSentence = function(){
     }
 
     var str = subjectAdjectiveStr + subjectStr + ' ' + verbStr;
+    str = str.replace(/^ +/, '');
 
+Y.log("first char is --" + str.charAt(0) + '--');
     str = str.charAt(0).toUpperCase() + str.slice(1);
 
     if (this.currentObject){
@@ -130,10 +132,10 @@ Tester.prototype.currentPolishSentence = function(){
         var objectAdjective = this.objectAdjective;
         var objectStr, objectAdjectiveStr, verbStr
         if (this.objectNumber == 'singular'){
-            objectStr = object.nom_sing;
+            objectStr = object.acc_sing;
             objectAdjectiveStr = objectAdjective[object.gender];
         }else{
-            objectStr = object.nom_pl;
+            objectStr = object.acc_pl;
             objectAdjectiveStr = objectAdjective.n;
         }
         str = str + ' ' + objectAdjectiveStr + ' ' + objectStr;
