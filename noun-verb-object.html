@@ -1,0 +1,458 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<title>polish plurals</title>
+
+<script type="text/javascript" src="http://yui.yahooapis.com/3.3.0/build/yui/yui-min.js"></script>
+
+<script type="text/javascript">
+YUI().use('node', 'event-key', function(Y) {
+
+function Tester(){
+    this.nouns = [];
+    this.adjectives = [];
+    this.verbs = [];
+    this.agents = [];
+    this.intelligentAgents = [];
+    this.nounLookup = {};
+}
+
+Tester.prototype.addNoun = function(noun){
+    this.nouns.push(noun);
+    var type = noun.agentType;  // agent, i-agent, no-agent
+    if (type == "agent"){
+        this.agents.push(noun);
+    }else if (type == "i-agent"){
+        this.intelligentAgents.push(noun);
+    }
+    this.nounLookup[ noun.nom_sing ] = noun;
+}
+Tester.prototype.addVerb = function(verb){
+    this.verbs.push(verb);
+}
+
+Tester.prototype.askQuestion = function(){
+    var verb = this.verbs [ Math.floor(Math.random()*this.verbs.length) ];
+    this.currentVerb = verb;
+
+    var okSubjectType = verb.subjectType;
+    var okSubjects;
+    if (okSubjectType == 'i-agent'){
+        okSubjects = this.intelligentAgents; 
+    }else{
+        okSubjects = this.agents;
+    }
+    if (okSubjects){
+        this.currentSubject      = okSubjects[      Math.floor(Math.random()*okSubjects.length) ];
+        this.subjectAdjective = this.adjectives[ Math.floor(Math.random()*this.adjectives.length) ];
+        this.subjectNumber    = Math.floor( Math.random()*(2) +1 ) % 2 == 0 ? 'singular' : 'plural';
+    }
+
+    if (verb.isTransitive){
+        var okObjects = verb.okObjects;
+        var okObjectKey = okObjects[ Math.floor( Math.random()*okObjects.length ) ];
+        this.currentObject = this.nounLookup[ okObjectKey ];
+        if (! this.currentObject){
+            alert("couldn't find noun for '" + okObjectKey + "'");
+        }
+        this.objectAdjective = this.adjectives[ Math.floor(Math.random()*this.adjectives.length) ];
+        this.objectNumber    = Math.floor( Math.random()*(2) +1 ) % 2 == 0 ? 'singular' : 'plural';
+    }
+
+    
+    var questionDiv = Y.one('#question');
+    questionDiv.set('innerHTML', this.currentEnglishSentence());
+
+    var outputDiv = Y.one('#output');
+    outputDiv.set('innerHTML', '');
+
+    var inputEl = Y.one('#input input');
+    inputEl.focus();
+    inputEl.set('value', '');
+
+//    var doShowImages = this.showImagesIsChecked();
+//    if (doShowImages){
+//        var iframeDiv = Y.one('#google-iframe');
+//        iframeDiv.set('src', this.generateGoogleUrl());
+//    }
+}
+
+Tester.prototype.checkAnswer = function(){
+    var answer = Y.one('#input input').get('value');
+
+    if (answer == this.currentPolishSentence()){
+        Y.one('#output').set('innerHTML', this.currentPolishSentence());
+        alert('Doskonale!');
+        
+    }else{
+        alert('Nie, zła odpowiedź, spróbuj ponownie!');
+    }
+}
+
+Tester.prototype.currentPolishSentence = function(){
+
+    var subject = this.currentSubject;
+    var subjectAdjective = this.subjectAdjective;
+    var subjectStr, subjectAdjectiveStr, verbStr
+    if (this.subjectNumber == 'singular'){
+        subjectStr = subject.nom_sing;
+        subjectAdjectiveStr = subjectAdjective[subject.gender];
+        verbStr = this.currentVerb.presentTense[ 's' ][2];
+    }else{
+        subjectStr = subject.nom_pl;
+        subjectAdjectiveStr = subjectAdjective.n;
+        verbStr = this.currentVerb.presentTense[ 'p' ][2];
+    }
+    subjectAdjectiveStr = subjectAdjectiveStr.charAt(0).toUpperCase() + subjectAdjectiveStr.slice(1);
+
+    var str = subjectAdjectiveStr + ' ' + subjectStr + ' ' + verbStr;
+
+    if (this.currentObject){
+        var object = this.currentObject;
+        var objectAdjective = this.objectAdjective;
+        var objectStr, objectAdjectiveStr, verbStr
+        if (this.objectNumber == 'singular'){
+            objectStr = object.nom_sing;
+            objectAdjectiveStr = objectAdjective[object.gender];
+        }else{
+            objectStr = object.nom_pl;
+            objectAdjectiveStr = objectAdjective.n;
+        }
+        str = str + objectAdjectiveStr + objectStr;
+    }
+    return str;
+}
+
+Tester.prototype.giveHint = function() {
+
+    var str = this.currentPolishSentence();
+
+    var showEvery = 3;
+
+    var outstr = '';
+    for (var i = 0; i < str.length; ++i){
+        var rand = Math.floor(Math.random()*showEvery);
+        if (str.charAt(i) == ' ' || str.charAt(i) == '.'){
+            outstr = outstr + str.charAt(i);
+        }else{
+            outstr = outstr + (rand % showEvery == 1 ? str.charAt(i) : '<span class="graydot">.</span>');
+        }
+    }
+    Y.one('#output').set('innerHTML', outstr);
+}
+
+Tester.prototype.showAnswer = function(){
+    var str = this.currentPolishSentence();
+
+    Y.one('#output').set('innerHTML', str);
+}
+
+Tester.prototype.showImagesIsChecked = function(){
+
+    var tmpValue;
+    Y.all('.radio-show-google-images').each(function(node) {
+        if (node.get('checked')) tmpValue = node.get('value');
+    });
+    return tmpValue;
+}
+    
+Tester.prototype.currentEnglishSentence = function(){
+    if (this.subjectNumber == 'singular'){
+        s = 'The ' +  this.subjectAdjective.english + ' ' + this.currentSubject.english_sing;
+    }else{
+        s = 'The ' +  this.subjectAdjective.english + ' ' + this.currentSubject.english_pl;
+    }
+
+    s = s + ' + ' + this.currentVerb.infinitive[1] + ' + ' ;
+
+    if (this.currentObject){
+        if (this.objectNumber == 'singular'){
+            s = s + 'the ' + this.objectAdjective.english + ' ' + this.currentObject.english_sing + '.';
+        }else{
+            s = s + 'the ' + this.objectAdjective.english + ' ' + this.currentObject.english_pl + '.';
+        }
+    }
+
+    return s;
+}
+
+Tester.prototype.generateGoogleUrl = function() {
+    var s = escape(this.currentEnglishSentence());
+
+    return 'http://images.google.com/search?safe=on&tbm=isch&q=' + s;
+}
+    
+
+function Noun(args){
+    this.english_sing= args[0];
+    this.english_pl = args[1];
+    this.nom_sing = args[2];
+    this.nom_pl = args[3];
+    this.gender = args[4];
+    this.agentType = args[5];
+}
+
+function Adjective(args){
+    this.english = args[0];
+    this.m = args[1];
+    this.f = args[2];
+    this.n = args[3];
+}
+
+function Verb(args){
+    this.infinitive = args.infinitive;
+    this.isTransitive = args.transitive;
+    this.subjectType = args.ok_subjects;
+    this.okObjects = args.objects; //link?
+    this.presentTense = args.present_tense;
+}
+    
+    
+
+//http://en.wikibooks.org/wiki/Polish/Masculine_noun_declension
+//http://en.wiktionary.org/wiki/chłopiec
+var nounData = [
+ [ 'house',    'houses',     'dom',      'domy',      'dom',      'domy',      'm', 'no-agent' ], 
+ [ 'cat',      'cats',       'kot',      'koty',      'kota'      'koty',      'm', 'agent' ], 
+ [ 'table',    'tables',     'stół',     'stóły',     'stoł',     'stoły',     'm', 'no-agent'  ], 
+ [ 'store',    'stores',     'sklep',    'sklepy',    'sklep',    'sklepy',    'm', 'no-agent' ], 
+ [ 'church',   'churches',   'koscioł',  'koscioły',  'koscioł',  'koscioły',  'm', 'no-agent' ], 
+ [ 'car',      'cars',       'samochód', 'samochody', 'samochód', 'samochody', 'm', 'no-agent' ], 
+ [ 'bicycle',  'bicycles',   'rower',    'rowery',    'rower',    'rowery',    'm', 'no-agent' ],
+ [ 'train',    'trains',     'pociąg',   'pociągi',   'pociąg',   'pociągi',   'm', 'no-agent' ],
+ [ 'airplane', 'airplanes',  'samolot',  'samoloty',  'samolot',  'samoloty',  'm', 'no-agent' ], 
+ [ 'clock',    'clocks',     'zegar',    'zegary',    'zegar',    'zegary',    'm', 'no-agent' ],
+ [ 'watch',    'watches',    'zegarek',  'zegarki',   'zegarek',  'zegarki',   'm', 'no-agent' ],
+ [ 'room',     'rooms',      'pokoj',    'pokoje',    'pokoj',    'pokoje',    'm', 'no-agent' ],
+ [ 'boy',      'boys',       'chłopiec', 'chłopcy',   'chłopca',  'chłopców',  'm', 'i-agent' ], 
+ [ 'pen',      'pens',       'długopis', 'długopisy', 'długopis', 'długopisy', 'm', 'no-agent' ], 
+ [ 'shoe',     'shoes',      'but',      'buty',      'but',      'buty',      'm', 'no-agent' ], 
+ [ 'sandwich', 'sandwiches', 'kanapka',  'kanapki',   'kanapkę',  'kanapki',   'f', 'no-agent' ],
+ [ 'toy',      'toys',       'zabawka',  'zabawki',   'zabawkę',  'zabawki',   'f', 'no-agent' ],
+ [ 'bank',     'banks',      'bank',     'banki',     'bank',     'banki',     'm', 'no-agent' ], 
+ [ 'ball',     'balls',      'piłka',    'piłki',     'pilkę',    'pilki',     'f', 'no-agent' ],
+ [ 'key',      'keys',       'klucz',    'klucze',    'klucz',    'klucze',    'm', 'no-agent' ], 
+ [ 'plate',    'plates',     'talerz',   'talerze',   'talerz',   'talerze',   'm', 'no-agent' ], 
+ [ 'hat',      'hats',       'kapelusz', 'kapelusze', 'kapelusz', 'kapelusze', 'm', 'no-agent' ], 
+ [ 'horse',    'horses',     'koń',      'konie',     'konia',    'konie',     'm', 'agent' ], 
+ [ 'woman',    'women',      'kobieta',  'kobiety',   'kobietę',  'kobiety',   'f', 'i-agent' ], 
+ [ 'school',   'schools',    'skoła',    'skoły',     '', 'f', 'no-agent' ], 
+ [ 'sister',   'sisters',    'siostra',  'siostry',   '', 'f', 'i-agent' ], 
+ [ 'wife',     'wives',      'żona',     'żony',      '', 'f', 'i-agent' ], 
+ [ 'cloud',    'clouds',     'chmura',   'chmury',    '', 'f', 'no-agent' ], 
+ [ 'fish',     'fish',       'ryba',     'ryby',      '', 'f', 'agent' ], 
+ [ 'bench',    'benches',    'ławka',    'ławki',     '', 'f', 'no-agent' ], 
+ [ 'book',     'books',      'książka',  'książki',   '', 'f', 'no-agent' ], 
+ [ 'daughter', 'daughters',  'córka',    'córki',     '', 'f', 'i-agent' ], 
+ [ 't-shirt',  't-shirs',    'koszulka', 'koszulki',  '', 'f', 'no-agent' ], 
+ [ 'skirt',    'skirts',     'spódnica', 'spódnice',  '', 'f', 'no-agent' ], 
+ [ 'street',   'streets',    'ulica',    'ulice',     '', 'f', 'no-agent' ], 
+ [ 'road',     'roads',      'droga',    'drogi',     '', 'f', 'no-agent' ], 
+ [ 'apple',    'apples',     'jabłko',   'jabłka',    '', 'n', 'no-agent' ], 
+ [ 'chair',    'chairs',     'krzesło',  'krzesła',   '', 'n', 'no-agent' ], 
+ [ 'soap',     'soaps',      'mydło',    'mydła',     '', 'n', 'no-agent' ], 
+ [ 'bed',      'beds',       'łóżko',    'łóżka',     '', 'n', 'no-agent' ], 
+  //add later: husband, father, grandfather, teacher, student
+  //add later: animal(zwierzę)
+];
+
+var adjectiveData = [
+ [ 'large', 'duże', 'duża', 'duże' ], 
+ [ 'small', 'mały', 'mała', 'małe' ], 
+ [ 'good', 'dobry', 'dobra', 'dobre' ], 
+ [ 'bad', 'zły', 'zła', 'złe' ], 
+ [ 'tasty', 'smaczny', 'smaczna', 'smaczne' ], 
+ [ 'nasty', 'niesmazcny', 'niesmaczna', 'niesmaczne' ], 
+ [ 'clean', 'czysty', 'czysta', 'czyste' ], 
+ [ 'wet', 'mokry', 'mokra', 'mokre' ], 
+ [ 'dry', 'suchy', 'sucha', 'suche' ], 
+ [ 'dirty', 'brudny', 'brudna', 'brudne' ], 
+ [ 'sick', 'chory', 'chora', 'chore' ], 
+ [ 'tired', 'zmęczony', 'zmęczona', 'zmęczone' ], 
+ [ 'hot', 'gorący', 'gorąca', 'gorące' ], 
+ [ 'cold', 'zimny', 'zimna', 'zimne' ], 
+ [ 'white', 'biały', 'biała', 'białe' ], 
+ [ 'black', 'czarny', 'czarna', 'czarne' ], 
+ [ 'red', 'czerwony', 'czerwona', 'czerwone' ], 
+ [ 'yellow', 'zołty', 'zołta', 'zołte' ], 
+ [ 'blue', 'niebieski', 'niebieska', 'niebieskie' ], 
+ [ 'green', 'zielony', 'zielona', 'zielone' ],
+ [ 'gray', 'szary', 'szara', 'szare' ],
+ [ 'brown', 'brązowy', 'brązowa', 'brązowe' ],
+ [ 'pink', 'różowy', 'różowa', 'różowe' ],
+ [ 'tall', 'wysoki', 'wysoka', 'wysokie' ], 
+ [ 'short(low)', 'niski', 'niska', 'niskie' ], 
+ [ 'polish', 'polski', 'polksa', 'polskie' ], 
+ [ 'long', 'długi', 'długa', 'długie' ], 
+ [ 'expensive', 'drogi', 'droga', 'drogie' ], 
+// [ 'short(hair)', 'krótki', 'krótka', 'krótkie' ], 
+ [ 'distant', 'daleki', 'daleka', 'dalekie' ], 
+ [ 'near', 'bliski', 'bliska', 'bliskie' ], 
+ [ 'fast', 'szybki', 'szybka', 'szybkie' ],
+ [ 'new', 'nowy', 'nowa', 'nowe' ],
+ [ 'old', 'stary', 'stara', 'stare' ]
+
+ //[ 'heavy', 'ci
+ //light lekka ...
+ //powolne
+];
+
+var verbData = [
+    { infinitive: [ 'czytać', "to read" ],
+      transitive: true,
+      ok_subjects: 'i-agent',
+      objects: [ 'książka' 
+              //add later: newspaper, letter, dictionary, sign
+      ],
+      present_tense: {
+        s: [ 'czytam', 'czytasz', 'czyta' ],
+        p: [ 'czytamy', 'czytacie', 'czytają' ]
+      }
+    },
+    { infinitive: [ 'jeść', "to eat" ],
+      transitive: true,
+      ok_subjects: 'agent',
+      objects: [ 'kanapka', 'jabłko' 
+                //add later: egg(jajko), kiełbasa, carrot(marchew), cabbage (kapusta)
+      ],
+      present_tense: {
+        s: [ 'jem', 'jesz', 'je' ],
+        p: [ 'jemy', 'jecie', 'jedzą' ]
+      }
+    },
+    { infinitive: [ 'lubić', 'to like' ],
+      transitive: true,
+      ok_subjects: 'agent',
+      objects: 'any',
+      present_tense: {
+        s: [ 'lubię', 'lubisz', 'lubi' ],
+        p: [ 'lubimy', 'lubicie', 'lubią']
+      }
+    }
+];
+
+
+var tester = new Tester;
+for (var i in nounData){
+    var row = nounData[i]
+    var noun = new Noun(row);
+    tester.addNoun(noun);
+}
+for (var i in adjectiveData){
+    var row = adjectiveData[i]
+    var adjective = new Adjective(row);
+    tester.adjectives.push(adjective);
+}
+
+for (var i in verbData){
+    var row = verbData[i];
+    var verb = new Verb(row);
+    tester.addVerb(verb);
+}
+
+Y.on("domready", function() { tester.askQuestion() });
+
+var returnPressed = 'down:13';
+Y.on('key', function(e) {
+    tester.checkAnswer();
+}, '#input', returnPressed, Y);
+
+Y.on('click', function(e){
+    tester.giveHint();
+   }, '#give-hint', Y
+);
+Y.on('click', function(e){
+    tester.askQuestion();
+    }, '#go-again', Y
+);
+Y.on('click', function(e){
+    tester.showAnswer();
+    }, '#show-answer', Y
+);
+});
+
+
+</script>
+
+<style>
+body {
+    background: white;
+}
+
+.outer-box {
+    border: 1px solid red; 
+    margin: 50px; 
+    padding: 50px;
+    height: 500px;
+    width: 1300px;
+}
+
+.outer-box div {
+    padding: 10px;
+}
+.test-box {
+    float: left;
+    border: 1px solid black;
+    font-size: 200%;
+}
+
+.images-iframe {
+    border: 1px solid yellow;
+    float: right;
+}
+
+#show-images-form {
+    margin: 10px;
+    float: right;
+}
+
+.graydot {
+    color: lightgrey;
+}
+
+.instructions {
+    color: grey;
+    font-size: 50%;
+}
+
+</style>
+</head>
+<body>
+
+<div class="outer-box">
+    <div class="test-box">
+        <div id="question">
+        </div>
+        <div id="input">
+            <input type="text">
+        </div>
+        <div id="output">
+        </div>
+        <div id="result">
+        </div>
+        <div class="buttons">
+            <button id="give-hint">Give me a hint?</button>
+            <button id="show-answer">I give up.</button>
+            <br/>
+            <button id="go-again">Another test</button>
+        </div>
+        <div class="instructions">Type your answer in the box and press 'enter'.</div>
+    </div>
+    <div class="images-iframe">
+        <div>
+             <form id="show-images-form">
+                Show google images?
+                <input type="radio" name="show-google-images" class="radio-show-google-images" value="1" checked="1"/>yes
+                <input type="radio" name="show-google-images" class="radio-show-google-images" value="0"/>no
+             </form>
+        </div>
+        <iframe id="google-iframe" height="800px" width="800px" src=""></iframe>
+    <div>
+</div>
+
+
+</body>
+</html>
