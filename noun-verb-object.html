@@ -13,6 +13,7 @@ YUI().use('node', 'event-key', function(Y) {
 
 function Tester(){
     this.nouns = [];
+    this.pronouns = [];
     this.adjectives = [];
     this.verbs = [];
     this.agents = [];
@@ -45,18 +46,31 @@ Tester.prototype.askQuestion = function(){
     }else{
         okSubjects = this.agents;
     }
-    if (okSubjects){
-        this.currentSubject      = okSubjects[      Math.floor(Math.random()*okSubjects.length) ];
+    if (Math.floor(Math.random()*3) % 3 == 0){
+        var pronoun = this.pronouns[ Math.floor(Math.random()*this.pronouns.length) ];
+        this.currentSubject = pronoun;
+        this.subjectNumber = pronoun.number == 's' ? 'singular' : 'plural';
+        this.currentPerson = pronoun.person;
+        this.subjectAdjective = false;
+    }else{
+        this.subjectNumber = Math.floor( Math.random()*(2) +1 ) % 2 == 0 ? 'singular' : 'plural';
+        this.currentPerson = 3;
+        this.currentSubject   = okSubjects[      Math.floor(Math.random()*okSubjects.length) ];
         this.subjectAdjective = this.adjectives[ Math.floor(Math.random()*this.adjectives.length) ];
-        this.subjectNumber    = Math.floor( Math.random()*(2) +1 ) % 2 == 0 ? 'singular' : 'plural';
     }
+    Y.log("currentSubject:");
+    Y.log(this.currentSubject);
 
     if (verb.isTransitive){
         var okObjects = verb.okObjects;
-        var okObjectKey = okObjects[ Math.floor( Math.random()*okObjects.length ) ];
-        this.currentObject = this.nounLookup[ okObjectKey ];
-        if (! this.currentObject){
-            alert("couldn't find noun for '" + okObjectKey + "'");
+        if (okObjects == 'any'){
+            this.currentObject = this.nouns[ Math.floor( Math.random()*this.nouns.length ) ];
+        }else{
+            var okObjectKey = okObjects[ Math.floor( Math.random()*okObjects.length ) ];
+            this.currentObject = this.nounLookup[ okObjectKey ];
+            if (! this.currentObject){
+                alert("couldn't find noun for '" + okObjectKey + "'");
+            }
         }
         this.objectAdjective = this.adjectives[ Math.floor(Math.random()*this.adjectives.length) ];
         this.objectNumber    = Math.floor( Math.random()*(2) +1 ) % 2 == 0 ? 'singular' : 'plural';
@@ -99,16 +113,17 @@ Tester.prototype.currentPolishSentence = function(){
     var subjectStr, subjectAdjectiveStr, verbStr
     if (this.subjectNumber == 'singular'){
         subjectStr = subject.nom_sing;
-        subjectAdjectiveStr = subjectAdjective[subject.gender];
-        verbStr = this.currentVerb.presentTense[ 's' ][2];
+        subjectAdjectiveStr = subjectAdjective ? subjectAdjective[subject.gender] + ' ' : '';
+        verbStr = this.currentVerb.presentTense[ 's' ][ this.currentPerson - 1 ];
     }else{
         subjectStr = subject.nom_pl;
-        subjectAdjectiveStr = subjectAdjective.n;
-        verbStr = this.currentVerb.presentTense[ 'p' ][2];
+        subjectAdjectiveStr =  subjectAdjective ? subjectAdjective.n + ' ' : '';
+        verbStr = this.currentVerb.presentTense[ 'p' ][ this.currentPerson - 1 ];
     }
-    subjectAdjectiveStr = subjectAdjectiveStr.charAt(0).toUpperCase() + subjectAdjectiveStr.slice(1);
 
-    var str = subjectAdjectiveStr + ' ' + subjectStr + ' ' + verbStr;
+    var str = subjectAdjectiveStr + subjectStr + ' ' + verbStr;
+
+    str = str.charAt(0).toUpperCase() + str.slice(1);
 
     if (this.currentObject){
         var object = this.currentObject;
@@ -121,8 +136,10 @@ Tester.prototype.currentPolishSentence = function(){
             objectStr = object.nom_pl;
             objectAdjectiveStr = objectAdjective.n;
         }
-        str = str + objectAdjectiveStr + objectStr;
+        str = str + ' ' + objectAdjectiveStr + ' ' + objectStr;
     }
+    str = str + '.';
+
     return str;
 }
 
@@ -160,19 +177,23 @@ Tester.prototype.showImagesIsChecked = function(){
 }
     
 Tester.prototype.currentEnglishSentence = function(){
+    var s = ''
+    if (this.subjectAdjective){
+        s = 'The ' +  this.subjectAdjective.english + ' ';
+    }
     if (this.subjectNumber == 'singular'){
-        s = 'The ' +  this.subjectAdjective.english + ' ' + this.currentSubject.english_sing;
+        s = s + this.currentSubject.english_sing;
     }else{
-        s = 'The ' +  this.subjectAdjective.english + ' ' + this.currentSubject.english_pl;
+        s = s + this.currentSubject.english_pl;
     }
 
-    s = s + ' + ' + this.currentVerb.infinitive[1] + ' + ' ;
+    s = s + ' + ' + this.currentVerb.infinitive[1] ;
 
     if (this.currentObject){
         if (this.objectNumber == 'singular'){
-            s = s + 'the ' + this.objectAdjective.english + ' ' + this.currentObject.english_sing + '.';
+            s = s + ' + the ' + this.objectAdjective.english + ' ' + this.currentObject.english_sing + '.';
         }else{
-            s = s + 'the ' + this.objectAdjective.english + ' ' + this.currentObject.english_pl + '.';
+            s = s + ' + the ' + this.objectAdjective.english + ' ' + this.currentObject.english_pl + '.';
         }
     }
 
@@ -191,8 +212,19 @@ function Noun(args){
     this.english_pl = args[1];
     this.nom_sing = args[2];
     this.nom_pl = args[3];
-    this.gender = args[4];
-    this.agentType = args[5];
+    this.acc_sing = args[4];
+    this.acc_pl = args[5];
+    this.gender = args[6];
+    this.agentType = args[7];
+}
+
+function Pronoun(args){
+    this.person = args[0];
+    this.number = args[1];
+    this.english_sing= args[2];
+    this.english_pl = args[2]; //cheating here so we can use both a noun and a pronoun, fix that
+    this.nom_sing = args[3] || '';
+    this.nom_pl = args[3] || '';
 }
 
 function Adjective(args){
@@ -211,52 +243,76 @@ function Verb(args){
 }
     
     
+var pronounData = [
+ [ 1, 's', 'I', ''],
+ [ 2, 's', 'you', ''],
+ [ 3, 's', 'he', ''],
+ [ 3, 's', 'she', ''],
+ [ 3, 's', 'you (formal, masc.)', 'pan'],
+ [ 3, 's', 'you (formal, fem.)', 'pani'],
+ [ 1, 'p', 'we'],
+ [ 2, 'p', 'you all'],
+ [ 3, 'p', 'they'   ],
+ //[ 3, 'p', 'you all (formal, masc.)'],
+ //[ 3, 'p', 'you all (formal, mixed.)'], ????
+];
+  
 
 //http://en.wikibooks.org/wiki/Polish/Masculine_noun_declension
 //http://en.wiktionary.org/wiki/chłopiec
 var nounData = [
- [ 'house',    'houses',     'dom',      'domy',      'dom',      'domy',      'm', 'no-agent' ], 
- [ 'cat',      'cats',       'kot',      'koty',      'kota'      'koty',      'm', 'agent' ], 
- [ 'table',    'tables',     'stół',     'stóły',     'stoł',     'stoły',     'm', 'no-agent'  ], 
- [ 'store',    'stores',     'sklep',    'sklepy',    'sklep',    'sklepy',    'm', 'no-agent' ], 
- [ 'church',   'churches',   'koscioł',  'koscioły',  'koscioł',  'koscioły',  'm', 'no-agent' ], 
- [ 'car',      'cars',       'samochód', 'samochody', 'samochód', 'samochody', 'm', 'no-agent' ], 
- [ 'bicycle',  'bicycles',   'rower',    'rowery',    'rower',    'rowery',    'm', 'no-agent' ],
- [ 'train',    'trains',     'pociąg',   'pociągi',   'pociąg',   'pociągi',   'm', 'no-agent' ],
- [ 'airplane', 'airplanes',  'samolot',  'samoloty',  'samolot',  'samoloty',  'm', 'no-agent' ], 
- [ 'clock',    'clocks',     'zegar',    'zegary',    'zegar',    'zegary',    'm', 'no-agent' ],
- [ 'watch',    'watches',    'zegarek',  'zegarki',   'zegarek',  'zegarki',   'm', 'no-agent' ],
- [ 'room',     'rooms',      'pokoj',    'pokoje',    'pokoj',    'pokoje',    'm', 'no-agent' ],
- [ 'boy',      'boys',       'chłopiec', 'chłopcy',   'chłopca',  'chłopców',  'm', 'i-agent' ], 
- [ 'pen',      'pens',       'długopis', 'długopisy', 'długopis', 'długopisy', 'm', 'no-agent' ], 
- [ 'shoe',     'shoes',      'but',      'buty',      'but',      'buty',      'm', 'no-agent' ], 
- [ 'sandwich', 'sandwiches', 'kanapka',  'kanapki',   'kanapkę',  'kanapki',   'f', 'no-agent' ],
- [ 'toy',      'toys',       'zabawka',  'zabawki',   'zabawkę',  'zabawki',   'f', 'no-agent' ],
- [ 'bank',     'banks',      'bank',     'banki',     'bank',     'banki',     'm', 'no-agent' ], 
- [ 'ball',     'balls',      'piłka',    'piłki',     'pilkę',    'pilki',     'f', 'no-agent' ],
- [ 'key',      'keys',       'klucz',    'klucze',    'klucz',    'klucze',    'm', 'no-agent' ], 
- [ 'plate',    'plates',     'talerz',   'talerze',   'talerz',   'talerze',   'm', 'no-agent' ], 
- [ 'hat',      'hats',       'kapelusz', 'kapelusze', 'kapelusz', 'kapelusze', 'm', 'no-agent' ], 
- [ 'horse',    'horses',     'koń',      'konie',     'konia',    'konie',     'm', 'agent' ], 
- [ 'woman',    'women',      'kobieta',  'kobiety',   'kobietę',  'kobiety',   'f', 'i-agent' ], 
- [ 'school',   'schools',    'skoła',    'skoły',     '', 'f', 'no-agent' ], 
- [ 'sister',   'sisters',    'siostra',  'siostry',   '', 'f', 'i-agent' ], 
- [ 'wife',     'wives',      'żona',     'żony',      '', 'f', 'i-agent' ], 
- [ 'cloud',    'clouds',     'chmura',   'chmury',    '', 'f', 'no-agent' ], 
- [ 'fish',     'fish',       'ryba',     'ryby',      '', 'f', 'agent' ], 
- [ 'bench',    'benches',    'ławka',    'ławki',     '', 'f', 'no-agent' ], 
- [ 'book',     'books',      'książka',  'książki',   '', 'f', 'no-agent' ], 
- [ 'daughter', 'daughters',  'córka',    'córki',     '', 'f', 'i-agent' ], 
- [ 't-shirt',  't-shirs',    'koszulka', 'koszulki',  '', 'f', 'no-agent' ], 
- [ 'skirt',    'skirts',     'spódnica', 'spódnice',  '', 'f', 'no-agent' ], 
- [ 'street',   'streets',    'ulica',    'ulice',     '', 'f', 'no-agent' ], 
- [ 'road',     'roads',      'droga',    'drogi',     '', 'f', 'no-agent' ], 
- [ 'apple',    'apples',     'jabłko',   'jabłka',    '', 'n', 'no-agent' ], 
- [ 'chair',    'chairs',     'krzesło',  'krzesła',   '', 'n', 'no-agent' ], 
- [ 'soap',     'soaps',      'mydło',    'mydła',     '', 'n', 'no-agent' ], 
- [ 'bed',      'beds',       'łóżko',    'łóżka',     '', 'n', 'no-agent' ], 
-  //add later: husband, father, grandfather, teacher, student
-  //add later: animal(zwierzę)
+ [ 'house',      'houses',       'dom',      'domy',      'dom',      'domy',      'm', 'no-agent' ], 
+ [ 'cat',        'cats',         'kot',      'koty',      'kota',     'koty',      'm', 'agent' ], 
+ [ 'table',      'tables',       'stół',     'stóły',     'stoł',     'stoły',     'm', 'no-agent'  ], 
+ [ 'store',      'stores',       'sklep',    'sklepy',    'sklep',    'sklepy',    'm', 'no-agent' ], 
+ [ 'church',     'churches',     'koscioł',  'koscioły',  'koscioł',  'koscioły',  'm', 'no-agent' ], 
+ [ 'car',        'cars',         'samochód', 'samochody', 'samochód', 'samochody', 'm', 'no-agent' ], 
+ [ 'bicycle',    'bicycles',     'rower',    'rowery',    'rower',    'rowery',    'm', 'no-agent' ],
+ [ 'train',      'trains',       'pociąg',   'pociągi',   'pociąg',   'pociągi',   'm', 'no-agent' ],
+ [ 'airplane',   'airplanes',    'samolot',  'samoloty',  'samolot',  'samoloty',  'm', 'no-agent' ], 
+ [ 'clock',      'clocks',       'zegar',    'zegary',    'zegar',    'zegary',    'm', 'no-agent' ],
+ [ 'watch',      'watches',      'zegarek',  'zegarki',   'zegarek',  'zegarki',   'm', 'no-agent' ],
+ [ 'room',       'rooms',        'pokoj',    'pokoje',    'pokoj',    'pokoje',    'm', 'no-agent' ],
+ [ 'boy',        'boys',         'chłopiec', 'chłopcy',   'chłopca',  'chłopców',  'm', 'i-agent' ], 
+ [ 'pen',        'pens',         'długopis', 'długopisy', 'długopis', 'długopisy', 'm', 'no-agent' ], 
+ [ 'shoe',       'shoes',        'but',      'buty',      'but',      'buty',      'm', 'no-agent' ], 
+ [ 'sandwich',   'sandwiches',   'kanapka',  'kanapki',   'kanapkę',  'kanapki',   'f', 'no-agent' ],
+ [ 'toy',        'toys',         'zabawka',  'zabawki',   'zabawkę',  'zabawki',   'f', 'no-agent' ],
+ [ 'bank',       'banks',        'bank',     'banki',     'bank',     'banki',     'm', 'no-agent' ], 
+ [ 'ball',       'balls',        'piłka',    'piłki',     'pilkę',    'pilki',     'f', 'no-agent' ],
+ [ 'key',        'keys',         'klucz',    'klucze',    'klucz',    'klucze',    'm', 'no-agent' ], 
+ [ 'plate',      'plates',       'talerz',   'talerze',   'talerz',   'talerze',   'm', 'no-agent' ], 
+ [ 'hat',        'hats',         'kapelusz', 'kapelusze', 'kapelusz', 'kapelusze', 'm', 'no-agent' ], 
+ [ 'horse',      'horses',       'koń',      'konie',     'konia',    'konie',     'm', 'agent' ], 
+ [ 'woman',      'women',        'kobieta',  'kobiety',   'kobietę',  'kobiety',   'f', 'i-agent' ], 
+ [ 'school',     'schools',      'skoła',    'skoły',     'skolę',    'skoły',     'f', 'no-agent' ], 
+ [ 'sister',     'sisters',      'siostra',  'siostry',   'siostrę',  'siostry',   'f', 'i-agent' ], 
+ [ 'wife',       'wives',        'żona',     'żony',      'zonę',     'zony',      'f', 'i-agent' ], 
+ [ 'cloud',      'clouds',       'chmura',   'chmury',    'chmurę',   'chmury',    'f', 'no-agent' ], 
+ [ 'fish',       'fish',         'ryba',     'ryby',      'rybę',     'ryby',      'f', 'agent' ], 
+ [ 'bench',      'benches',      'ławka',    'ławki',     'ławkę',    'ławki',     'f', 'no-agent' ], 
+ [ 'book',       'books',        'książka',  'książki',   'książkę',  'książki',   'f', 'no-agent' ], 
+ [ 'daughter',   'daughters',    'córka',    'córki',     'córkę',    'córki',     'f', 'i-agent' ], 
+ [ 't-shirt',    't-shirs',      'koszulka', 'koszulki',  'koszulkę', 'koszukli',  'f', 'no-agent' ], 
+ [ 'skirt',      'skirts',       'spódnica', 'spódnice',  'spódnicę', 'spodnice', 'f', 'no-agent' ], 
+ [ 'street',     'streets',      'ulica',    'ulice',     'ulica',    'ulice',    'f', 'no-agent' ], 
+ [ 'road',       'roads',        'droga',    'drogi',     'drogę',    'drogi',    'f', 'no-agent' ], 
+ [ 'apple',      'apples',       'jabłko',   'jabłka',    'jabłko',   'jabłka',   'n', 'no-agent' ], 
+ [ 'chair',      'chairs',       'krzesło',  'krzesła',   'krzesło',  'krzesła',  'n', 'no-agent' ], 
+ [ 'soap',       'soaps',        'mydło',    'mydła',     'mydło',    'mydła',    'n', 'no-agent' ], 
+ [ 'bed',        'beds',         'łóżko',    'łóżka',     'łóżko',    'łóżka',    'n', 'no-agent' ], 
+ [ 'animal',     'animals',      'zwierzę',  'zwierzeta', 'zwierzę',  'zwierzeta','n', 'agent' ],
+ [ 'father',     'fathers',      'ojciec',   'ojcowie',   'ojca',     'ojców',    'm', 'i-agent' ],
+ [ 'husband',    'husbands',     'mąż',      'mężowie',   'męża',     'mężów',    'm', 'i-agent' ],
+ [ 'grandpa',    'grandpas',     'dziadek',  'dziadkowie','dziadka',  'dziadków', 'm', 'i-agent' ],
+ [ 'newspaper',  'newspapers',   'gazeta',   'gazety',    'gazetę',   'gazety',   'f', 'no-agent' ],
+ [ 'letter',     'letters',      'list',     'listy',     'list',     'listy',    'm', 'no-agent' ],    
+ [ 'dictionary', 'dictionaries', 'słownik',  'słowniki',  'słownik',  'słowniki', 'm', 'no-agent' ], 
+ [ 'sign',       'sign',         'znak',     'znaki',     'znak',     'znaki',    'm', 'no-agent' ],
+ [ 'egg',        'eggs',         'jajko',    'jajka',     'jajko',    'jajka',    'n', 'no-agent' ],
+ [ 'carrot',     'carrots',      'marchew',  'marchwie',  'marchew',  'marchwie', 'f', 'no-agent' ],
+ [ 'sausage',    'sausages',     'kiełbasa', 'kiełbasy',  'kiełbasę', 'kiełbasy', 'f', 'no-agent' ],
+ [ 'cabbage',    'cabbages',     'kapusta',  'kapusty',   'kapustę',  'kapusty',  'f', 'no-agent' ],
 ];
 
 var adjectiveData = [
@@ -304,8 +360,7 @@ var verbData = [
     { infinitive: [ 'czytać', "to read" ],
       transitive: true,
       ok_subjects: 'i-agent',
-      objects: [ 'książka' 
-              //add later: newspaper, letter, dictionary, sign
+      objects: [ 'książka', 'gazeta', 'list', 'słownik', 'znak' 
       ],
       present_tense: {
         s: [ 'czytam', 'czytasz', 'czyta' ],
@@ -315,8 +370,7 @@ var verbData = [
     { infinitive: [ 'jeść', "to eat" ],
       transitive: true,
       ok_subjects: 'agent',
-      objects: [ 'kanapka', 'jabłko' 
-                //add later: egg(jajko), kiełbasa, carrot(marchew), cabbage (kapusta)
+      objects: [ 'kanapka', 'jabłko', 'jajko', 'kiełbasa', 'marchew', 'kapusta' 
       ],
       present_tense: {
         s: [ 'jem', 'jesz', 'je' ],
@@ -331,7 +385,35 @@ var verbData = [
         s: [ 'lubię', 'lubisz', 'lubi' ],
         p: [ 'lubimy', 'lubicie', 'lubią']
       }
-    }
+    },
+    { infinitive: [ 'chcieć', 'to want' ],
+      transitive: true,
+      ok_subjects: 'i-agent',
+      objects: 'any', 
+      present_tense: {
+        s: [ 'chcę', 'chcesz', 'chce' ],
+        p: [ 'chcemy', 'chcecie', 'chcą' ]
+      }
+    },
+    { infinitive: ['biegać', 'to run' ],
+      transitive: false,
+      ok_subjects: 'agent',
+      present_tense: {
+        s: [ 'biegnę', 'biegniesz', 'biegnie' ],
+        p: [ 'biegniemy', 'biegniecie', 'biegną' ]
+      }
+    },
+    { infinitive: ['brać', 'to take' ],
+      transitive: true,
+      ok_subjects: 'i-agent',
+      objects: 'any',
+      present_tense: {
+        s: ['biorę', 'bierzesz', 'bierze' ],
+        p: ['bierzemy', 'bierzecie', 'biorą' ]
+      }
+    } 
+
+   
 ];
 
 
@@ -340,6 +422,11 @@ for (var i in nounData){
     var row = nounData[i]
     var noun = new Noun(row);
     tester.addNoun(noun);
+}
+for (var i in pronounData){
+    var row = pronounData[i];
+    var pronoun = new Pronoun(row);
+    tester.pronouns.push(pronoun);
 }
 for (var i in adjectiveData){
     var row = adjectiveData[i]
@@ -435,7 +522,7 @@ body {
         </div>
         <div class="buttons">
             <button id="give-hint">Give me a hint?</button>
-            <button id="show-answer">I give up.</button>
+            <button id="show-answer">Tell me the answer</button>
             <br/>
             <button id="go-again">Another test</button>
         </div>
