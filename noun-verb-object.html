@@ -427,7 +427,7 @@ var nounData = [
  [ 'chair',      'chairs',       'krzesło',  'krzesła',   'krzesło',  'krzesła',   'n',          'no-agent' ], 
  [ 'soap',       'soaps',        'mydło',    'mydła',     'mydło',    'mydła',     'n',          'no-agent' ], 
  [ 'bed',        'beds',         'łóżko',    'łóżka',     'łóżko',    'łóżka',     'n',          'no-agent' ], 
- [ 'animal',     'animals',      'zwierzę',  'zwierzeta', 'zwierzę',  'zwierzeta', 'n',          'agent' ],
+ [ 'animal',     'animals',      'zwierzę',  'zwierzęta', 'zwierzę',  'zwierzęta', 'n',          'agent' ],
  [ 'father',     'fathers',      'ojciec',   'ojcowie',   'ojca',     'ojców',     'm-personal', 'i-agent' ],
  [ 'husband',    'husbands',     'mąż',      'mężowie',   'męża',     'mężów',     'm-personal', 'i-agent' ],
  [ 'grandpa',    'grandpas',     'dziadek',  'dziadkowie','dziadka',  'dziadków',  'm-personal', 'i-agent' ],
@@ -644,7 +644,7 @@ body {
         <div id="question">
         </div>
         <div id="input">
-            <input type="text">
+            <input type="text" size="40">
         </div>
         <div id="output">
         </div>
@@ -660,11 +660,11 @@ body {
     </div>
     <div class="images-iframe">
         <div>
-             <form id="show-images-form">
+             <!-- <form id="show-images-form">
                 Show google images?
                 <input type="radio" name="show-google-images" class="radio-show-google-images" value="1" checked="1"/>yes
                 <input type="radio" name="show-google-images" class="radio-show-google-images" value="0"/>no
-             </form>
+             </form> -->
         </div>
         <iframe id="google-iframe" height="800px" width="800px" src=""></iframe>
     <div>
