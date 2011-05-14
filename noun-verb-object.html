@@ -291,11 +291,16 @@ Tester.prototype.askQuestion = function(){
 
 Tester.prototype.checkAnswer = function(){
     var answer = Y.one('#input input').get('value');
+    answer = answer.replace(/ +$/, '');
+    answer = answer.replace(/^ +/, '');
 
     if (answer === this.currentPolishSentence()){
         Y.one('#output').set('innerHTML', this.currentPolishSentence());
         alert('Doskonale!');
-        
+    }else if (answer.charAt(0).toUpperCase() !== answer.charAt(0)){
+        alert('Capitalzation is important...');
+    }else if (answer.charAt( answer.length-1 ) !== '.'){
+        alert('Punctuation is important...');
     }else{
         alert('Nie, zła odpowiedź, spróbuj ponownie!');
     }
@@ -432,6 +437,8 @@ function Adjective(args){
     this.n         = args[3];
     this.mPersMasc = args[4];
 }
+
+Adjective.prototype.adjectiveEndings = adjectiveEndings;
 Adjective.prototype.nominativeSingularForGender = function (gender){
     switch(gender) {
         case 'f': 
@@ -444,7 +451,7 @@ Adjective.prototype.nominativeSingularForGender = function (gender){
             return this.m;
         default:
             alert("Hey, what gender is '" + gender + "' supposed to be?");
-    };
+    }
 };
 Adjective.prototype.nominativePluralForGender = function (gender){
 
@@ -462,13 +469,13 @@ Adjective.prototype.nominativePluralForGender = function (gender){
             break;
         default:
             alert("Hey, what gender is '" + gender + "' supposed to be?");
-    };
+    }
     return result;
 };
 Adjective.prototype.genitivePluralForGender = function (gender) {
     var stem = this.stem();
     var masculineEnding = this.masculineEnding(); // "i" or "y"
-    var endings = adjectiveEndings['genitive-p'];
+    var endings = this.adjectiveEndings['genitive-p'];
     var result = '';
     switch(gender) {
         case 'f': 
@@ -480,7 +487,7 @@ Adjective.prototype.genitivePluralForGender = function (gender) {
             break;
         default:
             alert("Hey, what gender is '" + gender + "' supposed to be?");
-    };
+    }
     return result.replace('*', masculineEnding);
 };
 
@@ -490,7 +497,7 @@ Adjective.prototype.stem = function (){
 Adjective.prototype.accusativeSingularForGender = function (gender){
     var stem = this.stem();
     var masculineEnding = this.masculineEnding(); // "i" or "y"
-    var endings = adjectiveEndings['accusative-s'];
+    var endings = this.adjectiveEndings['accusative-s'];
     var result = '';
     switch(gender) {
         case 'f': 
@@ -508,7 +515,7 @@ Adjective.prototype.accusativeSingularForGender = function (gender){
             break;
         default:
             alert("Hey, what gender is '" + gender + "' supposed to be?");
-    };
+    }
     return result.replace('*', masculineEnding);
 };
 Adjective.prototype.accusativePluralForGender = function (gender){
@@ -525,7 +532,7 @@ Adjective.prototype.accusativePluralForGender = function (gender){
             break;
         default:
             alert("Hey, what gender is '" + gender + "' supposed to be?");
-    };
+    }
     return result;
 };
 Adjective.prototype.masculineEnding = function(){
@@ -558,7 +565,7 @@ for (i in pronounData){
 }
 for (i in adjectiveData){
     row = adjectiveData[i];
-    var adjective = new Adjective(row);
+    adjective = new Adjective(row);
     tester.adjectives.push(adjective);
 }
 
@@ -568,7 +575,7 @@ for (i in verbData){
     tester.addVerb(verb);
 }
 
-Y.on("domready", function() { tester.askQuestion() });
+Y.on("domready", function() { tester.askQuestion(); });
 
 var returnPressed = 'down:13';
 Y.on('key', function(e) {
