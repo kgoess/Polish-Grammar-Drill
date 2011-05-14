@@ -107,7 +107,7 @@ var adjectiveData = [
  [ 'nasty',  'niesmazcny', 'niesmaczna', 'niesmaczne', 'niesmaczni' ], 
  [ 'clean',  'czysty',     'czysta',     'czyste',     'czyści'     ], 
  [ 'wet',    'mokry',      'mokra',      'mokre',      'mokrzy'     ], 
- [ 'dry',    'suchy',      'sucha',      'suche',      'susi',      ], 
+ [ 'dry',    'suchy',      'sucha',      'suche',      'susi'       ], 
  [ 'dirty',  'brudny',     'brudna',     'brudne',     'brudni'     ], 
  [ 'sick',   'chory',      'chora',      'chore',      'chorzy'     ], 
  [ 'tired',  'zmęczony',   'zmęczona',   'zmęczone',   'zmęczeni'   ], 
@@ -215,16 +215,16 @@ function Tester(){
 Tester.prototype.addNoun = function(noun){
     this.nouns.push(noun);
     var type = noun.agentType;  // agent, i-agent, no-agent
-    if (type == "agent"){
+    if (type === "agent"){
         this.agents.push(noun);
-    }else if (type == "i-agent"){
+    }else if (type === "i-agent"){
         this.intelligentAgents.push(noun);
     }
     this.nounLookup[ noun.nom_sing ] = noun;
-}
+};
 Tester.prototype.addVerb = function(verb){
     this.verbs.push(verb);
-}
+};
 
 Tester.prototype.askQuestion = function(){
     var verb = this.verbs [ Math.floor(Math.random()*this.verbs.length) ];
@@ -232,19 +232,19 @@ Tester.prototype.askQuestion = function(){
 
     var okSubjectType = verb.subjectType;
     var okSubjects;
-    if (okSubjectType == 'i-agent'){
+    if (okSubjectType === 'i-agent'){
         okSubjects = this.intelligentAgents; 
     }else{
         okSubjects = this.agents;
     }
-    if (Math.floor(Math.random()*3) % 3 == 0){
+    if (Math.floor(Math.random()*3) % 3 === 0){
         var pronoun = this.pronouns[ Math.floor(Math.random()*this.pronouns.length) ];
         this.currentSubject = pronoun;
-        this.subjectNumber = pronoun.number == 's' ? 'singular' : 'plural';
+        this.subjectNumber = pronoun.number === 's' ? 'singular' : 'plural';
         this.currentPerson = pronoun.person;
         this.subjectAdjective = false;
     }else{
-        this.subjectNumber = Math.floor( Math.random()*(2) +1 ) % 2 == 0 ? 'singular' : 'plural';
+        this.subjectNumber = Math.floor( Math.random()*(2) +1 ) % 2 === 0 ? 'singular' : 'plural';
         this.currentPerson = 3;
         this.currentSubject   = okSubjects[      Math.floor(Math.random()*okSubjects.length) ];
         this.subjectAdjective = this.adjectives[ Math.floor(Math.random()*this.adjectives.length) ];
@@ -254,7 +254,7 @@ Tester.prototype.askQuestion = function(){
 
     if (verb.isTransitive){
         var okObjects = verb.okObjects;
-        if (okObjects == 'any'){
+        if (okObjects === 'any'){
             this.currentObject = this.nouns[ Math.floor( Math.random()*this.nouns.length ) ];
         }else{
             var okObjectKey = okObjects[ Math.floor( Math.random()*okObjects.length ) ];
@@ -264,7 +264,7 @@ Tester.prototype.askQuestion = function(){
             }
         }
         this.objectAdjective = this.adjectives[ Math.floor(Math.random()*this.adjectives.length) ];
-        this.objectNumber    = Math.floor( Math.random()*(2) +1 ) % 2 == 0 ? 'singular' : 'plural';
+        this.objectNumber    = Math.floor( Math.random()*(2) +1 ) % 2 === 0 ? 'singular' : 'plural';
     }else{
         this.currentObject = null;
         this.objectAdjective = null;
@@ -287,26 +287,26 @@ Tester.prototype.askQuestion = function(){
 //        var iframeDiv = Y.one('#google-iframe');
 //        iframeDiv.set('src', this.generateGoogleUrl());
 //    }
-}
+};
 
 Tester.prototype.checkAnswer = function(){
     var answer = Y.one('#input input').get('value');
 
-    if (answer == this.currentPolishSentence()){
+    if (answer === this.currentPolishSentence()){
         Y.one('#output').set('innerHTML', this.currentPolishSentence());
         alert('Doskonale!');
         
     }else{
         alert('Nie, zła odpowiedź, spróbuj ponownie!');
     }
-}
+};
 
 Tester.prototype.currentPolishSentence = function(){
 
     var subject = this.currentSubject;
     var subjectAdjective = this.subjectAdjective;
-    var subjectStr, subjectAdjectiveStr, verbStr
-    if (this.subjectNumber == 'singular'){
+    var subjectStr, subjectAdjectiveStr, verbStr;
+    if (this.subjectNumber === 'singular'){
         subjectStr = subject.nom_sing;
         subjectAdjectiveStr = subjectAdjective ? subjectAdjective.nominativeSingularForGender(subject.gender) + ' ' : '';
         verbStr = this.currentVerb.presentTense[ 's' ][ this.currentPerson - 1 ];
@@ -324,8 +324,8 @@ Tester.prototype.currentPolishSentence = function(){
     if (this.currentObject){
         var object = this.currentObject;
         var objectAdjective = this.objectAdjective;
-        var objectStr, objectAdjectiveStr, verbStr
-        if (this.objectNumber == 'singular'){
+        var objectStr, objectAdjectiveStr;
+        if (this.objectNumber === 'singular'){
             objectStr = object.acc_sing;
             objectAdjectiveStr = objectAdjective.accusativeSingularForGender(object.gender);
         }else{
@@ -337,7 +337,7 @@ Tester.prototype.currentPolishSentence = function(){
     str = str + '.';
 
     return str;
-}
+};
 
 Tester.prototype.giveHint = function() {
 
@@ -346,22 +346,23 @@ Tester.prototype.giveHint = function() {
     var showEvery = 3;
 
     var outstr = '';
-    for (var i = 0; i < str.length; ++i){
+    var i;
+    for (i = 0; i < str.length; ++i){
         var rand = Math.floor(Math.random()*showEvery);
-        if (str.charAt(i) == ' ' || str.charAt(i) == '.'){
+        if (str.charAt(i) === ' ' || str.charAt(i) === '.'){
             outstr = outstr + str.charAt(i);
         }else{
-            outstr = outstr + (rand % showEvery == 1 ? str.charAt(i) : '<span class="graydot">.</span>');
+            outstr = outstr + (rand % showEvery === 1 ? str.charAt(i) : '<span class="graydot">.</span>');
         }
     }
     Y.one('#output').set('innerHTML', outstr);
-}
+};
 
 Tester.prototype.showAnswer = function(){
     var str = this.currentPolishSentence();
 
     Y.one('#output').set('innerHTML', str);
-}
+};
 
 Tester.prototype.showImagesIsChecked = function(){
 
@@ -370,14 +371,14 @@ Tester.prototype.showImagesIsChecked = function(){
         if (node.get('checked')) tmpValue = node.get('value');
     });
     return tmpValue;
-}
+};
     
 Tester.prototype.currentEnglishSentence = function(){
-    var s = ''
+    var s = '';
     if (this.subjectAdjective){
         s = 'The ' +  this.subjectAdjective.english + ' ';
     }
-    if (this.subjectNumber == 'singular'){
+    if (this.subjectNumber === 'singular'){
         s = s + this.currentSubject.english_sing;
     }else{
         s = s + this.currentSubject.english_pl;
@@ -386,7 +387,7 @@ Tester.prototype.currentEnglishSentence = function(){
     s = s + ' + ' + this.currentVerb.infinitive[1] ;
 
     if (this.currentObject){
-        if (this.objectNumber == 'singular'){
+        if (this.objectNumber === 'singular'){
             s = s + ' + the ' + this.objectAdjective.english + ' ' + this.currentObject.english_sing + '.';
         }else{
             s = s + ' + the ' + this.objectAdjective.english + ' ' + this.currentObject.english_pl + '.';
@@ -395,13 +396,13 @@ Tester.prototype.currentEnglishSentence = function(){
     s = s.charAt(0).toUpperCase() + s.slice(1);
 
     return s;
-}
+};
 
 Tester.prototype.generateGoogleUrl = function() {
     var s = escape(this.currentEnglishSentence());
 
     return 'http://images.google.com/search?safe=on&tbm=isch&q=' + s;
-}
+};
     
 
 function Noun(args){
@@ -435,19 +436,16 @@ Adjective.prototype.nominativeSingularForGender = function (gender){
     switch(gender) {
         case 'f': 
             return this.f;
-            break;
         case 'n':
             return this.n;
-            break;
         case 'm':
         case 'm-animate':
         case 'm-personal':
             return this.m;
-            break;
         default:
             alert("Hey, what gender is '" + gender + "' supposed to be?");
     };
-}
+};
 Adjective.prototype.nominativePluralForGender = function (gender){
 
     var result = '';
@@ -466,7 +464,7 @@ Adjective.prototype.nominativePluralForGender = function (gender){
             alert("Hey, what gender is '" + gender + "' supposed to be?");
     };
     return result;
-}
+};
 Adjective.prototype.genitivePluralForGender = function (gender) {
     var stem = this.stem();
     var masculineEnding = this.masculineEnding(); // "i" or "y"
@@ -484,11 +482,11 @@ Adjective.prototype.genitivePluralForGender = function (gender) {
             alert("Hey, what gender is '" + gender + "' supposed to be?");
     };
     return result.replace('*', masculineEnding);
-}
+};
 
 Adjective.prototype.stem = function (){
     return this.f.replace(/a$/, '');
-}
+};
 Adjective.prototype.accusativeSingularForGender = function (gender){
     var stem = this.stem();
     var masculineEnding = this.masculineEnding(); // "i" or "y"
@@ -512,11 +510,8 @@ Adjective.prototype.accusativeSingularForGender = function (gender){
             alert("Hey, what gender is '" + gender + "' supposed to be?");
     };
     return result.replace('*', masculineEnding);
-}
+};
 Adjective.prototype.accusativePluralForGender = function (gender){
-    var stem = this.stem();
-    var masculineEnding = this.masculineEnding(); // "i" or "y"
-    var endings = adjectiveEndings['accusative-p'];
     var result = '';
     switch(gender) {
         case 'f': 
@@ -532,10 +527,10 @@ Adjective.prototype.accusativePluralForGender = function (gender){
             alert("Hey, what gender is '" + gender + "' supposed to be?");
     };
     return result;
-}
+};
 Adjective.prototype.masculineEnding = function(){
     return this.m.substr( this.m.length -1 );
-}
+};
     
 
 
@@ -548,26 +543,28 @@ function Verb(args){
 }
     
 
-var tester = new Tester;
-for (var i in nounData){
-    var row = nounData[i]
-    var noun = new Noun(row);
+// this stuff should be in its own function so we can scope the variables
+var tester = new Tester();
+var i, row, noun, pronoun, adjective, verb;
+for (i in nounData){
+    row = nounData[i];
+    noun = new Noun(row);
     tester.addNoun(noun);
 }
-for (var i in pronounData){
-    var row = pronounData[i];
-    var pronoun = new Pronoun(row);
+for (i in pronounData){
+    row = pronounData[i];
+    pronoun = new Pronoun(row);
     tester.pronouns.push(pronoun);
 }
-for (var i in adjectiveData){
-    var row = adjectiveData[i]
+for (i in adjectiveData){
+    row = adjectiveData[i];
     var adjective = new Adjective(row);
     tester.adjectives.push(adjective);
 }
 
-for (var i in verbData){
-    var row = verbData[i];
-    var verb = new Verb(row);
+for (i in verbData){
+    row = verbData[i];
+    verb = new Verb(row);
     tester.addVerb(verb);
 }
 
