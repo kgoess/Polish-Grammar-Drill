@@ -68,9 +68,9 @@ var nounData = [
  [ 'woman',      'women',        'kobieta',  'kobiety',   'kobietę',  'kobiety',   'f',          'i-agent' ], 
  [ 'school',     'schools',      'skoła',    'skoły',     'skolę',    'skoły',     'f',          'no-agent' ], 
  [ 'sister',     'sisters',      'siostra',  'siostry',   'siostrę',  'siostry',   'f',          'i-agent' ], 
- [ 'wife',       'wives',        'żona',     'żony',      'zonę',     'zony',      'f',          'i-agent' ], 
+ [ 'wife',       'wives',        'żona',     'żony',      'żonę',     'żony',      'f',          'i-agent' ], 
  [ 'cloud',      'clouds',       'chmura',   'chmury',    'chmurę',   'chmury',    'f',          'no-agent' ], 
- [ 'fish',       'fish',         'ryba',     'ryby',      'rybę',     'ryby',      'f',          'agent' ], 
+ [ 'fish',       'fishes',       'ryba',     'ryby',      'rybę',     'ryby',      'f',          'agent' ], 
  [ 'bench',      'benches',      'ławka',    'ławki',     'ławkę',    'ławki',     'f',          'no-agent' ], 
  [ 'book',       'books',        'książka',  'książki',   'książkę',  'książki',   'f',          'no-agent' ], 
  [ 'daughter',   'daughters',    'córka',    'córki',     'córkę',    'córki',     'f',          'i-agent' ], 
@@ -140,6 +140,10 @@ var adjectiveData = [
  //powolne
 ];
 
+var byćPast = {
+    s: [ 'będę',     'będziesz',  'będzie' ],
+    p: [ 'będziemy', 'będziecie', 'będą' ]
+};
 
 var verbData = [
     { infinitive: [ 'czytać', "to read" ],
@@ -150,6 +154,10 @@ var verbData = [
       present_tense: {
         s: [ 'czytam', 'czytasz', 'czyta' ],
         p: [ 'czytamy', 'czytacie', 'czytają' ]
+      },
+      past_tense: {
+        s: [ 'czytał', 'czytała' ],
+        p: [ 'czytali', 'czytały']
       }
     },
     { infinitive: [ 'jeść', "to eat" ],
@@ -160,6 +168,10 @@ var verbData = [
       present_tense: {
         s: [ 'jem', 'jesz', 'je' ],
         p: [ 'jemy', 'jecie', 'jedzą' ]
+      },
+      past_tense: {
+        s: [ 'jadł', 'jadła'  ],
+        p: [ 'jedli', 'jadły' ]
       }
     },
     { infinitive: [ 'lubić', 'to like' ],
@@ -169,23 +181,35 @@ var verbData = [
       present_tense: {
         s: [ 'lubię', 'lubisz', 'lubi' ],
         p: [ 'lubimy', 'lubicie', 'lubią']
+      },
+      past_tense: {
+        s: [ 'lubił', 'lubiła'  ],
+        p: [ 'lubili', 'lubiły' ]
       }
     },
-    { infinitive: [ 'chcieć', 'to want' ],
-      transitive: true,
-      ok_subjects: 'i-agent',
-      objects: 'any', 
-      present_tense: {
-        s: [ 'chcę', 'chcesz', 'chce' ],
-        p: [ 'chcemy', 'chcecie', 'chcą' ]
-      }
-    },
-    { infinitive: ['biegać', 'to run' ],
+// apparently chcieć takes the genitive 
+// http://www.polishforums.com/grammar-usage-18/adjective-endings-masculine-personal-51432/
+//    { infinitive: [ 'chcieć', 'to want' ],
+//      transitive: true,
+//      ok_subjects: 'i-agent',
+//      objects: 'any', 
+//      present_tense: {
+//        s: [ 'chcę', 'chcesz', 'chce' ],
+//        p: [ 'chcemy', 'chcecie', 'chcą' ]
+//      }
+//    },
+    { infinitive: ['biec', 'to run' ],
+       //http://en.wiktionary.org/wiki/biec see also http://en.wiktionary.org/wiki/biegać
+       //The difference in the meaning is that biegać implies a reapeated action whereas biec only a single/permanent one.
       transitive: false,
       ok_subjects: 'agent',
       present_tense: {
         s: [ 'biegnę', 'biegniesz', 'biegnie' ],
         p: [ 'biegniemy', 'biegniecie', 'biegną' ]
+      },
+      past_tense: {
+        s: [ 'biegł', 'biegła'  ],
+        p: [ 'biegli', 'biegły' ]
       }
     },
     { infinitive: ['brać', 'to take' ],
@@ -195,10 +219,12 @@ var verbData = [
       present_tense: {
         s: ['biorę', 'bierzesz', 'bierze' ],
         p: ['bierzemy', 'bierzecie', 'biorą' ]
+      },
+      past_tense: {
+        s: [ 'brał', 'brała'  ],
+        p: [ 'brali', 'brały' ]
       }
     } 
-
-   
 ];
 
 
@@ -237,20 +263,18 @@ Tester.prototype.askQuestion = function(){
     }else{
         okSubjects = this.agents;
     }
-    if (Math.floor(Math.random()*3) % 3 === 0){
+    if (this.doUsePronounSubject()){
         var pronoun = this.pronouns[ Math.floor(Math.random()*this.pronouns.length) ];
         this.currentSubject = pronoun;
         this.subjectNumber = pronoun.number === 's' ? 'singular' : 'plural';
         this.currentPerson = pronoun.person;
         this.subjectAdjective = false;
-    }else{
-        this.subjectNumber = Math.floor( Math.random()*(2) +1 ) % 2 === 0 ? 'singular' : 'plural';
+    }else{ //generateSubjectNumber will revert to 'singular' if nothing is checked
+        this.subjectNumber = this.generateSubjectNumber();
         this.currentPerson = 3;
         this.currentSubject   = okSubjects[      Math.floor(Math.random()*okSubjects.length) ];
-        this.subjectAdjective = this.adjectives[ Math.floor(Math.random()*this.adjectives.length) ];
+        this.subjectAdjective = this.generateSubjectAdjective();
     }
-    Y.log("currentSubject:");
-    Y.log(this.currentSubject);
 
     if (verb.isTransitive){
         var okObjects = verb.okObjects;
@@ -263,7 +287,7 @@ Tester.prototype.askQuestion = function(){
                 alert("couldn't find noun for '" + okObjectKey + "'");
             }
         }
-        this.objectAdjective = this.adjectives[ Math.floor(Math.random()*this.adjectives.length) ];
+        this.objectAdjective = this.generateObjectAdjective();
         this.objectNumber    = Math.floor( Math.random()*(2) +1 ) % 2 === 0 ? 'singular' : 'plural';
     }else{
         this.currentObject = null;
@@ -282,11 +306,60 @@ Tester.prototype.askQuestion = function(){
     inputEl.focus();
     inputEl.set('value', '');
 
-//    var doShowImages = this.showImagesIsChecked();
-//    if (doShowImages){
-//        var iframeDiv = Y.one('#google-iframe');
-//        iframeDiv.set('src', this.generateGoogleUrl());
-//    }
+};
+
+Tester.prototype.canUseRegularSubject = function(){
+    var singularOk = document.settings["subject-singular"].checked;
+    var pluralOk   = document.settings["subject-plural"].checked;
+
+    return singularOk || pluralOk;
+};
+
+Tester.prototype.generateSubjectNumber = function(){
+    var singularOk = document.settings["subject-singular"].checked;
+    var pluralOk   = document.settings["subject-plural"].checked;
+
+    if (singularOk && pluralOk){ 
+        return Math.floor( Math.random()*(2) +1 ) % 2 === 0 ? 'singular' : 'plural';
+    }else if (pluralOk){
+        return 'plural';
+    }else if (singularOk){
+        return 'singular';
+    }else{
+        document.settings["subject-singular"].checked = 1;
+        return 'singular';
+    }
+};
+
+Tester.prototype.generateSubjectAdjective = function(){
+    var subjectAdjectivesOk = document.settings["subject-adjectives"].checked;
+    if (subjectAdjectivesOk){
+        return this.adjectives[ Math.floor(Math.random()*this.adjectives.length) ];
+    }else{
+        return null;
+    }
+};
+
+Tester.prototype.generateObjectAdjective = function(){
+   var objectAdjectivesOk = document.settings["object-adjectives"].checked;
+    if (objectAdjectivesOk){
+        return this.adjectives[ Math.floor(Math.random()*this.adjectives.length) ];
+    }else{
+        return null;
+    }
+};
+
+Tester.prototype.doUsePronounSubject = function(){
+    var pronounsOk = document.settings["subject-pronouns"].checked;
+    if (pronounsOk){
+        if (this.canUseRegularSubject()){
+            return Math.floor(Math.random()*3) % 3 === 0;
+        }else{
+            return true;
+        }
+    }else{
+        return false;
+    }
 };
 
 Tester.prototype.checkAnswer = function(){
@@ -314,10 +387,14 @@ Tester.prototype.currentPolishSentence = function(){
     if (this.subjectNumber === 'singular'){
         subjectStr = subject.nom_sing;
         subjectAdjectiveStr = subjectAdjective ? subjectAdjective.nominativeSingularForGender(subject.gender) + ' ' : '';
+        //var tenseAccessor = this.getTenseAccessor(); //presentTense, pastTense, etc...
+        //verbStr = this.currentVerb[tenseAccessor][ 's' ][ this.currentPerson - 1 ];
         verbStr = this.currentVerb.presentTense[ 's' ][ this.currentPerson - 1 ];
     }else{
         subjectStr = subject.nom_pl;
         subjectAdjectiveStr =  subjectAdjective ? subjectAdjective.nominativePluralForGender(subject.gender) + ' ' : '';
+        //var tenseAccessor = this.getTenseAccessor(); //presentTense, pastTense, etc...
+        //verbStr = this.currentVerb[tenseAccessor][ 'p' ][ this.currentPerson - 1 ];
         verbStr = this.currentVerb.presentTense[ 'p' ][ this.currentPerson - 1 ];
     }
 
@@ -332,16 +409,45 @@ Tester.prototype.currentPolishSentence = function(){
         var objectStr, objectAdjectiveStr;
         if (this.objectNumber === 'singular'){
             objectStr = object.acc_sing;
-            objectAdjectiveStr = objectAdjective.accusativeSingularForGender(object.gender);
+            if (objectAdjective){
+                objectAdjectiveStr = objectAdjective.accusativeSingularForGender(object.gender);
+            }else{
+                objectAdjectiveStr = '';
+            }
         }else{
             objectStr = object.acc_pl;
-            objectAdjectiveStr = objectAdjective.accusativePluralForGender(object.gender);
+            if (objectAdjective){
+                objectAdjectiveStr = objectAdjective.accusativePluralForGender(object.gender);
+            }else{
+                objectAdjectiveStr = '';
+            }
         }
-        str = str + ' ' + objectAdjectiveStr + ' ' + objectStr;
+        if (objectAdjectiveStr){
+            objectAdjectiveStr = ' ' + objectAdjectiveStr ;
+        }
+        str = str + objectAdjectiveStr +  ' ' + objectStr;
     }
     str = str + '.';
 
     return str;
+};
+
+Tester.prototype.tenseAccessor = function(){
+    var presentTenseOk = document.settings["verbs-present"].checked;
+    var pastTenseOk    = document.settings["verbs-past"].checked;
+    var futureTenseOk  = false; //document.settings["verbs-past"].checked;
+
+    var okAcessors = [];
+    if (presentTenseOk){
+        okAccessors.push('presentTense');
+    }
+    if (pastTenseOk){
+        okAccessors.push('pastTense');
+    }
+    if (futureTenseOk){
+        okAccessors.push('futureTense');
+    }
+    return okAccessors [ Math.floor(Math.random()*okAccessors.length) ];
 };
 
 Tester.prototype.giveHint = function() {
@@ -393,14 +499,23 @@ Tester.prototype.currentEnglishSentence = function(){
 
     if (this.currentObject){
         if (this.objectNumber === 'singular'){
-            s = s + ' + the ' + this.objectAdjective.english + ' ' + this.currentObject.english_sing + '.';
+            s = s + ' + the ' + this.getObjectAdjectiveEnglishStr() + ' ' + this.currentObject.english_sing + '.';
         }else{
-            s = s + ' + the ' + this.objectAdjective.english + ' ' + this.currentObject.english_pl + '.';
+            s = s + ' + the ' + this.getObjectAdjectiveEnglishStr() + ' ' + this.currentObject.english_pl + '.';
         }
     }
     s = s.charAt(0).toUpperCase() + s.slice(1);
 
     return s;
+};
+
+Tester.prototype.getObjectAdjectiveEnglishStr = function(){
+    if (this.objectAdjective){
+        return this.objectAdjective.english;
+    }else{
+        return '';
+    }
+
 };
 
 Tester.prototype.generateGoogleUrl = function() {
@@ -547,6 +662,8 @@ function Verb(args){
     this.subjectType = args.ok_subjects;
     this.okObjects = args.objects; //link?
     this.presentTense = args.present_tense;
+    this.pastTense = args.past_tense;
+    //this.futureTense = args.futureTense;
 }
     
 
@@ -609,27 +726,19 @@ body {
     margin: 50px; 
     padding: 50px;
     height: 500px;
-    width: 1300px;
+    width: 900px;
 }
 
-.outer-box div {
+.test-box div {
     padding: 10px;
 }
 .test-box {
     float: left;
     border: 1px solid black;
     font-size: 200%;
+    width: 65%;
 }
 
-.images-iframe {
-    border: 1px solid yellow;
-    float: right;
-}
-
-#show-images-form {
-    margin: 10px;
-    float: right;
-}
 
 .graydot {
     color: lightgrey;
@@ -638,6 +747,26 @@ body {
 .instructions {
     color: grey;
     font-size: 50%;
+}
+
+.settings-box {
+    border: 1px solid yellow;
+    float: right;
+    width: 30%;
+}
+
+.input {
+    margin: 0px;
+    padding: 0px;
+}
+.input label {
+    margin: 0px;
+    padding: 0px;
+}
+radio {
+    margin: 0px;
+    padding: 0px;
+
 }
 
 </style>
@@ -663,15 +792,46 @@ body {
         </div>
         <div class="instructions">Type your answer in the box and press 'enter'.</div>
     </div>
-    <div class="images-iframe">
-        <div>
-             <!-- <form id="show-images-form">
-                Show google images?
-                <input type="radio" name="show-google-images" class="radio-show-google-images" value="1" checked="1"/>yes
-                <input type="radio" name="show-google-images" class="radio-show-google-images" value="0"/>no
-             </form> -->
-        </div>
-        <iframe id="google-iframe" height="800px" width="800px" src=""></iframe>
+    <div class="settings-box">
+        <form name="settings">
+            <fieldset>
+                <legend>Subjects:</legend>
+                <div class="input">
+                    <label><input type="checkbox" name="subject-singular" checked="1"/>Include singular subjects</label>
+                </div>
+                <div class="input">
+                    <label><input type="checkbox" name="subject-plural" checked="1"/>Include plural subjects</label>
+                </div>
+                <div class="input">
+                    <label><input type="checkbox" name="subject-pronouns" checked="1"/>Include pronoun subjects</label>
+                </div>
+                <div class="input">
+                    <label><input type="checkbox" name="subject-adjectives" checked="1"/>Attach adjectives to subjects</label>
+                </div>
+            </fieldset>
+            <fieldset>
+                <!-- this should be grayed out if the only option is pronoun subjects -->
+                <legend>Direct Objects</legend>
+                <div class="input">
+                    <label><input type="checkbox" name="object-adjectives" checked="1">Attach adjectives to the direct object</label>
+                </div>
+            <!-- could add "include verbs whose d/o takes the genitive (e.g. chcieć) -->
+            </fieldset>
+            <fieldset>
+                <legend>Verbs</legend>
+<!--
+                <div class="input">
+                    <label><input type="checkbox" name="verbs-present" checked="1"/>Include present tense</label>
+                </div>
+                <div class="input">
+                    <label><input type="checkbox" name="verbs-past" checked="1"/>Include past tense</label>
+                </div>
+                <div class="input">
+                    <label><input type="checkbox" name="verbs-future" checked="1"/>Include future tense</label>
+                </div>
+-->
+            </fieldset>
+        </form>
     <div>
 </div>
 
