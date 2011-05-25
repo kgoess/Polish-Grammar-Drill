@@ -652,11 +652,11 @@ Pronoun.prototype.getGender = function(){
     if ( this.person === 1 ){
         g = this.genderOfSpeaker();
     }else if ( this.person === 2 ){
-        g = 'm'; // do something better later
+        g = 'm-personal'; // do something better later
     }else if (this.gender){ // 3rd p singular
         g = this.gender;
     }else{
-        g = 'm';   // 3rd p plural, do something better later
+        g = 'm-personal';   // 3rd p plural, do something better later
     }
     return g;
 }
@@ -878,9 +878,11 @@ Verb.prototype.getFutureTense = function(verbArgs){
     }else{
         switch(verbArgs.gender){
             case 'm-personal':
+            case undefined: //pronouns, they must be personal
                 str = this.futureTense['p'][0];
                 break;
             default:
+Y.log("gender is " + verbArgs.gender);
                 str = this.futureTense['p'][1];
         }
         str = byćPast['p'][verbArgs.person-1] + ' ' + str;
