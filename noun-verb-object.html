@@ -25,17 +25,17 @@ var adjectiveEndings = {
 };
     
 var pronounData = [
- [ 1, 's', 'I', ''],
- [ 2, 's', 'you', ''],
- [ 3, 's', 'he', ''],
- [ 3, 's', 'she', ''],
- [ 3, 's', 'you (formal, masc.)', 'pan'],
- [ 3, 's', 'you (formal, fem.)', 'pani'],
- [ 1, 'p', 'we'],
- [ 2, 'p', 'you all'],
- [ 3, 'p', 'they'   ]
- //[ 3, 'p', 'you all (formal, masc.)'],
- //[ 3, 'p', 'you all (formal, mixed.)'], ????
+ [ 1, 's', '',           'I', ''],
+ [ 2, 's', '',           'you', ''],
+ [ 3, 's', 'm',          'he', ''], //what about m-personal?
+ [ 3, 's', 'f',          'she', ''],
+ [ 3, 's', 'm-personal', 'you (formal, masc.)', 'pan'],
+ [ 3, 's', 'f',          'you (formal, fem.)', 'pani'],
+ [ 1, 'p', '',           'we'],
+ [ 2, 'p', '',           'you all'],
+ [ 3, 'p', '',           'they'   ]
+ //[ 3, 'p',               'you all (formal, masc.)'],
+ //[ 3, 'p',               'you all (formal, mixed.)'], ????
 ];
   
 
@@ -147,6 +147,8 @@ var byćPast = {
 
 var verbData = [
     { infinitive: [ 'czytać', "to read" ],
+      english_past: 'was reading',
+      english_future: 'will be reading',
       transitive: true,
       ok_subjects: 'i-agent',
       objects: [ 'książka', 'gazeta', 'list', 'słownik', 'znak' 
@@ -156,11 +158,18 @@ var verbData = [
         p: [ 'czytamy', 'czytacie', 'czytają' ]
       },
       past_tense: {
+        s: [ 'czytałem/czytałam', 'czytałeś/czytałaś', 'czytał/czytała/czytało' ],
+        p: [ 'czytaliśmy/czytałyśmy', 'czytaliście/czytałyście', 'czytali/czytały' ]
+      },
+      future_tense: {
         s: [ 'czytał', 'czytała' ],
         p: [ 'czytali', 'czytały']
       }
     },
+
     { infinitive: [ 'jeść', "to eat" ],
+      english_past: 'was eating',
+      english_future: 'will be eating',
       transitive: true,
       ok_subjects: 'agent',
       objects: [ 'kanapka', 'jabłko', 'jajko', 'kiełbasa', 'marchew', 'kapusta' 
@@ -170,11 +179,18 @@ var verbData = [
         p: [ 'jemy', 'jecie', 'jedzą' ]
       },
       past_tense: {
+        s: [ 'jadłem/jadłam', 'jadłeś/jadłaś', 'jadł/jadła/jadło' ],
+        p: [ 'jedliśmy/jadłyśmy', 'jedliście/jadłysćie', 'jedli/jadły' ]
+      }, 
+      future_tense: {
         s: [ 'jadł', 'jadła'  ],
         p: [ 'jedli', 'jadły' ]
       }
     },
+
     { infinitive: [ 'lubić', 'to like' ],
+      english_past: 'was liking',
+      english_future: 'will be liking',
       transitive: true,
       ok_subjects: 'agent',
       objects: 'any',
@@ -183,6 +199,10 @@ var verbData = [
         p: [ 'lubimy', 'lubicie', 'lubią']
       },
       past_tense: {
+        s: [ 'lubiłem/lubiłam', 'lubiłeś/lubiłaś', 'lubił/lubiła/lubiło' ],
+        p: [ 'lubiliśmy/lubiłyśmy', 'lubiliście/lubiłyście', 'lubili/lubiły' ]
+      },
+      future_tense: {
         s: [ 'lubił', 'lubiła'  ],
         p: [ 'lubili', 'lubiły' ]
       }
@@ -198,9 +218,12 @@ var verbData = [
 //        p: [ 'chcemy', 'chcecie', 'chcą' ]
 //      }
 //    },
+
     { infinitive: ['biec', 'to run' ],
+        english_past: 'was running',
+        english_future: 'will be running',
        //http://en.wiktionary.org/wiki/biec see also http://en.wiktionary.org/wiki/biegać
-       //The difference in the meaning is that biegać implies a reapeated action whereas biec only a single/permanent one.
+       //The difference in the meaning is that biegać implies a repeated action whereas biec only a single/permanent one.
       transitive: false,
       ok_subjects: 'agent',
       present_tense: {
@@ -208,11 +231,18 @@ var verbData = [
         p: [ 'biegniemy', 'biegniecie', 'biegną' ]
       },
       past_tense: {
+        s: [ 'biegłem/biegłam', 'biegłeś/biegłaś', 'biegł/biegła/biegło' ],
+        p: [ 'biegliśmy/biegłyśmy', 'biegliście/biegłyście', 'biegli/biegły' ]
+      },
+        
+      future_tense: {
         s: [ 'biegł', 'biegła'  ],
         p: [ 'biegli', 'biegły' ]
       }
     },
     { infinitive: ['brać', 'to take' ],
+      english_past: 'was taking',
+      english_future: 'will be taking',
       transitive: true,
       ok_subjects: 'i-agent',
       objects: 'any',
@@ -221,6 +251,10 @@ var verbData = [
         p: ['bierzemy', 'bierzecie', 'biorą' ]
       },
       past_tense: {
+        s: [ 'brałem/brałam', 'brałeś/brałaś', 'brał/brała/brało' ],
+        p: [ 'braliśmy/brałyśmy', 'braliście/brałyście', 'brali/brały' ]
+      },
+      future_tense: {
         s: [ 'brał', 'brała'  ],
         p: [ 'brali', 'brały' ]
       }
@@ -236,6 +270,11 @@ function Tester(){
     this.agents = [];
     this.intelligentAgents = [];
     this.nounLookup = {};
+    this.currentVerb  = null;
+    this.currentTense = null;
+    this.currentPerson = null;
+    this.currentSubject = null;
+    this.currentObject = null;
 }
 
 Tester.prototype.addNoun = function(noun){
@@ -295,6 +334,8 @@ Tester.prototype.askQuestion = function(){
         this.objectNumber = null;
     }
 
+    this.currentTense = this.pickTense();
+
     
     var questionDiv = Y.one('#question');
     questionDiv.set('innerHTML', this.currentEnglishSentence());
@@ -314,6 +355,7 @@ Tester.prototype.canUseRegularSubject = function(){
 
     return singularOk || pluralOk;
 };
+
 
 Tester.prototype.generateSubjectNumber = function(){
     var singularOk = document.settings["subject-singular"].checked;
@@ -383,19 +425,24 @@ Tester.prototype.currentPolishSentence = function(){
 
     var subject = this.currentSubject;
     var subjectAdjective = this.subjectAdjective;
+    var tense = this.currentTense; //present, past, future, etc...
+    var verbArgs = {
+        tense: this.currentTense, //present, past, future, etc...
+        number: null,   // s or p
+        person: this.currentPerson, //1, 2, 3
+        gender: this.currentSubject.getGender()
+    };
     var subjectStr, subjectAdjectiveStr, verbStr;
     if (this.subjectNumber === 'singular'){
         subjectStr = subject.nom_sing;
-        subjectAdjectiveStr = subjectAdjective ? subjectAdjective.nominativeSingularForGender(subject.gender) + ' ' : '';
-        //var tenseAccessor = this.getTenseAccessor(); //presentTense, pastTense, etc...
-        //verbStr = this.currentVerb[tenseAccessor][ 's' ][ this.currentPerson - 1 ];
-        verbStr = this.currentVerb.presentTense[ 's' ][ this.currentPerson - 1 ];
+        subjectAdjectiveStr = subjectAdjective ? subjectAdjective.nominativeSingularForGender(subject.getGender()) + ' ' : '';
+        verbArgs.number = 's';
+        verbStr = this.currentPolishVerbStr(verbArgs);
     }else{
         subjectStr = subject.nom_pl;
-        subjectAdjectiveStr =  subjectAdjective ? subjectAdjective.nominativePluralForGender(subject.gender) + ' ' : '';
-        //var tenseAccessor = this.getTenseAccessor(); //presentTense, pastTense, etc...
-        //verbStr = this.currentVerb[tenseAccessor][ 'p' ][ this.currentPerson - 1 ];
-        verbStr = this.currentVerb.presentTense[ 'p' ][ this.currentPerson - 1 ];
+        subjectAdjectiveStr =  subjectAdjective ? subjectAdjective.nominativePluralForGender(subject.getGender()) + ' ' : '';
+        verbArgs.number = 'p';
+        verbStr = this.currentPolishVerbStr(verbArgs);
     }
 
     var str = subjectAdjectiveStr + subjectStr + ' ' + verbStr;
@@ -410,14 +457,14 @@ Tester.prototype.currentPolishSentence = function(){
         if (this.objectNumber === 'singular'){
             objectStr = object.acc_sing;
             if (objectAdjective){
-                objectAdjectiveStr = objectAdjective.accusativeSingularForGender(object.gender);
+                objectAdjectiveStr = objectAdjective.accusativeSingularForGender(object.getGender());
             }else{
                 objectAdjectiveStr = '';
             }
         }else{
             objectStr = object.acc_pl;
             if (objectAdjective){
-                objectAdjectiveStr = objectAdjective.accusativePluralForGender(object.gender);
+                objectAdjectiveStr = objectAdjective.accusativePluralForGender(object.getGender());
             }else{
                 objectAdjectiveStr = '';
             }
@@ -432,22 +479,46 @@ Tester.prototype.currentPolishSentence = function(){
     return str;
 };
 
-Tester.prototype.tenseAccessor = function(){
+Tester.prototype.currentPolishVerbStr = function (verbArgs){
+    var verbStr = '';
+    switch(verbArgs.tense) {
+        case 'present': 
+            verbStr =  this.currentVerb.presentTense[ verbArgs.number ][ verbArgs.person - 1 ];
+            break;
+        case 'past':
+            verbStr = this.currentVerb.getPastTense(verbArgs);
+            break;
+        case 'future':
+            verbStr = this.currentVerb.getFutureTense(verbArgs);
+            break;
+    }
+    return verbStr;
+};
+
+Tester.prototype.pickTense = function(){
+    var roll = null;
     var presentTenseOk = document.settings["verbs-present"].checked;
     var pastTenseOk    = document.settings["verbs-past"].checked;
-    var futureTenseOk  = false; //document.settings["verbs-past"].checked;
+    var futureTenseOk  = document.settings["verbs-future"].checked;
 
-    var okAcessors = [];
+    if (! (presentTenseOk || pastTenseOk || futureTenseOk)){
+        document.settings["verbs-present"].checked = 1;
+        presentTenseOk = true;
+    }
+
+    var okTenses = [];
     if (presentTenseOk){
-        okAccessors.push('presentTense');
+        okTenses.push('present');
     }
     if (pastTenseOk){
-        okAccessors.push('pastTense');
+        okTenses.push('past');
     }
     if (futureTenseOk){
-        okAccessors.push('futureTense');
+        okTenses.push('future');
     }
-    return okAccessors [ Math.floor(Math.random()*okAccessors.length) ];
+    
+    roll = Math.floor(Math.random()*okTenses.length);
+    return okTenses [ roll ];
 };
 
 Tester.prototype.giveHint = function() {
@@ -495,7 +566,8 @@ Tester.prototype.currentEnglishSentence = function(){
         s = s + this.currentSubject.english_pl;
     }
 
-    s = s + ' + ' + this.currentVerb.infinitive[1] ;
+    //s = s + ' + ' + this.currentVerb.infinitive[1] ;
+    s = s + ' + ' + this.getEnglishVerb() ;
 
     if (this.currentObject){
         if (this.objectNumber === 'singular'){
@@ -507,6 +579,33 @@ Tester.prototype.currentEnglishSentence = function(){
     s = s.charAt(0).toUpperCase() + s.slice(1);
 
     return s;
+};
+
+Tester.prototype.getEnglishVerb = function(){
+    var englishVerbStr = '';
+    switch (this.currentTense){
+        case 'present':
+            englishVerbStr = this.currentVerb.infinitive[1];
+            break;
+        case 'past':
+            switch (this.subjectNumber){
+                case 'singular':
+                    englishVerbStr = this.currentVerb.getEnglishPast('singular', this.currentPerson);
+                    break;
+                case 'plural':
+                    englishVerbStr = this.currentVerb.getEnglishPast('plural', this.currentPerson);
+                    break;
+                default:
+                    alert("I don't know this subjectNumber " + this.subjectNumber + " for subject " + this.currentSubject);
+            }
+            break;
+        case 'future':
+            englishVerbStr = this.currentVerb.englishFuture;
+            break;
+        default:
+            alert("I don't know this tense: " + this.currentTense);
+    }
+    return englishVerbStr;
 };
 
 Tester.prototype.getObjectAdjectiveEnglishStr = function(){
@@ -535,15 +634,43 @@ function Noun(args){
     this.gender = args[6];
     this.agentType = args[7];
 }
+Noun.prototype.getGender = function(){
+    return this.gender;
+}
 
 function Pronoun(args){
     this.person = args[0];
     this.number = args[1];
-    this.english_sing= args[2];
-    this.english_pl = args[2]; //cheating here so we can use both a noun and a pronoun, fix that
-    this.nom_sing = args[3] || '';
-    this.nom_pl = args[3] || '';
+    this.gender = args[2];
+    this.english_sing= args[3];
+    this.english_pl = args[3]; //cheating here so we can use both a noun and a pronoun, fix that
+    this.nom_sing = args[4] || '';
+    this.nom_pl = args[4] || '';
 }
+Pronoun.prototype.getGender = function(){
+    var g = '';
+    if ( this.person === 1 ){
+        g = this.genderOfSpeaker();
+    }else if ( this.person === 2 ){
+        g = 'm'; // do something better later
+    }else if (this.gender){ // 3rd p singular
+        g = this.gender;
+    }else{
+        g = 'm';   // 3rd p plural, do something better later
+    }
+    return g;
+}
+
+Pronoun.prototype.genderOfSpeaker = function() {
+    var nodeList =  document.settings["gender-of-speaker"];
+    var i;
+    for(i = 0; i < nodeList.length; i++) {
+        if (nodeList.item(i).checked){
+            g = nodeList.item(i).value;
+        }
+    }
+    return g;
+};
 
 function Adjective(args){
     this.english   = args[0];
@@ -626,7 +753,11 @@ Adjective.prototype.accusativeSingularForGender = function (gender){
             break;
         case 'm-animate':
         case 'm-personal':
-            result = stem + endings[0];
+            if (stem.charAt(stem.length-1)=='k'){
+                result = stem + 'i' + endings[0];  //e.g. bliskiego
+            }else{
+                result = stem + endings[0];
+            }
             break;
         default:
             alert("Hey, what gender is '" + gender + "' supposed to be?");
@@ -657,14 +788,106 @@ Adjective.prototype.masculineEnding = function(){
 
 
 function Verb(args){
-    this.infinitive = args.infinitive;
-    this.isTransitive = args.transitive;
-    this.subjectType = args.ok_subjects;
-    this.okObjects = args.objects; //link?
-    this.presentTense = args.present_tense;
-    this.pastTense = args.past_tense;
-    //this.futureTense = args.futureTense;
+    this.infinitive    = args.infinitive;
+    this.isTransitive  = args.transitive;
+    this.subjectType   = args.ok_subjects;
+    this.okObjects     = args.objects; //link?
+    this.presentTense  = args.present_tense;
+    this.pastTense     = args.past_tense;
+    this.englishPast   = args.english_past;
+    this.englishFuture = args.english_future;
+    this.futureTense   = args.future_tense;
 }
+
+// This breaks down for pan/pani, since that's 3rd person
+// but should read "you were running" since it's
+// I think I need to keep track of the separate persons
+// in english v. polish
+Verb.prototype.getEnglishPast = function (number, person){
+    // number is 'singular' or 'plural'
+    // person is 1,2,3,
+    if (number == 'singular' && (person == 1 || person == 3)){
+        return this.englishPast; // was reading
+    }else{
+        return this.englishPast.replace('was', 'were');
+    }
+};
+
+Verb.prototype.getPastTense = function(verbArgs){
+    var str = '';
+
+    verbStr = this.pastTense[ verbArgs.number ][ verbArgs.person - 1];
+    //verbStr is now, e.g. 'brałem/brałam'
+    var parts = verbStr.split('/');
+
+    if (verbArgs.number === 's'){
+        switch(verbArgs.gender){
+            case 'm':
+            case 'm-animate':
+            case 'm-personal':
+                verbStr = parts[0];
+                break;
+            case 'f':
+                verbStr = parts[1];
+                break;
+            case 'n':
+                // only 3rd pers sing has a neuter
+                verbStr = parts[2]; 
+                break;
+            case undefined:
+                // remaining pronouns, also taking the easy way out for now, 
+                // default to masc.
+                verbStr = parts[0];
+                break;                    
+            default:
+                alert("I don't recognize this gender: " + verbArgs.gender);
+                Y.log(verbArgs);
+        }
+    }else{
+        switch(verbArgs.gender){
+            case 'm-personal':
+                verbStr = parts[0];
+                break;
+            default:
+                verbStr = parts[1];
+        }
+    }
+    return verbStr;
+};
+        
+
+Verb.prototype.getFutureTense = function(verbArgs){
+    var str = '';
+    if (verbArgs.number === 's'){
+        switch(verbArgs.gender){
+            case 'm':
+            case 'm-animate':
+            case 'm-personal':
+                str = this.futureTense['s'][0];
+                break;
+            case 'f':
+                str = this.futureTense['s'][1];
+                break;
+            case 'n':
+                str = this.futureTense['s'][1];
+                str = str.replace('ła$', 'ło');
+            default:
+                alert("I don't know gender " + verbArgs.gender);
+        }
+        str = byćPast['s'][verbArgs.person-1] + ' ' + str;
+    }else{
+        switch(verbArgs.gender){
+            case 'm-personal':
+                str = this.futureTense['p'][0];
+                break;
+            default:
+                str = this.futureTense['p'][1];
+        }
+        str = byćPast['p'][verbArgs.person-1] + ' ' + str;
+    }
+
+    return str;
+};
     
 
 // this stuff should be in its own function so we can scope the variables
@@ -679,8 +902,6 @@ for (i in pronounData){
     row = pronounData[i];
     pronoun = new Pronoun(row);
     tester.pronouns.push(pronoun);
-}
-for (i in adjectiveData){
     row = adjectiveData[i];
     adjective = new Adjective(row);
     tester.adjectives.push(adjective);
@@ -795,6 +1016,13 @@ radio {
     <div class="settings-box">
         <form name="settings">
             <fieldset>
+                <legend>Gender of Speaker:</legend>
+                <div class="input">
+                    <label><input type="radio" name="gender-of-speaker" value="m-personal" checked="1"/>Male</label>
+                    <label><input type="radio" name="gender-of-speaker" value="f"            />Female</label>
+                </div>
+            </fieldset>
+            <fieldset>
                 <legend>Subjects:</legend>
                 <div class="input">
                     <label><input type="checkbox" name="subject-singular" checked="1"/>Include singular subjects</label>
@@ -819,7 +1047,6 @@ radio {
             </fieldset>
             <fieldset>
                 <legend>Verbs</legend>
-<!--
                 <div class="input">
                     <label><input type="checkbox" name="verbs-present" checked="1"/>Include present tense</label>
                 </div>
@@ -829,7 +1056,6 @@ radio {
                 <div class="input">
                     <label><input type="checkbox" name="verbs-future" checked="1"/>Include future tense</label>
                 </div>
--->
             </fieldset>
         </form>
     <div>
