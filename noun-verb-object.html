@@ -9,7 +9,7 @@
 <script type="text/javascript" src="http://yui.yahooapis.com/3.3.0/build/yui/yui-min.js"></script>
 
 <script type="text/javascript">
-YUI().use('node', 'event-key', function(Y) {
+YUI().use('node', 'event-key', 'anim', 'substitute', function(Y) {
 
 var adjectiveEndings = {
              //    m-p_+_a  m-inam    f      n
@@ -99,7 +99,7 @@ var nounData = [
 
 var adjectiveData = [
   //           m             f             n           m-pers-plural
- [ 'large',  'duże',       'duża',       'duże',       'dużi'       ], 
+ [ 'large',  'duży',       'duża',       'duże',       'dużi'       ], 
  [ 'small',  'mały',       'mała',       'małe',       'małi'       ], 
  [ 'good',   'dobry',      'dobra',      'dobre',      'dobrzy'     ], 
  [ 'bad',    'zły',        'zła',        'złe',        'zli'        ], 
@@ -411,7 +411,17 @@ Tester.prototype.checkAnswer = function(){
 
     if (answer === this.currentPolishSentence()){
         Y.one('#output').set('innerHTML', this.currentPolishSentence());
+        Y.one('#input-element').setStyle("background-color", "#3CFF00");
+        
         alert('Doskonale!');
+
+        var anim = new Y.Anim(
+            { node: '#input-element', 
+              from: { backgroundColor: "#3CFF00" },
+              to:  { backgroundColor:  "#FFFFFF" }
+            } 
+        ); 
+        anim.run();
     }else if (answer.charAt(0).toUpperCase() !== answer.charAt(0)){
         alert('Capitalzation is important...');
     }else if (answer.charAt( answer.length-1 ) !== '.'){
@@ -422,6 +432,7 @@ Tester.prototype.checkAnswer = function(){
 };
 
 Tester.prototype.currentPolishSentence = function(){
+    //this method is too large and complex...
 
     var subject = this.currentSubject;
     var subjectAdjective = this.subjectAdjective;
@@ -434,37 +445,57 @@ Tester.prototype.currentPolishSentence = function(){
     };
     var subjectStr, subjectAdjectiveStr, verbStr;
     if (this.subjectNumber === 'singular'){
-        subjectStr = subject.nom_sing;
-        subjectAdjectiveStr = subjectAdjective ? subjectAdjective.nominativeSingularForGender(subject.getGender()) + ' ' : '';
+        subjectStr = subject.wrapInTooltipDivs(subject.nom_sing);
+
         verbArgs.number = 's';
         verbStr = this.currentPolishVerbStr(verbArgs);
+
+        if (subjectAdjective){
+            subjectAdjectiveStr = subjectAdjective.nominativeSingularForGender(subject.getGender());
+            subjectAdjectiveStr = subjectAdjectiveStr.charAt(0).toUpperCase() + subjectAdjectiveStr.slice(1);
+            subjectAdjectiveStr = subjectAdjective.wrapInTooltipDivs(subjectAdjectiveStr);
+        }else{
+            subjectAdjectiveStr = '';
+            verbStr = verbStr.charAt(0).toUpperCase() + verbStr.slice(1);
+        }
+
     }else{
-        subjectStr = subject.nom_pl;
-        subjectAdjectiveStr =  subjectAdjective ? subjectAdjective.nominativePluralForGender(subject.getGender()) + ' ' : '';
+        subjectStr = subject.wrapInTooltipDivs(subject.nom_pl);
+
         verbArgs.number = 'p';
         verbStr = this.currentPolishVerbStr(verbArgs);
+
+        if (subjectAdjective){
+            subjectAdjectiveStr = subjectAdjective.nominativePluralForGender(subject.getGender());
+            subjectAdjectiveStr = subjectAdjectiveStr.charAt(0).toUpperCase() + subjectAdjectiveStr.slice(1);
+            subjectAdjectiveStr = subjectAdjective.wrapInTooltipDivs(subjectAdjectiveStr);
+        }else{
+            subjectAdjectiveStr = '';
+            verbStr = verbStr.charAt(0).toUpperCase() + verbStr.slice(1);
+        }
     }
 
     var str = subjectAdjectiveStr + subjectStr + ' ' + verbStr;
     str = str.replace(/^ +/, '');
 
-    str = str.charAt(0).toUpperCase() + str.slice(1);
 
     if (this.currentObject){
         var object = this.currentObject;
         var objectAdjective = this.objectAdjective;
         var objectStr, objectAdjectiveStr;
         if (this.objectNumber === 'singular'){
-            objectStr = object.acc_sing;
+            objectStr = object.wrapInTooltipDivs(object.acc_sing);
             if (objectAdjective){
                 objectAdjectiveStr = objectAdjective.accusativeSingularForGender(object.getGender());
+                objectAdjectiveStr = objectAdjective.wrapInTooltipDivs(objectAdjectiveStr);
             }else{
                 objectAdjectiveStr = '';
             }
         }else{
-            objectStr = object.acc_pl;
+            objectStr = object.wrapInTooltipDivs(object.acc_pl);
             if (objectAdjective){
                 objectAdjectiveStr = objectAdjective.accusativePluralForGender(object.getGender());
+                objectAdjectiveStr = objectAdjective.wrapInTooltipDivs(objectAdjectiveStr);
             }else{
                 objectAdjectiveStr = '';
             }
@@ -544,6 +575,7 @@ Tester.prototype.showAnswer = function(){
     var str = this.currentPolishSentence();
 
     Y.one('#output').set('innerHTML', str);
+
 };
 
 Tester.prototype.showImagesIsChecked = function(){
@@ -637,6 +669,20 @@ function Noun(args){
 Noun.prototype.getGender = function(){
     return this.gender;
 }
+Noun.prototype.wrapInTooltipDivs = function(str){
+    if (! str){
+        return '';
+    }
+    // looking for :hover on span instead of a tag means IE6 isn't supported, oh well
+    var template = '<span class="answer-word">{polishStr}<span class="tooltip"><a href="http://en.wiktionary.org/wiki/{wikiLookup}#Polish" target="_blank">{dictionaryStr}</a></span></span> ';
+    var stash = {
+        polishStr: str,
+        wikiLookup: this.nom_sing,
+        dictionaryStr: this.nom_sing+' '+this.gender+'.'
+    }
+
+    return Y.substitute(template, stash);
+} 
 
 function Pronoun(args){
     this.person = args[0];
@@ -671,6 +717,11 @@ Pronoun.prototype.genderOfSpeaker = function() {
     }
     return g;
 };
+
+// we don't actually display the polish string for the pronouns, hmm, that's some side effect of something I think...?
+Pronoun.prototype.wrapInTooltipDivs = function(str){
+    return str;
+}
 
 function Adjective(args){
     this.english   = args[0];
@@ -784,7 +835,21 @@ Adjective.prototype.accusativePluralForGender = function (gender){
 Adjective.prototype.masculineEnding = function(){
     return this.m.substr( this.m.length -1 );
 };
-    
+
+Adjective.prototype.wrapInTooltipDivs = function(str){
+    if (! str){
+        return '';
+    }
+    // looking for :hover on span instead of a tag means IE6 isn't supported, oh well
+    var template = '<span class="answer-word">{polishStr}<span class="tooltip"><a href="http://en.wiktionary.org/wiki/{wikiLookup}#Polish" target="_blank">{dictionaryStr}</a></span></span> ';
+    var stash = {
+        polishStr: str,
+        wikiLookup: this.m,
+        dictionaryStr: this.m+','+this.f+','+this.n
+    }
+
+    return Y.substitute(template, stash);
+} 
 
 
 function Verb(args){
@@ -986,11 +1051,38 @@ body {
     margin: 0px;
     padding: 0px;
 }
+input {
+    font-size: 75%;
+}
 radio {
     margin: 0px;
     padding: 0px;
 
 }
+
+.answer-word {
+    position: relative; //http://psacake.com/web/jl.asp
+    z-index: 24;
+    text-decoration: none;
+    color: #000;
+}
+.answer-word.hover{
+    z-index: 25;
+}
+.tooltip {
+    display: none;
+    border:1px solid #0cf;
+    background-color: lightgray; 
+    padding: 5px;
+
+}
+.answer-word:hover .tooltip {
+    display: block;
+    position: absolute;
+    font-size: 50%;
+}
+
+
 
 </style>
 </head>
@@ -1001,7 +1093,7 @@ radio {
         <div id="question">
         </div>
         <div id="input">
-            <input type="text" size="40">
+            <input type="text" size="40" id="input-element">
         </div>
         <div id="output">
         </div>
