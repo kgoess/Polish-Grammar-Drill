@@ -449,7 +449,8 @@ Tester.prototype.currentPolishSentence = function(args){
     if (this.subjectNumber === 'singular'){
         subjectStr = subject.makePolishStr({
             wrapInTooltipDivs: wrapInTooltipDivs,
-            caseAccessor:      "nom_sing"
+            caseAccessor:      "nom_sing",
+            isInitialWord:     (! subjectAdjective)
         });
 
         verbArgs.number = 's';
@@ -464,8 +465,11 @@ Tester.prototype.currentPolishSentence = function(args){
             }) + ' ';
         }else{
             subjectAdjectiveStr = '';
+        }
+        if (! subjectAdjectiveStr && ! subjectStr){
             verbStr = verbStr.charAt(0).toUpperCase() + verbStr.slice(1);
         }
+        	
 
     }else{
         subjectStr = subject.makePolishStr({
@@ -760,11 +764,29 @@ Pronoun.prototype.genderOfSpeaker = function() {
 };
 
 // we don't actually display the polish string for the pronouns, hmm, that's some side effect of something I think...?
-Pronoun.prototype.wrapInTooltipDivs = function(args){
-    return '';
+Pronoun.prototype.wrapInTooltipDivs = function(str){
+    return str;
 }
 Pronoun.prototype.makePolishStr = function(args){
-    return '';
+    var caseMethodName     = args.caseMethodName; //e.g. "nominativeSingularForGender"
+    var gender             = args.gender;
+    var isInitialWord      = args.isInitialWord;
+    var wrapInTooltipDivs  = args.wrapInTooltipDivs;
+
+    var wrapInTooltipDivs = args.wrapInTooltipDivs; //true/false
+    var caseAccessor = args.caseAccessor; //e.g. "nom_sing"
+
+    var nounStr = this[caseAccessor];
+
+    if (isInitialWord){
+        nounStr = nounStr.charAt(0).toUpperCase() + nounStr.slice(1);
+    }
+
+    if (wrapInTooltipDivs){ //this is a no-op for pronouns
+        nounStr = this.wrapInTooltipDivs(nounStr);
+    }
+
+    return nounStr;
 }
 
 function Adjective(args){
