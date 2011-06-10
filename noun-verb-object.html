@@ -409,8 +409,9 @@ Tester.prototype.checkAnswer = function(){
     answer = answer.replace(/ +$/, '');
     answer = answer.replace(/^ +/, '');
 
-    if (answer === this.currentPolishSentence()){
-        Y.one('#output').set('innerHTML', this.currentPolishSentence());
+
+    if (answer === this.currentPolishSentence({wrapInTooltipDivs: false})){
+        Y.one('#output').set('innerHTML', this.currentPolishSentence({wrapInTooltipDivs: true}));
         Y.one('#input-element').setStyle("background-color", "#3CFF00");
         
         alert('Doskonale!');
@@ -428,11 +429,12 @@ Tester.prototype.checkAnswer = function(){
         alert('Punctuation is important...');
     }else{
         alert('Nie, zła odpowiedź, spróbuj ponownie!');
+        //alert(this.currentPolishSentence({wrapInTooltipDivs: false}));
     }
 };
 
-Tester.prototype.currentPolishSentence = function(){
-    //this method is too large and complex...
+Tester.prototype.currentPolishSentence = function(args){
+    var wrapInTooltipDivs = args.wrapInTooltipDivs;  //true/false
 
     var subject = this.currentSubject;
     var subjectAdjective = this.subjectAdjective;
@@ -445,30 +447,43 @@ Tester.prototype.currentPolishSentence = function(){
     };
     var subjectStr, subjectAdjectiveStr, verbStr;
     if (this.subjectNumber === 'singular'){
-        subjectStr = subject.wrapInTooltipDivs(subject.nom_sing);
+        subjectStr = subject.makePolishStr({
+            wrapInTooltipDivs: wrapInTooltipDivs,
+            caseAccessor:      "nom_sing"
+        });
 
         verbArgs.number = 's';
         verbStr = this.currentPolishVerbStr(verbArgs);
 
         if (subjectAdjective){
-            subjectAdjectiveStr = subjectAdjective.nominativeSingularForGender(subject.getGender());
-            subjectAdjectiveStr = subjectAdjectiveStr.charAt(0).toUpperCase() + subjectAdjectiveStr.slice(1);
-            subjectAdjectiveStr = subjectAdjective.wrapInTooltipDivs(subjectAdjectiveStr);
+            subjectAdjectiveStr = subjectAdjective.makePolishStr({
+                caseMethodName:    "nominativeSingularForGender", 
+                gender:            subject.getGender(),
+                isInitialWord:     true,
+                wrapInTooltipDivs: wrapInTooltipDivs
+            }) + ' ';
         }else{
             subjectAdjectiveStr = '';
             verbStr = verbStr.charAt(0).toUpperCase() + verbStr.slice(1);
         }
 
     }else{
-        subjectStr = subject.wrapInTooltipDivs(subject.nom_pl);
+        subjectStr = subject.makePolishStr({
+            wrapInTooltipDivs: wrapInTooltipDivs,
+            caseAccessor:      "nom_pl"
+        });
 
         verbArgs.number = 'p';
         verbStr = this.currentPolishVerbStr(verbArgs);
 
         if (subjectAdjective){
-            subjectAdjectiveStr = subjectAdjective.nominativePluralForGender(subject.getGender());
-            subjectAdjectiveStr = subjectAdjectiveStr.charAt(0).toUpperCase() + subjectAdjectiveStr.slice(1);
-            subjectAdjectiveStr = subjectAdjective.wrapInTooltipDivs(subjectAdjectiveStr);
+            var isInitialWord = true;
+            subjectAdjectiveStr =  subjectAdjective.makePolishStr({
+                caseMethodName:    "nominativePluralForGender", 
+                gender:            subject.getGender(),
+                isInitialWord:     true,
+                wrapInTooltipDivs: wrapInTooltipDivs
+            }) + ' ';
         }else{
             subjectAdjectiveStr = '';
             verbStr = verbStr.charAt(0).toUpperCase() + verbStr.slice(1);
@@ -484,18 +499,32 @@ Tester.prototype.currentPolishSentence = function(){
         var objectAdjective = this.objectAdjective;
         var objectStr, objectAdjectiveStr;
         if (this.objectNumber === 'singular'){
-            objectStr = object.wrapInTooltipDivs(object.acc_sing);
+            objectStr = object.makePolishStr({
+                wrapInTooltipDivs: wrapInTooltipDivs,
+                caseAccessor:      "acc_sing"
+            });
             if (objectAdjective){
-                objectAdjectiveStr = objectAdjective.accusativeSingularForGender(object.getGender());
-                objectAdjectiveStr = objectAdjective.wrapInTooltipDivs(objectAdjectiveStr);
+                objectAdjectiveStr =  objectAdjective.makePolishStr({
+                    caseMethodName:    "accusativeSingularForGender", 
+                    gender:            object.getGender(),
+                    isInitialWord:     false,
+                    wrapInTooltipDivs: wrapInTooltipDivs
+                });
             }else{
                 objectAdjectiveStr = '';
             }
         }else{
-            objectStr = object.wrapInTooltipDivs(object.acc_pl);
+            objectStr = object.makePolishStr({
+                wrapInTooltipDivs: wrapInTooltipDivs,
+                caseAccessor:      "acc_pl"
+            });
             if (objectAdjective){
-                objectAdjectiveStr = objectAdjective.accusativePluralForGender(object.getGender());
-                objectAdjectiveStr = objectAdjective.wrapInTooltipDivs(objectAdjectiveStr);
+                objectAdjectiveStr =  objectAdjective.makePolishStr({
+                    caseMethodName:    "accusativePluralForGender", 
+                    gender:            object.getGender(),
+                    isInitialWord:     false,
+                    wrapInTooltipDivs: wrapInTooltipDivs
+                });
             }else{
                 objectAdjectiveStr = '';
             }
@@ -505,7 +534,7 @@ Tester.prototype.currentPolishSentence = function(){
         }
         str = str + objectAdjectiveStr +  ' ' + objectStr;
     }
-    str = str + '.';
+    str = str.replace(/ +$/, '') + '.';
 
     return str;
 };
@@ -554,7 +583,7 @@ Tester.prototype.pickTense = function(){
 
 Tester.prototype.giveHint = function() {
 
-    var str = this.currentPolishSentence();
+    var str = this.currentPolishSentence({wrapInTooltipDivs: false});
 
     var showEvery = 3;
 
@@ -572,7 +601,7 @@ Tester.prototype.giveHint = function() {
 };
 
 Tester.prototype.showAnswer = function(){
-    var str = this.currentPolishSentence();
+    var str = this.currentPolishSentence({wrapInTooltipDivs: true});
 
     Y.one('#output').set('innerHTML', str);
 
@@ -683,6 +712,18 @@ Noun.prototype.wrapInTooltipDivs = function(str){
 
     return Y.substitute(template, stash);
 } 
+Noun.prototype.makePolishStr = function(args){
+    var wrapInTooltipDivs = args.wrapInTooltipDivs; //true/false
+    var caseAccessor = args.caseAccessor; //e.g. "nom_sing"
+
+    var nounStr = this[caseAccessor];
+
+    if (wrapInTooltipDivs){
+        nounStr = this.wrapInTooltipDivs(nounStr);
+    }
+
+    return nounStr;
+}
 
 function Pronoun(args){
     this.person = args[0];
@@ -719,8 +760,11 @@ Pronoun.prototype.genderOfSpeaker = function() {
 };
 
 // we don't actually display the polish string for the pronouns, hmm, that's some side effect of something I think...?
-Pronoun.prototype.wrapInTooltipDivs = function(str){
-    return str;
+Pronoun.prototype.wrapInTooltipDivs = function(args){
+    return '';
+}
+Pronoun.prototype.makePolishStr = function(args){
+    return '';
 }
 
 function Adjective(args){
@@ -850,7 +894,22 @@ Adjective.prototype.wrapInTooltipDivs = function(str){
 
     return Y.substitute(template, stash);
 } 
+Adjective.prototype.makePolishStr = function(args){
+    var caseMethodName     = args.caseMethodName; //e.g. "nominativeSingularForGender"
+    var gender             = args.gender;
+    var isInitialWord      = args.isInitialWord;
+    var wrapInTooltipDivs  = args.wrapInTooltipDivs;
 
+    var subjectAdjectiveStr = this[caseMethodName](gender);
+
+    if (isInitialWord){
+        subjectAdjectiveStr = subjectAdjectiveStr.charAt(0).toUpperCase() + subjectAdjectiveStr.slice(1);
+    }
+    if (wrapInTooltipDivs){
+        subjectAdjectiveStr = this.wrapInTooltipDivs(subjectAdjectiveStr);
+    }
+    return subjectAdjectiveStr;
+}
 
 function Verb(args){
     this.infinitive    = args.infinitive;
