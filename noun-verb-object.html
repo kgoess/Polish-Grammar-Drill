@@ -9,6 +9,11 @@
 <script type="text/javascript" src="http://yui.yahooapis.com/3.3.0/build/yui/yui-min.js"></script>
 
 <script type="text/javascript">
+
+/* TODO:
+   Będziemy lubili taniich ojców. fix that taniich to tanich
+*/
+
 YUI().use('node', 'event-key', 'anim', 'substitute', function(Y) {
 
 var adjectiveEndings = {
@@ -440,10 +445,11 @@ Tester.prototype.currentPolishSentence = function(args){
     var subjectAdjective = this.subjectAdjective;
     var tense = this.currentTense; //present, past, future, etc...
     var verbArgs = {
-        tense: this.currentTense, //present, past, future, etc...
-        number: null,   // s or p
-        person: this.currentPerson, //1, 2, 3
-        gender: this.currentSubject.getGender()
+        tense:             this.currentTense, //present, past, future, etc...
+        number:            null,   // s or p
+        person:            this.currentPerson, //1, 2, 3
+        gender:            this.currentSubject.getGender(),
+        wrapInTooltipDivs: wrapInTooltipDivs
     };
     var subjectStr, subjectAdjectiveStr, verbStr;
     if (this.subjectNumber === 'singular'){
@@ -454,6 +460,7 @@ Tester.prototype.currentPolishSentence = function(args){
         });
 
         verbArgs.number = 's';
+        verbArgs.isInitialWord = (! subjectStr);
         verbStr = this.currentPolishVerbStr(verbArgs);
 
         if (subjectAdjective){
@@ -478,6 +485,7 @@ Tester.prototype.currentPolishSentence = function(args){
         });
 
         verbArgs.number = 'p';
+        verbArgs.isInitialWord = (! subjectStr);
         verbStr = this.currentPolishVerbStr(verbArgs);
 
         if (subjectAdjective){
@@ -545,16 +553,24 @@ Tester.prototype.currentPolishSentence = function(args){
 
 Tester.prototype.currentPolishVerbStr = function (verbArgs){
     var verbStr = '';
+    var verb = this.currentVerb;
     switch(verbArgs.tense) {
         case 'present': 
-            verbStr =  this.currentVerb.presentTense[ verbArgs.number ][ verbArgs.person - 1 ];
+            verbStr =  verb.presentTense[ verbArgs.number ][ verbArgs.person - 1 ];
             break;
         case 'past':
-            verbStr = this.currentVerb.getPastTense(verbArgs);
+            verbStr = verb.getPastTense(verbArgs);
             break;
         case 'future':
-            verbStr = this.currentVerb.getFutureTense(verbArgs);
+            verbStr = verb.getFutureTense(verbArgs);
             break;
+    }
+    if (verbArgs.isInitialWord){
+	    verbStr = verbStr.charAt(0).toUpperCase() + verbStr.slice(1);
+	}
+
+    if (verbArgs.wrapInTooltipDivs){
+    	verbStr = verb.wrapInTooltipDivs(verbStr);
     }
     return verbStr;
 };
@@ -687,7 +703,29 @@ Tester.prototype.generateGoogleUrl = function() {
 
     return 'http://images.google.com/search?safe=on&tbm=isch&q=' + s;
 };
-    
+ 
+// looking for :hover on span instead of a tag means IE6 isn't supported, oh well
+var tooltipTemplate = '<span class="answer-word">{polishStr}<span class="tooltip"><a href="http://en.wiktionary.org/wiki/{wikiLookup}#Polish" target="_blank">{tooltipStr}</a></span></span> ';
+// how can I make this like a constant?
+
+// this is part of the prototype of each kind of word (Noun, Verb, etc.)--make it a superclass instead?
+function wrapInTooltipDivsTemplate (args){
+	var str        = args.polishStr;
+	var wikiLookup = args.wikiLookup;
+	var tooltipStr = args.tooltipStr;
+
+	var tooltipTemplate = this.tooltipTemplate;
+
+    var stash = {
+        polishStr: str,
+        wikiLookup: wikiLookup,
+        tooltipStr: tooltipStr
+    }
+
+    return Y.substitute(tooltipTemplate, stash);
+}
+
+
 
 function Noun(args){
     this.english_sing= args[0];
@@ -699,23 +737,21 @@ function Noun(args){
     this.gender = args[6];
     this.agentType = args[7];
 }
+Noun.prototype.wrapInTooltipDivsTemplate = wrapInTooltipDivsTemplate;
+Noun.prototype.tooltipTemplate = tooltipTemplate;
+
 Noun.prototype.getGender = function(){
     return this.gender;
 }
 Noun.prototype.wrapInTooltipDivs = function(str){
-    if (! str){
-        return '';
-    }
-    // looking for :hover on span instead of a tag means IE6 isn't supported, oh well
-    var template = '<span class="answer-word">{polishStr}<span class="tooltip"><a href="http://en.wiktionary.org/wiki/{wikiLookup}#Polish" target="_blank">{dictionaryStr}</a></span></span> ';
-    var stash = {
+
+	return this.wrapInTooltipDivsTemplate({
         polishStr: str,
         wikiLookup: this.nom_sing,
-        dictionaryStr: this.nom_sing+' '+this.gender+'.'
-    }
-
-    return Y.substitute(template, stash);
+        tooltipStr: this.nom_sing+' '+this.gender+'.'
+    });
 } 
+
 Noun.prototype.makePolishStr = function(args){
     var wrapInTooltipDivs = args.wrapInTooltipDivs; //true/false
     var caseAccessor = args.caseAccessor; //e.g. "nom_sing"
@@ -738,6 +774,9 @@ function Pronoun(args){
     this.nom_sing = args[4] || '';
     this.nom_pl = args[4] || '';
 }
+Pronoun.prototype.wrapInTooltipDivsTemplate = wrapInTooltipDivsTemplate;
+Pronoun.prototype.tooltipTemplate = tooltipTemplate;
+
 Pronoun.prototype.getGender = function(){
     var g = '';
     if ( this.person === 1 ){
@@ -796,6 +835,8 @@ function Adjective(args){
     this.n         = args[3];
     this.mPersMasc = args[4];
 }
+Adjective.prototype.wrapInTooltipDivsTemplate = wrapInTooltipDivsTemplate;
+Adjective.prototype.tooltipTemplate = tooltipTemplate;
 
 Adjective.prototype.adjectiveEndings = adjectiveEndings;
 Adjective.prototype.nominativeSingularForGender = function (gender){
@@ -903,19 +944,13 @@ Adjective.prototype.masculineEnding = function(){
 };
 
 Adjective.prototype.wrapInTooltipDivs = function(str){
-    if (! str){
-        return '';
-    }
-    // looking for :hover on span instead of a tag means IE6 isn't supported, oh well
-    var template = '<span class="answer-word">{polishStr}<span class="tooltip"><a href="http://en.wiktionary.org/wiki/{wikiLookup}#Polish" target="_blank">{dictionaryStr}</a></span></span> ';
-    var stash = {
+	return this.wrapInTooltipDivsTemplate({
         polishStr: str,
         wikiLookup: this.m,
-        dictionaryStr: this.m+','+this.f+','+this.n
-    }
-
-    return Y.substitute(template, stash);
+        tooltipStr: this.m+','+this.f+','+this.n
+    });
 } 
+
 Adjective.prototype.makePolishStr = function(args){
     var caseMethodName     = args.caseMethodName; //e.g. "nominativeSingularForGender"
     var gender             = args.gender;
@@ -944,6 +979,8 @@ function Verb(args){
     this.englishFuture = args.english_future;
     this.futureTense   = args.future_tense;
 }
+Verb.prototype.wrapInTooltipDivsTemplate = wrapInTooltipDivsTemplate;
+Verb.prototype.tooltipTemplate = tooltipTemplate;
 
 // This breaks down for pan/pani, since that's 3rd person
 // but should read "you were running" since it's
@@ -1028,7 +1065,6 @@ Verb.prototype.getFutureTense = function(verbArgs){
                 str = this.futureTense['p'][0];
                 break;
             default:
-Y.log("gender is " + verbArgs.gender);
                 str = this.futureTense['p'][1];
         }
         str = byćPast['p'][verbArgs.person-1] + ' ' + str;
@@ -1036,6 +1072,15 @@ Y.log("gender is " + verbArgs.gender);
 
     return str;
 };
+
+Verb.prototype.wrapInTooltipDivs = function(str){
+
+	return this.wrapInTooltipDivsTemplate({
+		polishStr:  (str || ''),
+		wikiLookup: this.infinitive[0],
+		tooltipStr: this.infinitive[0] + ', ' + this.presentTense.s[0] + ', ' + this.presentTense.s[1]
+	});
+}
     
 
 // this stuff should be in its own function so we can scope the variables
@@ -1150,20 +1195,21 @@ radio {
     text-decoration: none;
     color: #000;
 }
-.answer-word.hover{
+.answer-word:hover {
     z-index: 25;
 }
 .tooltip {
     display: none;
-    border:1px solid #0cf;
-    background-color: lightgray; 
-    padding: 5px;
-
+    padding: 5px 10px 5px 10px;
 }
 .answer-word:hover .tooltip {
     display: block;
     position: absolute;
     font-size: 50%;
+    border:1px solid #0cf;
+    background-color: lightgray; 
+    white-space: nowrap;
+    top:2em; left:2em;  //these two are required, not sure why
 }
 
 
