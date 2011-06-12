@@ -481,7 +481,8 @@ Tester.prototype.currentPolishSentence = function(args){
     }else{
         subjectStr = subject.makePolishStr({
             wrapInTooltipDivs: wrapInTooltipDivs,
-            caseAccessor:      "nom_pl"
+            caseAccessor:      "nom_pl",
+            isInitialWord:     (! subjectAdjective)
         });
 
         verbArgs.number = 'p';
@@ -489,7 +490,6 @@ Tester.prototype.currentPolishSentence = function(args){
         verbStr = this.currentPolishVerbStr(verbArgs);
 
         if (subjectAdjective){
-            var isInitialWord = true;
             subjectAdjectiveStr =  subjectAdjective.makePolishStr({
                 caseMethodName:    "nominativePluralForGender", 
                 gender:            subject.getGender(),
@@ -498,7 +498,6 @@ Tester.prototype.currentPolishSentence = function(args){
             }) + ' ';
         }else{
             subjectAdjectiveStr = '';
-            verbStr = verbStr.charAt(0).toUpperCase() + verbStr.slice(1);
         }
     }
 
@@ -754,9 +753,14 @@ Noun.prototype.wrapInTooltipDivs = function(str){
 
 Noun.prototype.makePolishStr = function(args){
     var wrapInTooltipDivs = args.wrapInTooltipDivs; //true/false
-    var caseAccessor = args.caseAccessor; //e.g. "nom_sing"
+    var caseAccessor      = args.caseAccessor; //e.g. "nom_sing"
+    var isInitialWord     = args.isInitialWord;
 
     var nounStr = this[caseAccessor];
+
+    if (isInitialWord){
+        nounStr = nounStr.charAt(0).toUpperCase() + nounStr.slice(1);
+    }
 
     if (wrapInTooltipDivs){
         nounStr = this.wrapInTooltipDivs(nounStr);
@@ -1054,8 +1058,9 @@ Verb.prototype.getFutureTense = function(verbArgs){
             case 'n':
                 str = this.futureTense['s'][1];
                 str = str.replace('ła$', 'ło');
+                break;
             default:
-                alert("I don't know gender " + verbArgs.gender);
+                alert("I don't know gender '" + verbArgs.gender + "'");
         }
         str = byćPast['s'][verbArgs.person-1] + ' ' + str;
     }else{
