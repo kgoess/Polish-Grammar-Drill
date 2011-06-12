@@ -640,12 +640,15 @@ Tester.prototype.showImagesIsChecked = function(){
 Tester.prototype.currentEnglishSentence = function(){
     var s = '';
     if (this.subjectAdjective){
-        s = 'The ' +  this.subjectAdjective.english + ' ';
+        s = this.subjectAdjective.english + ' ';
     }
     if (this.subjectNumber === 'singular'){
         s = s + this.currentSubject.english_sing;
     }else{
         s = s + this.currentSubject.english_pl;
+    }
+    if (! this.currentSubject.constructor.toString().match(/Pronoun/)){
+        s = 'The ' + s;
     }
 
     //s = s + ' + ' + this.currentVerb.infinitive[1] ;
