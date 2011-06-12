@@ -12,6 +12,8 @@
 
 /* TODO:
    Będziemy lubili taniich ojców. fix that taniich to tanich
+   Support pronouns as direct objects
+   Allow multiple subjects
 */
 
 YUI().use('node', 'event-key', 'anim', 'substitute', function(Y) {
@@ -705,21 +707,23 @@ Tester.prototype.generateGoogleUrl = function() {
 };
  
 // looking for :hover on span instead of a tag means IE6 isn't supported, oh well
-var tooltipTemplate = '<span class="answer-word">{polishStr}<span class="tooltip"><a href="http://en.wiktionary.org/wiki/{wikiLookup}#Polish" target="_blank">{tooltipStr}</a></span></span> ';
+var tooltipTemplate = '<span class="answer-word" id="answerWordPartOfSentenceId"><span class="pushpin pushpin-on"><img src="file:///Users/kevin/Desktop/push_pin-on.png"/></span>{polishStr}<span class="tooltip"><span class="pushpin"><img src="file:///Users/kevin/Desktop/push_pin-off.png"></span><a href="http://en.wiktionary.org/wiki/{wikiLookup}#Polish" target="_blank">{tooltipStr}</a></span></span> ';
 // how can I make this like a constant?
 
 // this is part of the prototype of each kind of word (Noun, Verb, etc.)--make it a superclass instead?
 function wrapInTooltipDivsTemplate (args){
-	var str        = args.polishStr;
-	var wikiLookup = args.wikiLookup;
-	var tooltipStr = args.tooltipStr;
+	var str              = args.polishStr;
+	var wikiLookup       = args.wikiLookup;
+	var tooltipStr       = args.tooltipStr;
+    var partOfSentenceId = args.partOfSentenceId;
 
 	var tooltipTemplate = this.tooltipTemplate;
 
     var stash = {
         polishStr: str,
         wikiLookup: wikiLookup,
-        tooltipStr: tooltipStr
+        tooltipStr: tooltipStr,
+        answerWordPartOfSentenceId: partOfSentenceId
     }
 
     return Y.substitute(tooltipTemplate, stash);
@@ -748,7 +752,8 @@ Noun.prototype.wrapInTooltipDivs = function(str){
 	return this.wrapInTooltipDivsTemplate({
         polishStr: str,
         wikiLookup: this.nom_sing,
-        tooltipStr: this.nom_sing+' '+this.gender+'.'
+        tooltipStr: this.nom_sing+' '+this.gender+'.',
+        partOfSentenceId: 'subject'
     });
 } 
 
@@ -1212,6 +1217,15 @@ radio {
     top:2em; left:2em;  //these two are required, not sure why
 }
 
+
+.pushpin {
+    //display: block;
+
+}
+
+.pushpin-on {
+    display: none;
+}
 
 
 </style>
