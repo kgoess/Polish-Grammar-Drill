@@ -299,8 +299,12 @@ Tester.prototype.addVerb = function(verb){
 };
 
 Tester.prototype.askQuestion = function(){
-    var verb = this.verbs [ Math.floor(Math.random()*this.verbs.length) ];
-    this.currentVerb = verb;
+    var verb;
+    if (this.currentVerb && this.currentVerb.pinned){
+    }else{
+        this.currentVerb = this.verbs [ Math.floor(Math.random()*this.verbs.length) ];
+    }
+    verb = this.currentVerb;
 
     var okSubjectType = verb.subjectType;
     var okSubjects;
@@ -651,8 +655,7 @@ Tester.prototype.currentEnglishSentence = function(){
         s = 'The ' + s;
     }
 
-    //s = s + ' + ' + this.currentVerb.infinitive[1] ;
-    s = s + ' + ' + this.getEnglishVerb() ;
+    s = s + ' + ' + this.currentVerb.wrapInPushpinDivs(this.getEnglishVerb(), 'verb') ;
 
     if (this.currentObject){
         if (this.objectNumber === 'singular'){
@@ -666,6 +669,9 @@ Tester.prototype.currentEnglishSentence = function(){
     return s;
 };
 
+
+// this looks funny being a method on Tester, it seems like it should be a method on Verb, but
+// all the information it needs is in the Tester object
 Tester.prototype.getEnglishVerb = function(){
     var englishVerbStr = '';
     switch (this.currentTense){
@@ -707,9 +713,55 @@ Tester.prototype.generateGoogleUrl = function() {
 
     return 'http://images.google.com/search?safe=on&tbm=isch&q=' + s;
 };
+
+Tester.prototype.pushpinPushed = function(pushpinSpanEl){
+
+    var elId = pushpinSpanEl.get('id'); //e.g answer-word-verb-pushpin-setter
+    var matched = elId.match(/question-word-(.+?)-pushpin/);
+    var partOfSentence = matched[1]; //subject, verb, object, subject-adjective, object-adjective
+
+    if (pushpinSpanEl.hasClass('pushpin-on')){
+        this.unsetPushpin(pushpinSpanEl, partOfSentence);
+    }else{
+        this.setPushpin(pushpinSpanEl, partOfSentence);
+    }
+}
+
+Tester.prototype.setPushpin = function(pushpinSpanEl, partOfSentence){
+
+    var pushpinImgEl = pushpinSpanEl.one('img');
+
+    pushpinSpanEl.removeClass('pushpin-hidden');
+    pushpinImgEl.set('src', 'file:///Users/kevin/desktop/push_pin-on.png');
+
+    switch (partOfSentence){
+        case 'verb':
+            var verb = this.currentVerb;
+            verb.pinned = true;
+            break;
+        default:
+            return;
+    }
+}
+Tester.prototype.unsetPushpin = function(pushpinSpanEl, partOfSentence){
+    var pushpinImgEl = pushpinSpanEl.one('img');
+
+    pushpinImgEl.set('src', 'file:///Users/kevin/desktop/push_pin-off.png');
+    // don't hide it right away, too abrupt, pushpinSpanEl.addClass('pushpin-hidden');
+
+    switch (partOfSentence){
+        case 'verb':
+            var verb = this.currentVerb;
+            verb.pinned = false;
+            break;
+        default:
+            return;
+    }
+}
+    
  
 // looking for :hover on span instead of a tag means IE6 isn't supported, oh well
-var tooltipTemplate = '<span class="answer-word" id="answerWordPartOfSentenceId"><span class="pushpin pushpin-on"><img src="file:///Users/kevin/Desktop/push_pin-on.png"/></span>{polishStr}<span class="tooltip"><span class="pushpin"><img src="file:///Users/kevin/Desktop/push_pin-off.png"></span><a href="http://en.wiktionary.org/wiki/{wikiLookup}#Polish" target="_blank">{tooltipStr}</a></span></span> ';
+var tooltipTemplate = '<span class="answer-word" >{polishStr}<span class="tooltip"><a href="http://en.wiktionary.org/wiki/{wikiLookup}#Polish" target="_blank">{tooltipStr}</a></span></span> ';
 // how can I make this like a constant?
 
 // this is part of the prototype of each kind of word (Noun, Verb, etc.)--make it a superclass instead?
@@ -717,15 +769,14 @@ function wrapInTooltipDivsTemplate (args){
 	var str              = args.polishStr;
 	var wikiLookup       = args.wikiLookup;
 	var tooltipStr       = args.tooltipStr;
-    var partOfSentenceId = args.partOfSentenceId;
 
 	var tooltipTemplate = this.tooltipTemplate;
+
 
     var stash = {
         polishStr: str,
         wikiLookup: wikiLookup,
-        tooltipStr: tooltipStr,
-        answerWordPartOfSentenceId: partOfSentenceId
+        tooltipStr: tooltipStr
     }
 
     return Y.substitute(tooltipTemplate, stash);
@@ -754,8 +805,7 @@ Noun.prototype.wrapInTooltipDivs = function(str){
 	return this.wrapInTooltipDivsTemplate({
         polishStr: str,
         wikiLookup: this.nom_sing,
-        tooltipStr: this.nom_sing+' '+this.gender+'.',
-        partOfSentenceId: 'subject'
+        tooltipStr: this.nom_sing+' '+this.gender+'.'
     });
 } 
 
@@ -822,7 +872,6 @@ Pronoun.prototype.makePolishStr = function(args){
     var caseMethodName     = args.caseMethodName; //e.g. "nominativeSingularForGender"
     var gender             = args.gender;
     var isInitialWord      = args.isInitialWord;
-    var wrapInTooltipDivs  = args.wrapInTooltipDivs;
 
     var wrapInTooltipDivs = args.wrapInTooltipDivs; //true/false
     var caseAccessor = args.caseAccessor; //e.g. "nom_sing"
@@ -957,9 +1006,9 @@ Adjective.prototype.masculineEnding = function(){
 
 Adjective.prototype.wrapInTooltipDivs = function(str){
 	return this.wrapInTooltipDivsTemplate({
-        polishStr: str,
-        wikiLookup: this.m,
-        tooltipStr: this.m+','+this.f+','+this.n
+        polishStr:      str,
+        wikiLookup:     this.m,
+        tooltipStr:     this.m+','+this.f+','+this.n
     });
 } 
 
@@ -990,6 +1039,7 @@ function Verb(args){
     this.englishPast   = args.english_past;
     this.englishFuture = args.english_future;
     this.futureTense   = args.future_tense;
+    this.pinned        = false;
 }
 Verb.prototype.wrapInTooltipDivsTemplate = wrapInTooltipDivsTemplate;
 Verb.prototype.tooltipTemplate = tooltipTemplate;
@@ -1095,6 +1145,21 @@ Verb.prototype.wrapInTooltipDivs = function(str){
 	});
 }
     
+// move this to Word superclass
+Verb.prototype.wrapInPushpinDivs = function(englishStr, partOfSpeech){
+
+    var pushpinTemplate = '<span class="question-word" id="question-word-{partOfSpeech}"><span class="pushpin {hiddenClass} {onOffClass}" id="question-word-{partOfSpeech}-pushpin"><img src="{imgSrc}"/></span>{englishStr}</span>';
+    var stash = {
+        englishStr: englishStr,
+        partOfSpeech: partOfSpeech,
+        hiddenClass: (this.pinned ? '' : 'pushpin-hidden'),
+        imgSrc: (this.pinned ? 'file:///Users/kevin/Desktop/push_pin-on.png' : 'file:///Users/kevin/Desktop/push_pin-off.png'),
+        onOffClass: (this.pinned ? 'pushpin-on' : 'pushpin-off')
+    };
+        
+    return Y.substitute(pushpinTemplate, stash);
+
+}
 
 // this stuff should be in its own function so we can scope the variables
 var tester = new Tester();
@@ -1141,6 +1206,13 @@ Y.on('click', function(e){
     tester.showAnswer();
     }, '#show-answer', Y
 );
+
+// delegating to the outer element since the inner ones come and go with each question
+Y.delegate('click', function(e){
+    tester.pushpinPushed(e.currentTarget);
+    }, '#question', ".pushpin",  Y
+);
+
 });
 
 
@@ -1225,13 +1297,17 @@ radio {
     top:2em; left:2em;  //these two are required, not sure why
 }
 
+.question-word:hover .pushpin {
+    display: inline;
+}
+
 
 .pushpin {
     //display: block;
 
 }
 
-.pushpin-on {
+.pushpin-hidden {
     display: none;
 }
 
@@ -1257,7 +1333,12 @@ radio {
             <br/>
             <button id="go-again">Another test</button>
         </div>
-        <div class="instructions">Type your answer in the box and press 'enter'.</div>
+        <div class="instructions">
+            <p>Type your answer in the box and press 'enter'.</p>
+            <p>Mouseover the answer for additional details and a link to Wiktionary.org.</p>
+            <p>Mouseover the question to pin particular words you want to focus on.</p>
+
+        </div>
     </div>
     <div class="settings-box">
         <form name="settings">
