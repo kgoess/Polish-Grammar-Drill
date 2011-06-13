@@ -269,6 +269,12 @@ var verbData = [
 ];
 
 
+
+/**
+ * This is the controller class that drives the page, keeps track of the 
+ * current sentence and checks the answer.
+ * @class Tester
+ */
 function Tester(){
     this.nouns = [];
     this.pronouns = [];
@@ -758,20 +764,23 @@ Tester.prototype.unsetPushpin = function(pushpinSpanEl, partOfSentence){
             return;
     }
 }
-    
- 
-// looking for :hover on span instead of a tag means IE6 isn't supported, oh well
-var tooltipTemplate = '<span class="answer-word" >{polishStr}<span class="tooltip"><a href="http://en.wiktionary.org/wiki/{wikiLookup}#Polish" target="_blank">{tooltipStr}</a></span></span> ';
-// how can I make this like a constant?
+/**
+ * This is the base class for Noun, Verb, Adjective, and Pronoun.
+ * @class Word
+ */    
+function Word(){
 
-// this is part of the prototype of each kind of word (Noun, Verb, etc.)--make it a superclass instead?
-function wrapInTooltipDivsTemplate (args){
+}
+
+// looking for :hover on span instead of a tag means IE6 isn't supported, oh well
+Word.prototype.tooltipTemplate = '<span class="answer-word" >{polishStr}<span class="tooltip"><a href="http://en.wiktionary.org/wiki/{wikiLookup}#Polish" target="_blank">{tooltipStr}</a></span></span> ';
+
+Word.prototype.wrapInTooltipDivsTemplate = function (args){
 	var str              = args.polishStr;
 	var wikiLookup       = args.wikiLookup;
 	var tooltipStr       = args.tooltipStr;
 
 	var tooltipTemplate = this.tooltipTemplate;
-
 
     var stash = {
         polishStr: str,
@@ -782,7 +791,26 @@ function wrapInTooltipDivsTemplate (args){
     return Y.substitute(tooltipTemplate, stash);
 }
 
+Word.prototype.pushpinTemplate = '<span class="question-word" id="question-word-{partOfSpeech}"><span class="pushpin {hiddenClass} {onOffClass}" id="question-word-{partOfSpeech}-pushpin"><img src="{imgSrc}"/></span>{englishStr}</span>';
 
+Word.prototype.wrapInPushpinDivs = function(englishStr, partOfSpeech){
+
+    var stash = {
+        englishStr: englishStr,
+        partOfSpeech: partOfSpeech,
+        hiddenClass: (this.pinned ? '' : 'pushpin-hidden'),
+        imgSrc: (this.pinned ? 'file:///Users/kevin/Desktop/push_pin-on.png' : 'file:///Users/kevin/Desktop/push_pin-off.png'),
+        onOffClass: (this.pinned ? 'pushpin-on' : 'pushpin-off')
+    };
+        
+    return Y.substitute(this.pushpinTemplate, stash);
+}
+
+
+/**
+ * Can be the subject or the direct object
+ * @class Noun
+ */
 
 function Noun(args){
     this.english_sing= args[0];
@@ -794,8 +822,7 @@ function Noun(args){
     this.gender = args[6];
     this.agentType = args[7];
 }
-Noun.prototype.wrapInTooltipDivsTemplate = wrapInTooltipDivsTemplate;
-Noun.prototype.tooltipTemplate = tooltipTemplate;
+Y.extend(Noun, Word);
 
 Noun.prototype.getGender = function(){
     return this.gender;
@@ -827,6 +854,10 @@ Noun.prototype.makePolishStr = function(args){
     return nounStr;
 }
 
+
+/**
+ * @class Pronoun
+ */
 function Pronoun(args){
     this.person = args[0];
     this.number = args[1];
@@ -836,8 +867,7 @@ function Pronoun(args){
     this.nom_sing = args[4] || '';
     this.nom_pl = args[4] || '';
 }
-Pronoun.prototype.wrapInTooltipDivsTemplate = wrapInTooltipDivsTemplate;
-Pronoun.prototype.tooltipTemplate = tooltipTemplate;
+Y.extend(Pronoun, Word);
 
 Pronoun.prototype.getGender = function(){
     var g = '';
@@ -889,6 +919,12 @@ Pronoun.prototype.makePolishStr = function(args){
     return nounStr;
 }
 
+
+
+/**
+ * Can be attached to the subject or the direct object, or turned off on either/both of those
+ * @class Adjective
+ */
 function Adjective(args){
     this.english   = args[0];
     this.m         = args[1];
@@ -896,8 +932,7 @@ function Adjective(args){
     this.n         = args[3];
     this.mPersMasc = args[4];
 }
-Adjective.prototype.wrapInTooltipDivsTemplate = wrapInTooltipDivsTemplate;
-Adjective.prototype.tooltipTemplate = tooltipTemplate;
+Y.extend(Adjective, Word);
 
 Adjective.prototype.adjectiveEndings = adjectiveEndings;
 Adjective.prototype.nominativeSingularForGender = function (gender){
@@ -1029,6 +1064,10 @@ Adjective.prototype.makePolishStr = function(args){
     return subjectAdjectiveStr;
 }
 
+
+/**
+ * @class Verb
+ */
 function Verb(args){
     this.infinitive    = args.infinitive;
     this.isTransitive  = args.transitive;
@@ -1041,8 +1080,7 @@ function Verb(args){
     this.futureTense   = args.future_tense;
     this.pinned        = false;
 }
-Verb.prototype.wrapInTooltipDivsTemplate = wrapInTooltipDivsTemplate;
-Verb.prototype.tooltipTemplate = tooltipTemplate;
+Y.extend(Verb, Word);
 
 // This breaks down for pan/pani, since that's 3rd person
 // but should read "you were running" since it's
@@ -1145,21 +1183,6 @@ Verb.prototype.wrapInTooltipDivs = function(str){
 	});
 }
     
-// move this to Word superclass
-Verb.prototype.wrapInPushpinDivs = function(englishStr, partOfSpeech){
-
-    var pushpinTemplate = '<span class="question-word" id="question-word-{partOfSpeech}"><span class="pushpin {hiddenClass} {onOffClass}" id="question-word-{partOfSpeech}-pushpin"><img src="{imgSrc}"/></span>{englishStr}</span>';
-    var stash = {
-        englishStr: englishStr,
-        partOfSpeech: partOfSpeech,
-        hiddenClass: (this.pinned ? '' : 'pushpin-hidden'),
-        imgSrc: (this.pinned ? 'file:///Users/kevin/Desktop/push_pin-on.png' : 'file:///Users/kevin/Desktop/push_pin-off.png'),
-        onOffClass: (this.pinned ? 'pushpin-on' : 'pushpin-off')
-    };
-        
-    return Y.substitute(pushpinTemplate, stash);
-
-}
 
 // this stuff should be in its own function so we can scope the variables
 var tester = new Tester();
