@@ -738,7 +738,7 @@ Tester.prototype.setPushpin = function(pushpinSpanEl, partOfSentence){
     var pushpinImgEl = pushpinSpanEl.one('img');
 
     pushpinSpanEl.removeClass('pushpin-hidden');
-    pushpinImgEl.set('src', 'file:///Users/kevin/desktop/push_pin-on.png');
+    pushpinImgEl.set('src', 'push_pin-on.png');
 
     switch (partOfSentence){
         case 'verb':
@@ -752,7 +752,7 @@ Tester.prototype.setPushpin = function(pushpinSpanEl, partOfSentence){
 Tester.prototype.unsetPushpin = function(pushpinSpanEl, partOfSentence){
     var pushpinImgEl = pushpinSpanEl.one('img');
 
-    pushpinImgEl.set('src', 'file:///Users/kevin/desktop/push_pin-off.png');
+    pushpinImgEl.set('src', 'push_pin-off.png');
     // don't hide it right away, too abrupt, pushpinSpanEl.addClass('pushpin-hidden');
 
     switch (partOfSentence){
@@ -799,7 +799,7 @@ Word.prototype.wrapInPushpinDivs = function(englishStr, partOfSpeech){
         englishStr: englishStr,
         partOfSpeech: partOfSpeech,
         hiddenClass: (this.pinned ? '' : 'pushpin-hidden'),
-        imgSrc: (this.pinned ? 'file:///Users/kevin/Desktop/push_pin-on.png' : 'file:///Users/kevin/Desktop/push_pin-off.png'),
+        imgSrc: (this.pinned ? 'push_pin-on.png' : 'push_pin-off.png'),
         onOffClass: (this.pinned ? 'pushpin-on' : 'pushpin-off')
     };
         
