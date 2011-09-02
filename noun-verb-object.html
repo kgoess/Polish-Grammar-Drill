@@ -766,6 +766,8 @@ Tester.prototype.setPushpin = function(pushpinSpanEl, partOfSentence){
     var pushpinImgEl = pushpinSpanEl.one('img');
 
     pushpinSpanEl.removeClass('pushpin-hidden');
+    pushpinSpanEl.removeClass('pushpin-off');
+    pushpinSpanEl.addClass('pushpin-on');
     pushpinImgEl.set('src', 'push_pin-on.png');
 
     switch (partOfSentence){
