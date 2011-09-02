@@ -14,6 +14,8 @@
    Będziemy lubili taniich ojców. fix that taniich to tanich
    Support pronouns as direct objects
    Allow multiple subjects
+   If they pin the subject we need to disable the "include * subjects" checkboxes
+   otherwise they might change it and generate an adjective for a pronoun.
 */
 
 YUI().use('node', 'event-key', 'anim', 'substitute', function(Y) {
@@ -305,32 +307,26 @@ Tester.prototype.addVerb = function(verb){
 };
 
 Tester.prototype.askQuestion = function(){
-    var verb;
+    var verb, s, failsafe;
     if (this.currentVerb && this.currentVerb.pinned){
+		verb = this.currentVerb;
     }else{
-        this.currentVerb = this.verbs [ Math.floor(Math.random()*this.verbs.length) ];
+        verb = this.verbs [ Math.floor(Math.random()*this.verbs.length) ];
     }
-    verb = this.currentVerb;
 
-    var okSubjectType = verb.subjectType;
-    var okSubjects;
-    if (okSubjectType === 'i-agent'){
-        okSubjects = this.intelligentAgents; 
-    }else{
-        okSubjects = this.agents;
-    }
-    if (this.doUsePronounSubject()){
-        var pronoun = this.pronouns[ Math.floor(Math.random()*this.pronouns.length) ];
-        this.currentSubject = pronoun;
-        this.subjectNumber = pronoun.number === 's' ? 'singular' : 'plural';
-        this.currentPerson = pronoun.person;
-        this.subjectAdjective = false;
-    }else{ //generateSubjectNumber will revert to 'singular' if nothing is checked
-        this.subjectNumber = this.generateSubjectNumber();
-        this.currentPerson = 3;
-        this.currentSubject   = okSubjects[      Math.floor(Math.random()*okSubjects.length) ];
-        this.subjectAdjective = this.generateSubjectAdjective();
-    }
+	if (this.currentSubject && this.currentSubject.pinned){
+		s = this.currentSubject;
+		failsafe = 0;
+		while (s.agentType && s.agentType !== verb.subjectType && failsafe++ < 20){
+			verb = this.verbs [ Math.floor(Math.random()*this.verbs.length) ];
+		}
+	}else{
+		this.generateSubject(verb);
+	}
+	this.currentVerb = verb;
+
+	this.generateSubjectAdjective();
+
 
     if (verb.isTransitive){
         var okObjects = verb.okObjects;
@@ -365,6 +361,35 @@ Tester.prototype.askQuestion = function(){
     inputEl.set('value', '');
 
 };
+
+Tester.prototype.generateSubject = function(verb){
+
+    var okSubjectType = verb.subjectType;
+    var okSubjects;
+    if (okSubjectType === 'i-agent'){
+        okSubjects = this.intelligentAgents; 
+    }else{
+        okSubjects = this.agents;
+    }
+    if (this.doUsePronounSubject()){
+        var pronoun = this.pronouns[ Math.floor(Math.random()*this.pronouns.length) ];
+        this.currentSubject = pronoun;
+        this.subjectNumber = pronoun.number === 's' ? 'singular' : 'plural';
+        this.currentPerson = pronoun.person;
+    }else{ //generateSubjectNumber will revert to 'singular' if nothing is checked
+        this.subjectNumber = this.generateSubjectNumber();
+        this.currentPerson = 3;
+        this.currentSubject   = okSubjects[ Math.floor(Math.random()*okSubjects.length) ];
+    }
+}
+
+Tester.prototype.generateSubjectAdjective = function(){
+    if (this.doUsePronounSubject()){
+        this.subjectAdjective = false;
+	}else{
+        this.subjectAdjective = this.generateSubjectAdjective();
+	}
+}
 
 Tester.prototype.canUseRegularSubject = function(){
     var singularOk = document.settings["subject-singular"].checked;
@@ -649,17 +674,20 @@ Tester.prototype.showImagesIsChecked = function(){
     
 Tester.prototype.currentEnglishSentence = function(){
     var s = '';
+	var subjectNoun = '';
+
     if (this.subjectAdjective){
         s = this.subjectAdjective.english + ' ';
     }
     if (this.subjectNumber === 'singular'){
-        s = s + this.currentSubject.english_sing;
+        subjectNoun = this.currentSubject.english_sing;
     }else{
-        s = s + this.currentSubject.english_pl;
+        subjectNoun = this.currentSubject.english_pl;
     }
     if (! this.currentSubject.constructor.toString().match(/Pronoun/)){
         s = 'The ' + s;
     }
+	s = s + this.currentSubject.wrapInPushpinDivs(subjectNoun, 'subject');
 
     s = s + ' + ' + this.currentVerb.wrapInPushpinDivs(this.getEnglishVerb(), 'verb') ;
 
@@ -745,6 +773,10 @@ Tester.prototype.setPushpin = function(pushpinSpanEl, partOfSentence){
             var verb = this.currentVerb;
             verb.pinned = true;
             break;
+		case 'subject':
+			var subject = this.currentSubject;
+			subject.pinned = true;
+			break;
         default:
             return;
     }
@@ -760,6 +792,10 @@ Tester.prototype.unsetPushpin = function(pushpinSpanEl, partOfSentence){
             var verb = this.currentVerb;
             verb.pinned = false;
             break;
+		case 'subject':
+			var subject = this.currentSubject;
+			subject.pinned = false;
+			break;
         default:
             return;
     }
