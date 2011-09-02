@@ -267,7 +267,26 @@ var verbData = [
         s: [ 'brał', 'brała'  ],
         p: [ 'brali', 'brały' ]
       }
-    } 
+    },
+    { infinitive: ['potrzebować', 'to need' ],
+      english_past: 'was needing', 
+      english_future: 'will be needing',
+      transitive: true,
+      ok_subjects: 'i-agent',
+      objects: 'any',
+      present_tense: {
+        s: [ 'potrzebuję', 'potrzebujesz', 'potrzebuje' ],
+        p: [ 'potrzebujemy', 'potrzebujecie', 'potrzebują' ]
+      },
+      past_tense: {
+        s:  [ 'potrzebowałem/potrzebowałam','potrzebowałeś/potrzebowałaś','potrzebował/potrzebowała' ],
+        p: [ 'potrzebowaliśmy/potrzebowałyśmy', 'potrzebowaliście/potrzebowałyście', 'potrzebowali/potrzebowały' ]
+      },
+      future_tense: {
+        s: [ 'potrzebował', 'potrzebowała'  ],
+        p: [ 'potrzebowali', 'potrzebowały' ] 
+      }
+    }
 ];
 
 
@@ -309,23 +328,23 @@ Tester.prototype.addVerb = function(verb){
 Tester.prototype.askQuestion = function(){
     var verb, s, failsafe;
     if (this.currentVerb && this.currentVerb.pinned){
-		verb = this.currentVerb;
+        verb = this.currentVerb;
     }else{
-        verb = this.verbs [ Math.floor(Math.random()*this.verbs.length) ];
+        verb = this.pickRandomActiveVerb();
     }
 
-	if (this.currentSubject && this.currentSubject.pinned){
-		s = this.currentSubject;
-		failsafe = 0;
-		while (s.agentType && s.agentType !== verb.subjectType && failsafe++ < 20){
-			verb = this.verbs [ Math.floor(Math.random()*this.verbs.length) ];
-		}
-	}else{
-		this.generateSubject(verb);
-	}
-	this.currentVerb = verb;
+    if (this.currentSubject && this.currentSubject.pinned){
+        s = this.currentSubject;
+        failsafe = 0;
+        while (s.agentType && s.agentType !== verb.subjectType && failsafe++ < 20){
+            verb = this.verbs [ Math.floor(Math.random()*this.verbs.length) ];
+        }
+    }else{
+        this.generateSubject(verb);
+    }
+    this.currentVerb = verb;
 
-	this.generateSubjectAdjective();
+    this.generateSubjectAdjective();
 
 
     if (verb.isTransitive){
@@ -362,6 +381,30 @@ Tester.prototype.askQuestion = function(){
 
 };
 
+Tester.prototype.pickRandomActiveVerb = function(){
+    var aVerb, activeVerbs;
+
+    activeVerbs = [];
+
+    // hmm, wonder how this will scale with more verbs...
+    for (i in this.verbs){
+        aVerb = this.verbs[i];
+        checkboxEl = Y.one("#wordlist-checkbox-" + aVerb.wordId);
+        if (checkboxEl.get('checked')){
+            activeVerbs.push(aVerb);
+        }
+    }
+    // ...if the user has unchecked all the boxes
+    if (activeVerbs.length === 0){
+        activeVerbs = this.verbs;
+    }
+
+    aVerb = activeVerbs [ Math.floor(Math.random()*activeVerbs.length) ];
+
+    return aVerb;
+};
+
+
 Tester.prototype.generateSubject = function(verb){
 
     var okSubjectType = verb.subjectType;
@@ -381,15 +424,15 @@ Tester.prototype.generateSubject = function(verb){
         this.currentPerson = 3;
         this.currentSubject   = okSubjects[ Math.floor(Math.random()*okSubjects.length) ];
     }
-}
+};
 
 Tester.prototype.generateSubjectAdjective = function(){
     if (this.doUsePronounSubject()){
         this.subjectAdjective = false;
-	}else{
+    }else{
         this.subjectAdjective = this.generateSubjectAdjective();
-	}
-}
+    }
+};
 
 Tester.prototype.canUseRegularSubject = function(){
     var singularOk = document.settings["subject-singular"].checked;
@@ -513,7 +556,6 @@ Tester.prototype.currentPolishSentence = function(args){
         if (! subjectAdjectiveStr && ! subjectStr){
             verbStr = verbStr.charAt(0).toUpperCase() + verbStr.slice(1);
         }
-        	
 
     }else{
         subjectStr = subject.makePolishStr({
@@ -602,11 +644,11 @@ Tester.prototype.currentPolishVerbStr = function (verbArgs){
             break;
     }
     if (verbArgs.isInitialWord){
-	    verbStr = verbStr.charAt(0).toUpperCase() + verbStr.slice(1);
-	}
+        verbStr = verbStr.charAt(0).toUpperCase() + verbStr.slice(1);
+    }
 
     if (verbArgs.wrapInTooltipDivs){
-    	verbStr = verb.wrapInTooltipDivs(verbStr);
+        verbStr = verb.wrapInTooltipDivs(verbStr);
     }
     return verbStr;
 };
@@ -671,10 +713,22 @@ Tester.prototype.showImagesIsChecked = function(){
     });
     return tmpValue;
 };
+
+Tester.prototype.showHideWordList = function(buttonEl){
+
+    var elId = buttonEl.get('id');
+
+    var listEl = Y.one('#' + elId + '-list');
+    if (listEl.hasClass('hidden')){
+        listEl.removeClass('hidden');
+    }else{
+        listEl.addClass('hidden');
+    }
+};
     
 Tester.prototype.currentEnglishSentence = function(){
     var s = '';
-	var subjectNoun = '';
+    var subjectNoun = '';
 
     if (this.subjectAdjective){
         s = this.subjectAdjective.english + ' ';
@@ -687,7 +741,7 @@ Tester.prototype.currentEnglishSentence = function(){
     if (! this.currentSubject.constructor.toString().match(/Pronoun/)){
         s = 'The ' + s;
     }
-	s = s + this.currentSubject.wrapInPushpinDivs(subjectNoun, 'subject');
+    s = s + this.currentSubject.wrapInPushpinDivs(subjectNoun, 'subject');
 
     s = s + ' + ' + this.currentVerb.wrapInPushpinDivs(this.getEnglishVerb(), 'verb') ;
 
@@ -759,7 +813,7 @@ Tester.prototype.pushpinPushed = function(pushpinSpanEl){
     }else{
         this.setPushpin(pushpinSpanEl, partOfSentence);
     }
-}
+};
 
 Tester.prototype.setPushpin = function(pushpinSpanEl, partOfSentence){
 
@@ -775,14 +829,14 @@ Tester.prototype.setPushpin = function(pushpinSpanEl, partOfSentence){
             var verb = this.currentVerb;
             verb.pinned = true;
             break;
-		case 'subject':
-			var subject = this.currentSubject;
-			subject.pinned = true;
-			break;
+        case 'subject':
+            var subject = this.currentSubject;
+            subject.pinned = true;
+            break;
         default:
             return;
     }
-}
+};
 Tester.prototype.unsetPushpin = function(pushpinSpanEl, partOfSentence){
     var pushpinImgEl = pushpinSpanEl.one('img');
 
@@ -794,14 +848,51 @@ Tester.prototype.unsetPushpin = function(pushpinSpanEl, partOfSentence){
             var verb = this.currentVerb;
             verb.pinned = false;
             break;
-		case 'subject':
-			var subject = this.currentSubject;
-			subject.pinned = false;
-			break;
+        case 'subject':
+            var subject = this.currentSubject;
+            subject.pinned = false;
+            break;
         default:
             return;
     }
+};
+
+
+Word.prototype.wrapInTooltipDivsTemplate = function (args){
+    var str              = args.polishStr;
+    var wikiLookup       = args.wikiLookup;
+    var tooltipStr       = args.tooltipStr;
+
+    var tooltipTemplate = this.tooltipTemplate;
+
+    var stash = {
+        polishStr: str,
+        wikiLookup: wikiLookup,
+        tooltipStr: tooltipStr
+    }
+
+    return Y.substitute(tooltipTemplate, stash);
 }
+Tester.prototype.checkboxWordListTemplate = '<input id="wordlist-checkbox-{wordId}" type="checkbox" checked="1"/>{english}</input><br/>';
+Tester.prototype.populateCheckboxWordLists = function() {
+    var i, row, word, template, stash, html;
+
+    template = this.checkboxWordListTemplate;
+
+    for (i in verbData){
+        row = verbData[i];
+        word = new Verb(row);
+        stash = { 
+            english: word.infinitive[1],
+            wordId: word.wordId };
+        html = Y.substitute(template, stash);
+        el = Y.Node.create(html);
+
+       sectionEl = Y.one('#verb-section-list');
+       sectionEl.append(el);  
+    }
+};
+
 /**
  * This is the base class for Noun, Verb, Adjective, and Pronoun.
  * @class Word
@@ -814,11 +905,11 @@ function Word(){
 Word.prototype.tooltipTemplate = '<span class="answer-word" >{polishStr}<span class="tooltip"><a href="http://en.wiktionary.org/wiki/{wikiLookup}#Polish" target="_blank">{tooltipStr}</a></span></span> ';
 
 Word.prototype.wrapInTooltipDivsTemplate = function (args){
-	var str              = args.polishStr;
-	var wikiLookup       = args.wikiLookup;
-	var tooltipStr       = args.tooltipStr;
+    var str              = args.polishStr;
+    var wikiLookup       = args.wikiLookup;
+    var tooltipStr       = args.tooltipStr;
 
-	var tooltipTemplate = this.tooltipTemplate;
+    var tooltipTemplate = this.tooltipTemplate;
 
     var stash = {
         polishStr: str,
@@ -827,7 +918,7 @@ Word.prototype.wrapInTooltipDivsTemplate = function (args){
     }
 
     return Y.substitute(tooltipTemplate, stash);
-}
+};
 
 Word.prototype.pushpinTemplate = '<span class="question-word" id="question-word-{partOfSpeech}"><span class="pushpin {hiddenClass} {onOffClass}" id="question-word-{partOfSpeech}-pushpin"><img src="{imgSrc}"/></span>{englishStr}</span>';
 
@@ -842,7 +933,7 @@ Word.prototype.wrapInPushpinDivs = function(englishStr, partOfSpeech){
     };
         
     return Y.substitute(this.pushpinTemplate, stash);
-}
+};
 
 
 /**
@@ -859,15 +950,17 @@ function Noun(args){
     this.acc_pl = args[5];
     this.gender = args[6];
     this.agentType = args[7];
+
+    this.wordId = this.nom_sing; // like a primary key for all the words here
 }
 Y.extend(Noun, Word);
 
 Noun.prototype.getGender = function(){
     return this.gender;
-}
+};
 Noun.prototype.wrapInTooltipDivs = function(str){
 
-	return this.wrapInTooltipDivsTemplate({
+    return this.wrapInTooltipDivsTemplate({
         polishStr: str,
         wikiLookup: this.nom_sing,
         tooltipStr: this.nom_sing+' '+this.gender+'.'
@@ -890,7 +983,7 @@ Noun.prototype.makePolishStr = function(args){
     }
 
     return nounStr;
-}
+};
 
 
 /**
@@ -919,7 +1012,7 @@ Pronoun.prototype.getGender = function(){
         g = 'm-personal';   // 3rd p plural, do something better later
     }
     return g;
-}
+};
 
 Pronoun.prototype.genderOfSpeaker = function() {
     var nodeList =  document.settings["gender-of-speaker"];
@@ -935,7 +1028,7 @@ Pronoun.prototype.genderOfSpeaker = function() {
 // we don't actually display the polish string for the pronouns, hmm, that's some side effect of something I think...?
 Pronoun.prototype.wrapInTooltipDivs = function(str){
     return str;
-}
+};
 Pronoun.prototype.makePolishStr = function(args){
     var caseMethodName     = args.caseMethodName; //e.g. "nominativeSingularForGender"
     var gender             = args.gender;
@@ -955,7 +1048,7 @@ Pronoun.prototype.makePolishStr = function(args){
     }
 
     return nounStr;
-}
+};
 
 
 
@@ -969,6 +1062,8 @@ function Adjective(args){
     this.f         = args[2];
     this.n         = args[3];
     this.mPersMasc = args[4];
+
+    this.wordId = this.m; // like a primary key for all the words here
 }
 Y.extend(Adjective, Word);
 
@@ -1078,7 +1173,7 @@ Adjective.prototype.masculineEnding = function(){
 };
 
 Adjective.prototype.wrapInTooltipDivs = function(str){
-	return this.wrapInTooltipDivsTemplate({
+    return this.wrapInTooltipDivsTemplate({
         polishStr:      str,
         wikiLookup:     this.m,
         tooltipStr:     this.m+','+this.f+','+this.n
@@ -1100,7 +1195,7 @@ Adjective.prototype.makePolishStr = function(args){
         subjectAdjectiveStr = this.wrapInTooltipDivs(subjectAdjectiveStr);
     }
     return subjectAdjectiveStr;
-}
+};
 
 
 /**
@@ -1116,8 +1211,11 @@ function Verb(args){
     this.englishPast   = args.english_past;
     this.englishFuture = args.english_future;
     this.futureTense   = args.future_tense;
+
+    this.wordId = args.infinitive[0]; // like a primary key for all the words here
+
     this.pinned        = false;
-}
+};
 Y.extend(Verb, Word);
 
 // This breaks down for pan/pani, since that's 3rd person
@@ -1214,12 +1312,12 @@ Verb.prototype.getFutureTense = function(verbArgs){
 
 Verb.prototype.wrapInTooltipDivs = function(str){
 
-	return this.wrapInTooltipDivsTemplate({
-		polishStr:  (str || ''),
-		wikiLookup: this.infinitive[0],
-		tooltipStr: this.infinitive[0] + ', ' + this.presentTense.s[0] + ', ' + this.presentTense.s[1]
-	});
-}
+    return this.wrapInTooltipDivsTemplate({
+        polishStr:  (str || ''),
+        wikiLookup: this.infinitive[0],
+        tooltipStr: this.infinitive[0] + ', ' + this.presentTense.s[0] + ', ' + this.presentTense.s[1]
+    });
+};
     
 
 // this stuff should be in its own function so we can scope the variables
@@ -1248,7 +1346,11 @@ for (i in verbData){
     tester.addVerb(verb);
 }
 
-Y.on("domready", function() { tester.askQuestion(); });
+Y.on("domready", function() { 
+    // need to setup the checkboxes before we can generate the question
+    tester.populateCheckboxWordLists();
+    tester.askQuestion(); 
+});
 
 var returnPressed = 'down:13';
 Y.on('key', function(e) {
@@ -1266,6 +1368,10 @@ Y.on('click', function(e){
 Y.on('click', function(e){
     tester.showAnswer();
     }, '#show-answer', Y
+);
+Y.on('click', function(e){
+    tester.showHideWordList(e.currentTarget);
+    }, '.buttony-legend-input', Y
 );
 
 // delegating to the outer element since the inner ones come and go with each question
@@ -1336,7 +1442,7 @@ radio {
 }
 
 .answer-word {
-    position: relative; //http://psacake.com/web/jl.asp
+    position: relative; /* //http://psacake.com/web/jl.asp */
     z-index: 24;
     text-decoration: none;
     color: #000;
@@ -1355,7 +1461,7 @@ radio {
     border:1px solid #0cf;
     background-color: lightgray; 
     white-space: nowrap;
-    top:2em; left:2em;  //these two are required, not sure why
+    top:2em; left:2em;  /* these two are required, not sure why */
 }
 
 .question-word:hover .pushpin {
@@ -1364,11 +1470,36 @@ radio {
 
 
 .pushpin {
-    //display: block;
+    /* display: block; */
 
 }
 
 .pushpin-hidden {
+    display: none;
+}
+
+.buttony-legend .buttony-legend-input {
+    display: none;
+}
+.buttony-legend .buttony-legend-text {
+    display: inline;
+}
+.buttony-legend:hover .buttony-legend-input {
+    display: inline;
+}
+.buttony-legend:hover .buttony-legend-text {
+    display: none;
+}
+
+/* the initially hidden list of vocabulary word checkboxes */
+.section-word-list {
+    overflow: auto; 
+    height: 5em; 
+    width: 80%; 
+    border: 1px solid gray;
+}
+
+.hidden {
     display: none;
 }
 
@@ -1382,7 +1513,7 @@ radio {
         <div id="question">
         </div>
         <div id="input">
-            <input type="text" size="40" id="input-element">
+            <input type="text" size="36" id="input-element">
         </div>
         <div id="output">
         </div>
@@ -1396,8 +1527,8 @@ radio {
         </div>
         <div class="instructions">
             <p>Type your answer in the box and press 'enter'.</p>
-            <p>Mouseover the answer for additional details and a link to Wiktionary.org.</p>
-            <p>Mouseover the question to pin particular words you want to focus on.</p>
+            <p>Mouse-over the words in the <strong>question</strong> to pin particular words you want to focus on.</p>
+            <p>Mouse-over the words in the <strong>answer</strong> for additional details and a link to Wiktionary.org.</p>
 
         </div>
     </div>
@@ -1433,8 +1564,13 @@ radio {
                 </div>
             <!-- could add "include verbs whose d/o takes the genitive (e.g. chcieć) -->
             </fieldset>
-            <fieldset>
-                <legend>Verbs</legend>
+            <fieldset class="buttony-legend">
+                <legend>
+                    <span class="buttony-legend-input" id="verb-section"> <input type="button" value="Verbs"/></span><span class="buttony-legend-text">Verbs</span>
+                </legend>
+                <div id="verb-section-list" class="input hidden section-word-list" >
+                    <!-- populated by populateCheckboxWordLists on documentLoad -->
+                </div>
                 <div class="input">
                     <label><input type="checkbox" name="verbs-present" checked="1"/>Include present tense</label>
                 </div>
