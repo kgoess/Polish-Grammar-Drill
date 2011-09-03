@@ -113,7 +113,7 @@ var adjectiveData = [
  [ 'good',   'dobry',      'dobra',      'dobre',      'dobrzy'     ], 
  [ 'bad',    'zły',        'zła',        'złe',        'zli'        ], 
  [ 'tasty',  'smaczny',    'smaczna',    'smaczne',    'smaczni'    ], 
- [ 'nasty',  'niesmazcny', 'niesmaczna', 'niesmaczne', 'niesmaczni' ], 
+ [ 'nasty',  'niesmaczny', 'niesmaczna', 'niesmaczne', 'niesmaczni' ], 
  [ 'clean',  'czysty',     'czysta',     'czyste',     'czyści'     ], 
  [ 'wet',    'mokry',      'mokra',      'mokre',      'mokrzy'     ], 
  [ 'dry',    'suchy',      'sucha',      'suche',      'susi'       ], 
@@ -138,7 +138,7 @@ var adjectiveData = [
  [ 'fast',   'szybki',     'szybka',     'szybkie',    'szybcy'     ],
  [ 'new',    'nowy',       'nowa',       'nowe',       'nowi'       ],
  [ 'old',    'stary',      'stara',      'stare',      'starzy'     ],
- [ 'polish', 'polski',     'polksa',     'polskie',    'polscy'     ], 
+ [ 'polish', 'polski',     'polska',     'polskie',    'polscy'     ], 
  [ 'short(low)', 'niski',  'niska',      'niskie',     'niscy'      ], 
  [ 'expensive', 'drogi',   'droga',      'drogie',     'drodzy'     ], 
  [ 'cheap',     'tani',    'tania',      'tanie',      'tani'       ]
@@ -253,7 +253,7 @@ var verbData = [
       english_past: 'was taking',
       english_future: 'will be taking',
       transitive: true,
-      ok_subjects: 'i-agent',
+      ok_subjects: 'agent',
       objects: 'any',
       present_tense: {
         s: ['biorę', 'bierzesz', 'bierze' ],
@@ -317,6 +317,7 @@ Tester.prototype.addNoun = function(noun){
     if (type === "agent"){
         this.agents.push(noun);
     }else if (type === "i-agent"){
+        this.agents.push(noun);
         this.intelligentAgents.push(noun);
     }
     this.nounLookup[ noun.nom_sing ] = noun;
@@ -394,7 +395,7 @@ Tester.prototype.pickRandomActiveVerb = function(){
             activeVerbs.push(aVerb);
         }
     }
-    // ...if the user has unchecked all the boxes
+    // ...if the user has unchecked all the boxes...
     if (activeVerbs.length === 0){
         activeVerbs = this.verbs;
     }
@@ -406,14 +407,9 @@ Tester.prototype.pickRandomActiveVerb = function(){
 
 
 Tester.prototype.generateSubject = function(verb){
+    var okSubjectType, okSubjects;
 
-    var okSubjectType = verb.subjectType;
-    var okSubjects;
-    if (okSubjectType === 'i-agent'){
-        okSubjects = this.intelligentAgents; 
-    }else{
-        okSubjects = this.agents;
-    }
+
     if (this.doUsePronounSubject()){
         var pronoun = this.pronouns[ Math.floor(Math.random()*this.pronouns.length) ];
         this.currentSubject = pronoun;
@@ -422,8 +418,35 @@ Tester.prototype.generateSubject = function(verb){
     }else{ //generateSubjectNumber will revert to 'singular' if nothing is checked
         this.subjectNumber = this.generateSubjectNumber();
         this.currentPerson = 3;
+        okSubjectType = verb.subjectType;
+        if (okSubjectType === 'i-agent'){
+            okSubjects = this.intelligentAgents; 
+        }else{
+            okSubjects = this.agents;
+        }
+        okSubjects = this.filterActiveSubjects(okSubjects);
         this.currentSubject   = okSubjects[ Math.floor(Math.random()*okSubjects.length) ];
     }
+};
+
+Tester.prototype.filterActiveSubjects = function(okSubjects){
+    var i, activeSubjects;
+
+    activeSubjects = [];
+
+    for (i in okSubjects){
+        aNoun = okSubjects[i];
+        checkboxEl = Y.one("#wordlist-checkbox-" + aNoun.wordId);
+        if (checkboxEl.get('checked')){
+            activeSubjects.push(aNoun);
+        }
+    }
+    // ...if the user has unchecked all the boxes...
+    if (activeSubjects.length === 0){
+        activeSubjects = okSubjects;
+    }
+
+    return activeSubjects;
 };
 
 Tester.prototype.generateSubjectAdjective = function(){
@@ -491,6 +514,7 @@ Tester.prototype.doUsePronounSubject = function(){
 
 Tester.prototype.checkAnswer = function(){
     var answer = Y.one('#input input').get('value');
+    var praise;
     answer = answer.replace(/ +$/, '');
     answer = answer.replace(/^ +/, '');
 
@@ -499,7 +523,8 @@ Tester.prototype.checkAnswer = function(){
         Y.one('#output').set('innerHTML', this.currentPolishSentence({wrapInTooltipDivs: true}));
         Y.one('#input-element').setStyle("background-color", "#3CFF00");
         
-        alert('Doskonale!');
+        praise = this.generateRandomPraise();
+        alert(praise);
 
         var anim = new Y.Anim(
             { node: '#input-element', 
@@ -508,8 +533,10 @@ Tester.prototype.checkAnswer = function(){
             } 
         ); 
         anim.run();
+        this.addToHistory(answer);
+
     }else if (answer.charAt(0).toUpperCase() !== answer.charAt(0)){
-        alert('Capitalzation is important...');
+        alert('Capitalization is important...');
     }else if (answer.charAt( answer.length-1 ) !== '.'){
         alert('Punctuation is important...');
     }else{
@@ -517,6 +544,23 @@ Tester.prototype.checkAnswer = function(){
         //alert(this.currentPolishSentence({wrapInTooltipDivs: false}));
     }
 };
+
+Tester.prototype.addToHistory = function(answer){
+    var historyDiv = Y.one('.answer-history');
+    historyDivItem = Y.Node.create('<div class="answer-history-item">' + answer + '</div>');
+    historyDiv.prepend(historyDivItem);
+}
+
+Tester.prototype.generateRandomPraise = function(){
+    var praises = [ 'Świetnie!', 'Dobrze!', 'Wszystko Dobrze!',
+                    'Wszystko dobre, co się dobrze kończy', 
+                    'Najświetniej!',
+                    'Doskonale!'
+                  ];
+    
+    var roll = Math.floor(Math.random()*praises.length);
+    return praises[roll];
+}
 
 Tester.prototype.currentPolishSentence = function(args){
     var wrapInTooltipDivs = args.wrapInTooltipDivs;  //true/false
@@ -884,12 +928,31 @@ Tester.prototype.populateCheckboxWordLists = function() {
         word = new Verb(row);
         stash = { 
             english: word.infinitive[1],
-            wordId: word.wordId };
+            wordId: word.wordId
+        };
         html = Y.substitute(template, stash);
         el = Y.Node.create(html);
 
-       sectionEl = Y.one('#verb-section-list');
-       sectionEl.append(el);  
+        sectionEl = Y.one('#verb-section-list');
+        sectionEl.append(el);  
+    }
+
+    // the subjects (only agents or i-agents are subjects for verbs)
+    for (i in nounData){
+        row = nounData[i];
+        word = new Noun(row);
+        if (word.agentType === 'no-agent'){
+            continue;
+        }
+        stash = {
+            english: word.english_sing,
+            wordId: word.wordId
+        };
+        html = Y.substitute(template, stash);
+        el = Y.Node.create(html);
+
+        sectionEl = Y.one('#subject-section-list');
+        sectionEl.append(el);
     }
 };
 
@@ -1394,18 +1457,20 @@ body {
     border: 1px solid red; 
     margin: 50px; 
     padding: 50px;
-    height: 500px;
+    height: 600px;
     width: 900px;
 }
 
-.test-box div {
+.left-box div {
     padding: 10px;
 }
-.test-box {
+.left-box {
     float: left;
-    border: 1px solid black;
     font-size: 200%;
     width: 65%;
+}
+.test-box {
+    border: 1px solid black;
 }
 
 
@@ -1503,35 +1568,55 @@ radio {
     display: none;
 }
 
+.answer-history {
+	overflow: auto;
+	height: 7em;
+	/* width:80%;  */
+	border: 1px solid green;
+	font-size: 50%;
+	padding: 10px;
+    margin-top: 10px;
+}
+.answer-history div {
+    margin: 1px;
+    padding: 1px;
+    color: grey;
+}
+
 
 </style>
 </head>
 <body>
 
 <div class="outer-box">
-    <div class="test-box">
-        <div id="question">
+    <div class="left-box">
+        <div class="test-box">
+            <div id="question">
+            </div>
+            <div id="input">
+                <input type="text" size="36" id="input-element">
+            </div>
+            <div id="output">
+            </div>
+            <div id="result">
+            </div>
+            <div class="buttons">
+                <button id="give-hint">Give me a hint?</button>
+                <button id="show-answer">Tell me the answer</button>
+                <br/>
+                <button id="go-again">Another test</button>
+            </div>
+            <div class="instructions">
+                <p>Type your answer in the box and press 'enter'.</p>
+                <p>Mouse-over the words in the <strong>question</strong> to pin particular words you want to focus on.</p>
+                <p>Mouse-over the words in the <strong>answer</strong> for additional details and a link to Wiktionary.org.</p>
+    
+            </div>
         </div>
-        <div id="input">
-            <input type="text" size="36" id="input-element">
-        </div>
-        <div id="output">
-        </div>
-        <div id="result">
-        </div>
-        <div class="buttons">
-            <button id="give-hint">Give me a hint?</button>
-            <button id="show-answer">Tell me the answer</button>
-            <br/>
-            <button id="go-again">Another test</button>
-        </div>
-        <div class="instructions">
-            <p>Type your answer in the box and press 'enter'.</p>
-            <p>Mouse-over the words in the <strong>question</strong> to pin particular words you want to focus on.</p>
-            <p>Mouse-over the words in the <strong>answer</strong> for additional details and a link to Wiktionary.org.</p>
+        <div class="answer-history">
 
         </div>
-    </div>
+    </div> <!-- end left box container -->
     <div class="settings-box">
         <form name="settings">
             <fieldset>
@@ -1541,8 +1626,14 @@ radio {
                     <label><input type="radio" name="gender-of-speaker" value="f"            />Female</label>
                 </div>
             </fieldset>
-            <fieldset>
-                <legend>Subjects:</legend>
+            <fieldset class="buttony-legend-XXXDisabledForNow">
+                <legend>
+                    <span class="buttony-legend-input-XXXDisabledForNow hidden" id="subject-section"><input type="button" value="Subjects"/></span><span class="buttony-legend-text">Subjects:</span>
+                </legend>
+                <div id="subject-section-list" class="input hidden section-word-list">
+                    <!-- populated by populateCheckboxWordLists on documentLoad -->
+                </div>
+                    
                 <div class="input">
                     <label><input type="checkbox" name="subject-singular" checked="1"/>Include singular subjects</label>
                 </div>
@@ -1582,7 +1673,7 @@ radio {
                 </div>
             </fieldset>
         </form>
-    <div>
+	</div>
 </div>
 
 
