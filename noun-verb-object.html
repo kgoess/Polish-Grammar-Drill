@@ -1352,7 +1352,7 @@ Verb.prototype.getFutureTense = function(verbArgs){
                 break;
             case 'n':
                 str = this.futureTense['s'][1];
-                str = str.replace('ła$', 'ło');
+                str = str.replace(/ła$/, 'ło');
                 break;
             default:
                 alert("I don't know gender '" + verbArgs.gender + "'");
