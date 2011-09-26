@@ -102,6 +102,8 @@ var nounData = [
  [ 'egg',        'eggs',         'jajko',    'jajka',     'jajko',    'jajka',     'n',          'no-agent' ],
  [ 'carrot',     'carrots',      'marchew',  'marchwie',  'marchew',  'marchwie',  'f',          'no-agent' ],
  [ 'sausage',    'sausages',     'kiełbasa', 'kiełbasy',  'kiełbasę', 'kiełbasy',  'f',          'no-agent' ],
+ [ 'bridge',     'bridges',      'most',     'mosty',     'most',     'mosty',     'm',          'no-agent' ],
+ [ 'friend',     'friends',      'przyjaciel','przyjaciele','przyjaciela','przyjaciół','m',     'i-agent' ],
  [ 'cabbage',    'cabbages',     'kapusta',  'kapusty',   'kapustę',  'kapusty',   'f',          'no-agent' ]
 ] ;
 
@@ -285,6 +287,25 @@ var verbData = [
       future_tense: {
         s: [ 'potrzebował', 'potrzebowała'  ],
         p: [ 'potrzebowali', 'potrzebowały' ] 
+      }
+    },
+    { infinitive: ['wracać', 'to return' ],
+      english_past: 'was returning', 
+      english_future: 'will be returning',
+      transitive: false,
+      ok_subjects: 'agent',
+      //objects: 'any',
+      present_tense: {
+        s: [ 'wracam', 'wracasz', 'wraca' ],
+        p: [ 'wracamy', 'wracacie', 'wracają' ]
+      },
+      past_tense: {
+        s:  [ 'wracałem/wracałam','wracałes/wracałas','wracawał/wracawała' ],
+        p: [ 'wracaliśmy/wracałyśmy', 'wracaliście/wracałyście', 'wracali/wracały' ]
+      },
+      future_tense: {
+        s: [ 'wracał', 'wracała'  ],
+        p: [ 'wracali', 'wracały' ] 
       }
     }
 ];
