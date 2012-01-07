@@ -27,7 +27,7 @@ horse koń konie
 
 my @fem_nouns = qw/
 woman kobieta kobiety
-school skoła skoły
+school szkoła szkoły
 sister siostra siostry
 wife żona żony
 cloud chmura chmury
