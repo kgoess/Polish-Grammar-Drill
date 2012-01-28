@@ -775,7 +775,14 @@ Tester.prototype.giveHint = function() {
     var i;
     for (i = 0; i < str.length; ++i){
         var rand = Math.floor(Math.random()*showEvery);
+        // do spaces by default
         if (str.charAt(i) === ' ' || str.charAt(i) === '.'){
+            outstr = outstr + str.charAt(i);
+        // and initial letters
+        }else if (i == 0 || i > 0 && str.charAt(i-1) === ' '){
+            outstr = outstr + str.charAt(i);
+        // and final letters (but not the last one of the last word, just to be difficult)
+        }else if ((i < str.length -1) && str.charAt(i+1) === ' '){
             outstr = outstr + str.charAt(i);
         }else{
             outstr = outstr + (rand % showEvery === 1 ? str.charAt(i) : '<span class="graydot">.</span>');
@@ -1518,6 +1525,7 @@ body {
 
 .graydot {
     color: lightgrey;
+    padding: 4px;
 }
 
 .instructions {
