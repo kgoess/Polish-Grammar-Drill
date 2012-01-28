@@ -347,6 +347,7 @@ function Tester(){
     this.currentPerson = null;
     this.currentSubject = null;
     this.currentObject = null;
+    this.subjectIsPronoun = false; // for the current sentence
 }
 
 Tester.prototype.addNoun = function(noun){
@@ -453,6 +454,7 @@ Tester.prototype.generateSubject = function(verb){
         this.currentSubject = pronoun;
         this.subjectNumber = pronoun.number === 's' ? 'singular' : 'plural';
         this.currentPerson = pronoun.person;
+        this.subjectIsPronoun = true;
     }else{ //generateSubjectNumber will revert to 'singular' if nothing is checked
         this.subjectNumber = this.generateSubjectNumber();
         this.currentPerson = 3;
@@ -464,6 +466,7 @@ Tester.prototype.generateSubject = function(verb){
         }
         okSubjects = this.filterActiveSubjects(okSubjects);
         this.currentSubject   = okSubjects[ Math.floor(Math.random()*okSubjects.length) ];
+        this.subjectIsPronoun = false;
     }
 };
 
@@ -488,10 +491,16 @@ Tester.prototype.filterActiveSubjects = function(okSubjects){
 };
 
 Tester.prototype.generateSubjectAdjective = function(){
-    if (this.doUsePronounSubject()){
-        this.subjectAdjective = false;
+    var subjectAdjectivesOk = document.settings["subject-adjectives"].checked;
+
+    if (subjectAdjectivesOk){
+        if (this.subjectIsPronoun){
+            this.subjectAdjective = false;
+        }else{
+            this.subjectAdjective = this.pickAdjectiveForSubject();
+        }
     }else{
-        this.subjectAdjective = this.generateSubjectAdjective();
+        this.subjectAdjective = false;
     }
 };
 
@@ -519,13 +528,8 @@ Tester.prototype.generateSubjectNumber = function(){
     }
 };
 
-Tester.prototype.generateSubjectAdjective = function(){
-    var subjectAdjectivesOk = document.settings["subject-adjectives"].checked;
-    if (subjectAdjectivesOk){
-        return this.adjectives[ Math.floor(Math.random()*this.adjectives.length) ];
-    }else{
-        return null;
-    }
+Tester.prototype.pickAdjectiveForSubject = function(){
+    return this.adjectives[ Math.floor(Math.random()*this.adjectives.length) ];
 };
 
 Tester.prototype.generateObjectAdjective = function(){
@@ -1682,7 +1686,7 @@ radio {
                     <label><input type="checkbox" name="subject-pronouns" checked="1"/>Include pronoun subjects</label>
                 </div>
                 <div class="input">
-                    <label><input type="checkbox" name="subject-adjectives" checked="1"/>Attach adjectives to subjects</label>
+                    <label><input type="checkbox" name="subject-adjectives"/>Attach adjectives to subjects</label>
                 </div>
             </fieldset>
             <fieldset>
