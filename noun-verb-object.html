@@ -347,6 +347,7 @@ function Tester(){
     this.currentPerson = null;
     this.currentSubject = null;
     this.currentObject = null;
+    this.isNegated = false;
 }
 
 Tester.prototype.addNoun = function(noun){
@@ -385,6 +386,7 @@ Tester.prototype.askQuestion = function(){
 
     this.generateSubjectAdjective();
 
+    this.setNegation();
 
     if (verb.isTransitive){
         var okObjects = verb.okObjects;
@@ -494,6 +496,24 @@ Tester.prototype.generateSubjectAdjective = function(){
         this.subjectAdjective = this.generateSubjectAdjective();
     }
 };
+
+Tester.prototype.setNegation = function(){
+    if (this.doUseNegation){
+        this.isNegated = true;
+    }else{
+        this.isNegated = false;
+    }
+}
+
+// if set, make a third of the sentences negations
+Tester.prototype.doUseNegation = function(){
+    var negationOk = document.settings["verbs-negation"];
+    if (negationOk){
+        return Math.floor( Math.random()*(3) +1 ) % 3 === 0 ? true : false;
+    }else{
+        return false;
+    }
+}
 
 Tester.prototype.canUseRegularSubject = function(){
     var singularOk = document.settings["subject-singular"].checked;
@@ -865,6 +885,9 @@ Tester.prototype.getEnglishVerb = function(){
             break;
         default:
             alert("I don't know this tense: " + this.currentTense);
+    }
+    if (this.isNegated){
+        englishVerbStr = englishVerbStr.replace(/\s([^\s]+)$/, ' not $1');
     }
     return englishVerbStr;
 };
@@ -1708,6 +1731,9 @@ radio {
                 </div>
                 <div class="input">
                     <label><input type="checkbox" name="verbs-future" checked="1"/>Include future tense</label>
+                </div>
+                <div class="input">
+                    <label><input type="checkbox" name="verbs-negation" checked="1"/>Include negations</label>
                 </div>
             </fieldset>
         </form>
