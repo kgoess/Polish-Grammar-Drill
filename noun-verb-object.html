@@ -144,7 +144,7 @@ var adjectiveData = [
  [ 'white',  'biały',      'biała',      'białe',      'biali'      ], 
  [ 'black',  'czarny',     'czarna',     'czarne',     'czarni'     ], 
  [ 'red',    'czerwony',   'czerwona',   'czerwone',   'czerwoni'   ], 
- [ 'yellow', 'żółty',      'żółta',      'żółte',      'żółtych'      ], 
+ [ 'yellow', 'żółty',      'żółta',      'żółte',      'żółci'      ], 
  [ 'blue',   'niebieski',  'niebieska',  'niebieskie', 'niebiescy'  ], 
  [ 'green',  'zielony',    'zielona',    'zielone',    'zieleni'    ],
  [ 'gray',   'szary',      'szara',      'szare',      'szarzy'     ],
@@ -348,7 +348,8 @@ function Tester(){
     this.currentSubject = null;
     this.currentObject = null;
     this.subjectIsPronoun = false; // for the current sentence
-}
+    this.isNegated = false;
+
 
 Tester.prototype.addNoun = function(noun){
     this.nouns.push(noun);
@@ -386,6 +387,7 @@ Tester.prototype.askQuestion = function(){
 
     this.generateSubjectAdjective();
 
+    this.setNegation();
 
     if (verb.isTransitive){
         var okObjects = verb.okObjects;
@@ -503,6 +505,24 @@ Tester.prototype.generateSubjectAdjective = function(){
         this.subjectAdjective = false;
     }
 };
+
+Tester.prototype.setNegation = function(){
+    if (this.doUseNegation){
+        this.isNegated = true;
+    }else{
+        this.isNegated = false;
+    }
+}
+
+// if set, make a third of the sentences negations
+Tester.prototype.doUseNegation = function(){
+    var negationOk = document.settings["verbs-negation"];
+    if (negationOk){
+        return Math.floor( Math.random()*(3) +1 ) % 3 === 0 ? true : false;
+    }else{
+        return false;
+    }
+}
 
 Tester.prototype.canUseRegularSubject = function(){
     var singularOk = document.settings["subject-singular"].checked;
@@ -876,6 +896,9 @@ Tester.prototype.getEnglishVerb = function(){
             break;
         default:
             alert("I don't know this tense: " + this.currentTense);
+    }
+    if (this.isNegated){
+        englishVerbStr = englishVerbStr.replace(/\s([^\s]+)$/, ' not $1');
     }
     return englishVerbStr;
 };
@@ -1720,6 +1743,9 @@ radio {
                 </div>
                 <div class="input">
                     <label><input type="checkbox" name="verbs-future" checked="1"/>Include future tense</label>
+                </div>
+                <div class="input">
+                    <label><input type="checkbox" name="verbs-negation" checked="1"/>Include negations</label>
                 </div>
             </fieldset>
         </form>
