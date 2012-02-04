@@ -8,3 +8,5 @@ default:
 test:
 	mocha -r should t/01-basic.js
 
+#http://toolbox.no.de/packages/yui3-mocha ?
+
