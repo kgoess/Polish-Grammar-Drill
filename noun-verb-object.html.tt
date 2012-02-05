@@ -1,0 +1,393 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<!--
+Copyright (c) 2011 Kevin M. Goess
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<title>polish adjective agreement: subject-verb-object</title>
+
+<script type="text/javascript" src="http://yui.yahooapis.com/3.3.0/build/yui/yui-min.js"></script>
+
+<script type="text/javascript">
+
+/* TODO:
+   add wpol, kilo, więcej, mniej, litr, butelka, paczka for more genitive
+   bug: Dziadkowie nie czytają niebieskej książki. s/b niebieskiej
+   Będziemy lubili taniich ojców. fix that taniich to tanich
+   Support pronouns as direct objects
+   Allow multiple subjects
+   If they pin the subject we need to disable the "include * subjects" checkboxes
+   otherwise they might change it and generate an adjective for a pronoun.
+*/
+
+YUI().use('node', 'event-key', 'anim', 'substitute', function(Y) {
+
+var adjectiveEndings = {
+             //    m-p_+_a  m-inam    f      n
+ // "nominative-s": [    ~y or i~     'a'    'e'
+    "genitive-s":   [ 'ego',  'ego',  'ej', 'ego' ],
+    "dative-s":     [ 'emu',  'emu',  'ej', 'emu' ],
+    "accusative-s": [ 'ego',  '=nom', 'ą',  'e'   ],
+            //      m-pers    m       f    n 
+    "nominative-p": [ 'IRR',   '=nas', '=nas', '=nas'],
+    "genitive-p":   [ '*ch',   '*ch',  '*ch',  '*ch'] ,
+    "dative-p":     [ '*m',    '*m',   '*m',   '*m' ],
+    "accusative-p": [ '=gen',  '=nom', '=nom', '=nom'  ]
+};
+    
+var pronounData = [
+ [ 1, 's', '',           'I', ''],
+ [ 2, 's', '',           'you', ''],
+ [ 3, 's', 'm',          'he', ''], //what about m-personal?
+ [ 3, 's', 'f',          'she', ''],
+ [ 3, 's', 'm-personal', 'you (formal, masc.)', 'pan'],
+ [ 3, 's', 'f',          'you (formal, fem.)', 'pani'],
+ [ 1, 'p', '',           'we'],
+ [ 2, 'p', '',           'you all'],
+ [ 3, 'p', '',           'they'   ]
+ //[ 3, 'p',               'you all (formal, masc.)'],
+ //[ 3, 'p',               'you all (formal, mixed.)'], ????
+];
+  
+[% INCLUDE modules/data-nouns.js %]
+
+[% INCLUDE modules/data-adjectives.js %]
+
+[% INCLUDE modules/data-verbs.js %]
+
+[% INCLUDE modules/tester.js %]
+
+[% INCLUDE modules/word.js %]
+
+[% INCLUDE modules/noun.js %]
+
+[% INCLUDE modules/pronoun.js %]
+
+[% INCLUDE modules/adjective.js %]
+
+[% INCLUDE modules/verb.js %]
+
+
+// this stuff should be in its own function so we can scope the variables
+var tester = new Tester();
+var i, row, noun, pronoun, adjective, verb;
+for (i in nounData){
+    row = nounData[i];
+    noun = new Noun(row);
+    tester.addNoun(noun);
+}
+for (i in pronounData){
+    row = pronounData[i];
+    pronoun = new Pronoun(row);
+    tester.pronouns.push(pronoun);
+}
+
+for (i in adjectiveData){
+    row = adjectiveData[i];
+    adjective = new Adjective(row);
+    tester.adjectives.push(adjective);
+}
+
+for (i in verbData){
+    row = verbData[i];
+    verb = new Verb(row);
+    tester.addVerb(verb);
+}
+
+Y.on("domready", function() { 
+    // need to setup the checkboxes before we can generate the question
+    tester.populateCheckboxWordLists();
+    tester.askQuestion(); 
+});
+
+var returnPressed = 'down:13';
+Y.on('key', function(e) {
+    tester.checkAnswer();
+}, '#input', returnPressed, Y);
+
+Y.on('click', function(e){
+    tester.giveHint();
+   }, '#give-hint', Y
+);
+Y.on('click', function(e){
+    tester.askQuestion();
+    }, '#go-again', Y
+);
+Y.on('click', function(e){
+    tester.showAnswer();
+    }, '#show-answer', Y
+);
+Y.on('click', function(e){
+    tester.showHideWordList(e.currentTarget);
+    }, '.buttony-legend-input', Y
+);
+
+// delegating to the outer element since the inner ones come and go with each question
+Y.delegate('click', function(e){
+    tester.pushpinPushed(e.currentTarget);
+    }, '#question', ".pushpin",  Y
+);
+
+});
+
+
+</script>
+
+<style>
+body {
+    background: white;
+}
+
+.outer-box {
+    border: 1px solid red; 
+    margin: 50px; 
+    padding: 50px;
+    height: 600px;
+    width: 900px;
+}
+
+.left-box div {
+    padding: 10px;
+}
+.left-box {
+    float: left;
+    font-size: 200%;
+    width: 65%;
+}
+.test-box {
+    border: 1px solid black;
+}
+
+
+.graydot {
+    color: lightgrey;
+    padding: 4px;
+}
+
+.instructions {
+    color: grey;
+    font-size: 50%;
+}
+
+.settings-box {
+    border: 1px solid yellow;
+    float: right;
+    width: 30%;
+}
+
+.input {
+    margin: 0px;
+    padding: 0px;
+}
+.input label {
+    margin: 0px;
+    padding: 0px;
+}
+.input label.radiobuttons {
+    font-size: 75%;
+}
+input {
+    font-size: 75%;
+}
+radio {
+    margin: 0px;
+    padding: 0px;
+
+}
+
+.answer-word {
+    position: relative; /* //http://psacake.com/web/jl.asp */
+    z-index: 24;
+    text-decoration: none;
+    color: #000;
+}
+.answer-word:hover {
+    z-index: 25;
+}
+.tooltip {
+    display: none;
+    padding: 5px 10px 5px 10px;
+}
+.answer-word:hover .tooltip {
+    display: block;
+    position: absolute;
+    font-size: 50%;
+    border:1px solid #0cf;
+    background-color: lightgray; 
+    white-space: nowrap;
+    top:2em; left:2em;  /* these two are required, not sure why */
+}
+
+.question-word:hover .pushpin {
+    display: inline;
+}
+
+
+.pushpin {
+    /* display: block; */
+
+}
+
+.pushpin-hidden {
+    display: none;
+}
+
+.buttony-legend .buttony-legend-input {
+    display: none;
+}
+.buttony-legend .buttony-legend-text {
+    display: inline;
+}
+.buttony-legend:hover .buttony-legend-input {
+    display: inline;
+}
+.buttony-legend:hover .buttony-legend-text {
+    display: none;
+}
+
+/* the initially hidden list of vocabulary word checkboxes */
+.section-word-list {
+    overflow: auto; 
+    height: 5em; 
+    width: 80%; 
+    border: 1px solid gray;
+}
+
+.hidden {
+    display: none;
+}
+
+.answer-history {
+	overflow: auto;
+	height: 7em;
+	/* width:80%;  */
+	border: 1px solid green;
+	font-size: 50%;
+	padding: 10px;
+    margin-top: 10px;
+}
+.answer-history div {
+    margin: 1px;
+    padding: 1px;
+    color: grey;
+}
+
+
+</style>
+</head>
+<body>
+
+<div class="outer-box">
+    <div class="left-box">
+        <div class="test-box">
+            <div id="question">
+            </div>
+            <div id="input">
+                <input type="text" size="36" id="input-element">
+            </div>
+            <div id="output">
+            </div>
+            <div id="result">
+            </div>
+            <div class="buttons">
+                <button id="give-hint">Give me a hint?</button>
+                <button id="show-answer">Tell me the answer</button>
+                <br/>
+                <button id="go-again">Another test</button>
+            </div>
+            <div class="instructions">
+                <p>Type your answer in the box and press 'enter'.</p>
+                <p>Mouse-over the words in the <strong>question</strong> to pin particular words you want to focus on.</p>
+                <p>Mouse-over the words in the <strong>answer</strong> for additional details and a link to Wiktionary.org.</p>
+    
+            </div>
+        </div>
+        <div class="answer-history">
+
+        </div>
+    </div> <!-- end left box container -->
+    <div class="settings-box">
+        <form name="settings">
+            <fieldset>
+                <legend>Gender of Speaker:</legend>
+                <div class="input">
+                    <label><input type="radio" name="gender-of-speaker" value="m-personal" checked="1"/>Male</label>
+                    <label><input type="radio" name="gender-of-speaker" value="f"            />Female</label>
+                </div>
+            </fieldset>
+            <fieldset class="buttony-legend-XXXDisabledForNow">
+                <legend>
+                    <span class="buttony-legend-input-XXXDisabledForNow hidden" id="subject-section"><input type="button" value="Subjects"/></span><span class="buttony-legend-text">Subjects:</span>
+                </legend>
+                <div id="subject-section-list" class="input hidden section-word-list">
+                    <!-- populated by populateCheckboxWordLists on documentLoad -->
+                </div>
+                    
+                <div class="input">
+                    <label><input type="checkbox" name="subject-singular" checked="1"/>Include singular subjects</label>
+                </div>
+                <div class="input">
+                    <label><input type="checkbox" name="subject-plural" checked="1"/>Include plural subjects</label>
+                </div>
+                <div class="input">
+                    <label><input type="checkbox" name="subject-pronouns" checked="1"/>Include pronoun subjects</label>
+                </div>
+                <div class="input">
+                    <label><input type="checkbox" name="subject-adjectives"/>Attach adjectives to subjects</label>
+                </div>
+            </fieldset>
+            <fieldset>
+                <!-- this should be grayed out if the only option is pronoun subjects -->
+                <legend>Direct Objects</legend>
+                <div class="input">
+                    <label><input type="checkbox" name="object-adjectives" checked="1">Attach adjectives to the direct object</label>
+                </div>
+            <!-- could add "include verbs whose d/o takes the genitive (e.g. chcieć) -->
+            </fieldset>
+            <fieldset class="buttony-legend">
+                <legend>
+                    <span class="buttony-legend-input" id="verb-section"> <input type="button" value="Verbs"/></span><span class="buttony-legend-text">Verbs</span>
+                </legend>
+                <div id="verb-section-list" class="input hidden section-word-list" >
+                    <!-- populated by populateCheckboxWordLists on documentLoad -->
+                </div>
+                <div class="input">
+                    <label><input type="checkbox" name="verbs-present" checked="1"/>Include present tense</label>
+                </div>
+                <div class="input">
+                    <label><input type="checkbox" name="verbs-past" checked="1"/>Include past tense</label>
+                </div>
+                <div class="input">
+                    <label><input type="checkbox" name="verbs-future" checked="1"/>Include future tense</label>
+                </div>
+                <div class="input">
+                    Include negations:<br>
+                    <label class="radiobuttons"><input type="radio" name="verbs-negation" value="sometimes" checked="1"/>sometimes</label>
+                    <label class="radiobuttons"><input type="radio" name="verbs-negation" value="always"/>always</label>
+                    <label class="radiobuttons"><input type="radio" name="verbs-negation" value="never"/>never</label>
+                </div>
+            </fieldset>
+        </form>
+	</div>
+</div>
+
+
+</body>
+</html>

@@ -1,0 +1,117 @@
+***************
+*** 28,33 ****
+  <script type="text/javascript">
+  
+  /* TODO:
+     Będziemy lubili taniich ojców. fix that taniich to tanich
+     Support pronouns as direct objects
+     Allow multiple subjects
+--- 28,35 ----
+  <script type="text/javascript">
+  
+  /* TODO:
++    add wpol, kilo, więcej, mniej, litr, butelka, paczka for more genitive
++    bug: Dziadkowie nie czytają niebieskej książki. s/b niebieskiej
+     Będziemy lubili taniich ojców. fix that taniich to tanich
+     Support pronouns as direct objects
+     Allow multiple subjects
+***************
+*** 299,305 ****
+          p: [ 'potrzebujemy', 'potrzebujecie', 'potrzebują' ]
+        },
+        past_tense: {
+-         s:  [ 'potrzebowałem/potrzebowałam','potrzebowałeś/potrzebowałaś','potrzebował/potrzebowała' ],
+          p: [ 'potrzebowaliśmy/potrzebowałyśmy', 'potrzebowaliście/potrzebowałyście', 'potrzebowali/potrzebowały' ]
+        },
+        future_tense: {
+--- 301,307 ----
+          p: [ 'potrzebujemy', 'potrzebujecie', 'potrzebują' ]
+        },
+        past_tense: {
++         s: [ 'potrzebowałem/potrzebowałam','potrzebowałeś/potrzebowałaś','potrzebował/potrzebowała' ],
+          p: [ 'potrzebowaliśmy/potrzebowałyśmy', 'potrzebowaliście/potrzebowałyście', 'potrzebowali/potrzebowały' ]
+        },
+        future_tense: {
+***************
+*** 318,330 ****
+          p: [ 'wracamy', 'wracacie', 'wracają' ]
+        },
+        past_tense: {
+-         s:  [ 'wracałem/wracałam','wracałes/wracałas','wracał/wracała' ],
+          p: [ 'wracaliśmy/wracałyśmy', 'wracaliście/wracałyście', 'wracali/wracały' ]
+        },
+        future_tense: {
+          s: [ 'wracał', 'wracała'  ],
+          p: [ 'wracali', 'wracały' ] 
+        }
+      }
+  ];
+  
+--- 320,370 ----
+          p: [ 'wracamy', 'wracacie', 'wracają' ]
+        },
+        past_tense: {
++         s: [ 'wracałem/wracałam','wracałeś/wracałaś','wracał/wracała' ],
+          p: [ 'wracaliśmy/wracałyśmy', 'wracaliście/wracałyście', 'wracali/wracały' ]
+        },
+        future_tense: {
+          s: [ 'wracał', 'wracała'  ],
+          p: [ 'wracali', 'wracały' ] 
+        }
++     },
++     { infinitive: ['mieć', 'to have' ],
++       english_past: 'was having', 
++       english_future: 'will be having',
++       transitive: true,
++       ok_subjects: 'agent',
++       objects: 'any',
++       present_tense: {
++         s: [ 'mam', 'masz', 'ma' ],
++         p: [ 'mamy', 'macie', 'mają' ]
++       },
++       past_tense: {
++         s: [ 'miałem/miałam','miałeś/miałaś','miał/miała' ],
++         p: [ 'mieliśmy/miałysmy', 'mieliście/miałyście', 'mieli/miały' ]
++       },
++       future_tense: {
++         s: [ 'miał', 'miała'  ],
++         p: [ 'mieli', 'miały' ] 
++       }
++     },
++     { infinitive: ['widzieć', 'to see' ],
++       english_past: 'was seeing', 
++       english_future: 'will be seeing',
++       transitive: true,
++       ok_subjects: 'agent',
++       objects: 'any',
++       present_tense: {
++         s: [ 'widzę', 'widzisz', 'widzi' ],
++         p: [ 'widzimy', 'widzicie', 'widzą' ]
++       },
++       past_tense: {
++         s: [ 'widzałem/widzałam','widzałeś/widzałaś','widział/widziała' ],
++         p: [ 'widzieliśmy/widziełyśmy', 'widzieliście/widziełyscie', 'widzieli/widziały' ]
++       },
++       future_tense: {
++         s: [ 'widział', 'widziała'  ],
++         p: [ 'widzieli', 'widziały' ] 
++       }
+      }
+  ];
+  
+***************
+*** 1260,1265 ****
+      }
+      return result;
+  };
+  Adjective.prototype.genitiveSingularForGender = function (gender){
+      var stem = this.stem();
+      var masculineEnding = this.masculineEnding(); // "i" or "y"
+--- 1300,1306 ----
+      }
+      return result;
+  };
++ //bug: Dziadkowie nie czytają niebieskej książki. s/b niebieskiej
+  Adjective.prototype.genitiveSingularForGender = function (gender){
+      var stem = this.stem();
+      var masculineEnding = this.masculineEnding(); // "i" or "y"
