@@ -1,0 +1,136 @@
+
+body {
+    background: white;
+}
+
+.outer-box {
+    border: 1px solid red; 
+    margin: 50px; 
+    padding: 50px;
+    height: 600px;
+    width: 900px;
+}
+
+.left-box div {
+    padding: 10px;
+}
+.left-box {
+    float: left;
+    font-size: 200%;
+    width: 65%;
+}
+.test-box {
+    border: 1px solid black;
+}
+
+
+.graydot {
+    color: lightgrey;
+}
+
+.instructions {
+    color: grey;
+    font-size: 50%;
+}
+
+.settings-box {
+    border: 1px solid yellow;
+    float: right;
+    width: 30%;
+}
+
+.input {
+    margin: 0px;
+    padding: 0px;
+}
+.input label {
+    margin: 0px;
+    padding: 0px;
+}
+input {
+    font-size: 75%;
+}
+radio {
+    margin: 0px;
+    padding: 0px;
+
+}
+
+.answer-word {
+    position: relative; /* //http://psacake.com/web/jl.asp */
+    z-index: 24;
+    text-decoration: none;
+    color: #000;
+}
+.answer-word:hover {
+    z-index: 25;
+}
+.tooltip {
+    display: none;
+    padding: 5px 10px 5px 10px;
+}
+.answer-word:hover .tooltip {
+    display: block;
+    position: absolute;
+    font-size: 50%;
+    border:1px solid #0cf;
+    background-color: lightgray; 
+    white-space: nowrap;
+    top:2em; left:2em;  /* these two are required, not sure why */
+}
+
+.question-word:hover .pushpin {
+    display: inline;
+}
+
+
+.pushpin {
+    /* display: block; */
+
+}
+
+.pushpin-hidden {
+    display: none;
+}
+
+.buttony-legend .buttony-legend-input {
+    display: none;
+}
+.buttony-legend .buttony-legend-text {
+    display: inline;
+}
+.buttony-legend:hover .buttony-legend-input {
+    display: inline;
+}
+.buttony-legend:hover .buttony-legend-text {
+    display: none;
+}
+
+/* the initially hidden list of vocabulary word checkboxes */
+.section-word-list {
+    overflow: auto; 
+    height: 5em; 
+    width: 80%; 
+    border: 1px solid gray;
+}
+
+.hidden {
+    display: none;
+}
+
+.answer-history {
+	overflow: auto;
+	height: 7em;
+	/* width:80%;  */
+	border: 1px solid green;
+	font-size: 50%;
+	padding: 10px;
+    margin-top: 10px;
+}
+.answer-history div {
+    margin: 1px;
+    padding: 1px;
+    color: grey;
+}
+
+
