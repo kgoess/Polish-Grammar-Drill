@@ -42,3 +42,12 @@ var adjectiveData = [
  //light lekka ...
  //powolne
 ];
+adjectiveData.findRow = function(english){
+    var i;
+    for (i = 0; i < this.length; ++i){
+        if (this[i][0] === english){
+            return this[i];
+        }
+    }
+    return false;
+};
