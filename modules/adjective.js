@@ -1,4 +1,7 @@
 
+var exported = require('../node_modules/yui3-mocha/package.js');
+
+exported.YUI().use('nodex', function (Y){
 /**
  * Can be attached to the subject or the direct object, or turned off on either/both of those
  * @class Adjective
@@ -12,7 +15,14 @@ function Adjective(args){
 
     this.wordId = this.m; // like a primary key for all the words here
 }
+var m;
+for(m in Y){
+    console.log("Y."+m+" is " + Y.m);
+}
+console.log("in my adjective.js Y is " + Y);
 Y.extend(Adjective, Word);
+
+
 
 Adjective.prototype.adjectiveEndings = adjectiveEndings;
 Adjective.prototype.nominativeSingularForGender = function (gender){
@@ -177,3 +187,4 @@ Adjective.prototype.makePolishStr = function(args){
     return adjectiveStr;
 };
 
+});
