@@ -11,11 +11,11 @@ test:
 #http://toolbox.no.de/packages/yui3-mocha ?
 
 build:
-	perl -np -e '                      \
-		if (/\[% INCLUDE (\S+) %\]/){     \
-			my $$filename = $$1;      \
-			die "bad filename $$_"    \
-				unless -e $$filename; \
-			$$_ = `cat $$filename`;   \
-		}                             \
-	' noun-verb-object.html.tt > noun-verb-object.html
+	perl -np -e '                      '\
+	'	if (/\[% INCLUDE (\S+) %\]/){  '\
+	'		my $$filename = $$1;       '\
+	'		die "bad filename $$_"     '\
+	'			unless -e $$filename;  '\
+	'		$$_ = `cat $$filename`;    '\
+	'	}                              '\
+	 noun-verb-object.html.tt > noun-verb-object.html
