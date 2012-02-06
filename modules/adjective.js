@@ -1,7 +1,9 @@
 
-var exported = require('../node_modules/yui3-mocha/package.js');
+var yui3 = require('yui3');
+var YUI = yui3.YUI;
+exports.foox = 123;
 
-exported.YUI().use('node', function (Y){
+YUI.add('adjective', function (Y){
 /**
  * Can be attached to the subject or the direct object, or turned off on either/both of those
  * @class Adjective
@@ -15,10 +17,12 @@ function Adjective(args){
 
     this.wordId = this.m; // like a primary key for all the words here
 }
-console.log("in my adjective.js Y is " + Y);
+console.log("****in my adjective.js Y is " + Y);
 Y.extend(Adjective, Word);
 
 
+
+exports.Adjective = Adjective;
 
 Adjective.prototype.adjectiveEndings = adjectiveEndings;
 Adjective.prototype.nominativeSingularForGender = function (gender){
@@ -183,4 +187,14 @@ Adjective.prototype.makePolishStr = function(args){
     return adjectiveStr;
 };
 
-});
+}
+,
+'0.01',
+{requires: 
+[]//    ['node']
+    ['word']
+}
+);
+
+YUI().use('adjective', function(Y){ console.log("here in YUI().use's callback ");});
+console.log("after YUI().use");
