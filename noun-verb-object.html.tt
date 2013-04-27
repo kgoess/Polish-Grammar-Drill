@@ -39,18 +39,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 YUI().use('node', 'event-key', 'anim', 'substitute', function(Y) {
 
-var adjectiveEndings = {
-             //    m-p_+_a  m-inam    f      n
- // "nominative-s": [    ~y or i~     'a'    'e'
-    "genitive-s":   [ 'ego',  'ego',  'ej', 'ego' ],
-    "dative-s":     [ 'emu',  'emu',  'ej', 'emu' ],
-    "accusative-s": [ 'ego',  '=nom', 'ą',  'e'   ],
-            //      m-pers    m       f    n 
-    "nominative-p": [ 'IRR',   '=nas', '=nas', '=nas'],
-    "genitive-p":   [ '*ch',   '*ch',  '*ch',  '*ch'] ,
-    "dative-p":     [ '*m',    '*m',   '*m',   '*m' ],
-    "accusative-p": [ '=gen',  '=nom', '=nom', '=nom'  ]
-};
     
 var pronounData = [
  [ 1, 's', '',           'I', ''],

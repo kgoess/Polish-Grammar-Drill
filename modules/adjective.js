@@ -1,9 +1,8 @@
 
-var yui3 = require('yui3');
+var yui3 = require('yui');
 var YUI = yui3.YUI;
 exports.foox = 123;
 
-YUI.add('adjective', function (Y){
 /**
  * Can be attached to the subject or the direct object, or turned off on either/both of those
  * @class Adjective
@@ -17,12 +16,24 @@ function Adjective(args){
 
     this.wordId = this.m; // like a primary key for all the words here
 }
-console.log("****in my adjective.js Y is " + Y);
-Y.extend(Adjective, Word);
+//Y.extend(Adjective, Word);
 
 
 
 exports.Adjective = Adjective;
+
+var adjectiveEndings = {
+             //    m-p_+_a  m-inam    f      n
+ // "nominative-s": [    ~y or i~     'a'    'e'
+    "genitive-s":   [ 'ego',  'ego',  'ej', 'ego' ],
+    "dative-s":     [ 'emu',  'emu',  'ej', 'emu' ],
+    "accusative-s": [ 'ego',  '=nom', 'ą',  'e'   ],
+            //      m-pers    m       f    n 
+    "nominative-p": [ 'IRR',   '=nas', '=nas', '=nas'],
+    "genitive-p":   [ '*ch',   '*ch',  '*ch',  '*ch'] ,
+    "dative-p":     [ '*m',    '*m',   '*m',   '*m' ],
+    "accusative-p": [ '=gen',  '=nom', '=nom', '=nom'  ]
+};
 
 Adjective.prototype.adjectiveEndings = adjectiveEndings;
 Adjective.prototype.nominativeSingularForGender = function (gender){
@@ -187,14 +198,3 @@ Adjective.prototype.makePolishStr = function(args){
     return adjectiveStr;
 };
 
-}
-,
-'0.01',
-{requires: 
-[]//    ['node']
-    ['word']
-}
-);
-
-YUI().use('adjective', function(Y){ console.log("here in YUI().use's callback ");});
-console.log("after YUI().use");
