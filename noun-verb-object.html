@@ -29,7 +29,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /* TODO:
    add wpol, kilo, więcej, mniej, litr, butelka, paczka for more genitive
-   bug: Dziadkowie nie czytają niebieskej książki. s/b niebieskiej
    Będziemy lubili taniich ojców. fix that taniich to tanich
    Support pronouns as direct objects
    Allow multiple subjects
@@ -1300,7 +1299,6 @@ Adjective.prototype.nominativePluralForGender = function (gender){
     }
     return result;
 };
-//bug: Dziadkowie nie czytają niebieskej książki. s/b niebieskiej
 Adjective.prototype.genitiveSingularForGender = function (gender){
     var stem = this.stem();
     var masculineEnding = this.masculineEnding(); // "i" or "y"
