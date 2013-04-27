@@ -69,7 +69,7 @@ Adjective.prototype.nominativePluralForGender = function (gender){
     }
     return result;
 };
-//bug: Dziadkowie nie czytają niebieskej książki. s/b niebieskiej
+
 Adjective.prototype.genitiveSingularForGender = function (gender){
     var stem = this.stem();
     var masculineEnding = this.masculineEnding(); // "i" or "y"
@@ -77,25 +77,35 @@ Adjective.prototype.genitiveSingularForGender = function (gender){
     var result = '';
     switch(gender) {
         case 'f': 
-            result = stem + endings[2];
+            result = this.addEndingToStemSingular(endings[2]);
             break;
         case 'n':
-            result = stem + endings[3];
+            result = this.addEndingToStemSingular(endings[3]);
             break;
         case 'm':
         case 'm-animate':
         case 'm-personal':
-            if (stem.charAt(stem.length-1)=='k'){
-                result = stem + 'i' + endings[0];  //e.g. bliskiego
-            }else{
-                result = stem + endings[0];
-            }
+            result = this.addEndingToStemSingular(endings[0]);
             break;
         default:
             alert("Hey, what gender is '" + gender + "' supposed to be?");
     }
     return result;
 };
+
+Adjective.prototype.addEndingToStemSingular = function (ending){
+    var stem = this.stem(),
+        result;
+    if (stem.charAt(stem.length-1)=='k'){
+        result = stem + 'i' + ending;  //e.g. bliskiego
+    }else{
+        result = stem + ending;
+    }
+    return result;
+}
+
+
+
 
 Adjective.prototype.genitivePluralForGender = function (gender) {
     var stem = this.stem();
