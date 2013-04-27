@@ -77,15 +77,15 @@ Adjective.prototype.genitiveSingularForGender = function (gender){
     var result = '';
     switch(gender) {
         case 'f': 
-            result = this.addEndingToStemSingular(endings[2]);
+            result = this.addEndingToStemGenitiveSingular(endings[2]);
             break;
         case 'n':
-            result = this.addEndingToStemSingular(endings[3]);
+            result = this.addEndingToStemGenitiveSingular(endings[3]);
             break;
         case 'm':
         case 'm-animate':
         case 'm-personal':
-            result = this.addEndingToStemSingular(endings[0]);
+            result = this.addEndingToStemGenitiveSingular(endings[0]);
             break;
         default:
             alert("Hey, what gender is '" + gender + "' supposed to be?");
@@ -93,19 +93,16 @@ Adjective.prototype.genitiveSingularForGender = function (gender){
     return result;
 };
 
-Adjective.prototype.addEndingToStemSingular = function (ending){
+Adjective.prototype.addEndingToStemGenitiveSingular = function (ending){
     var stem = this.stem(),
         result;
-    if (stem.charAt(stem.length-1)=='k'){
+    if (stem.charAt(stem.length-1) == 'k'){
         result = stem + 'i' + ending;  //e.g. bliskiego
     }else{
         result = stem + ending;
     }
     return result;
 }
-
-
-
 
 Adjective.prototype.genitivePluralForGender = function (gender) {
     var stem = this.stem();
@@ -123,8 +120,10 @@ Adjective.prototype.genitivePluralForGender = function (gender) {
         default:
             alert("Hey, what gender is '" + gender + "' supposed to be?");
     }
-    return result.replace('*', masculineEnding);
+    // for e.g. tani we don't want to end up with taniich
+    return result.replace(/i?\*/, masculineEnding);
 };
+
 
 Adjective.prototype.stem = function (){
     return this.f.replace(/a$/, '');
