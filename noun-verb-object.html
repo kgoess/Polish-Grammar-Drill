@@ -1348,7 +1348,7 @@ Adjective.prototype.genitivePluralForGender = function (gender) {
         default:
             alert("Hey, what gender is '" + gender + "' supposed to be?");
     }
-    return result.replace('*', masculineEnding);
+    return result.replace(/i?\*/, masculineEnding);
 };
 
 Adjective.prototype.stem = function (){
