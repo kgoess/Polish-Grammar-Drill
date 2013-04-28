@@ -28,10 +28,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript">
 
 /* TODO:
-   bug: f acc s niebieskią s/b niebieską, 
-        see notes in adj re "should move this logic into the stem method?"
+   see notes in adj re "should move this logic into the stem method?"
    add wszytsky, wpoł, kilo, więcej, mniej, litr, butelka, paczka for more genitive
-   bug: Dziadkowie nie czytają niebieskej książki. s/b niebieskiej
    Będziemy lubili taniich ojców. fix that taniich to tanich
    Support pronouns as direct objects
    Allow multiple subjects

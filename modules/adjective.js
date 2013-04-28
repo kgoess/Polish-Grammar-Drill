@@ -141,7 +141,9 @@ Adjective.prototype.accusativeSingularForGender = function (gender){
     // for e.g. niskie ryby, should move this logic into the stem method?
     //       k and g go to k′ and g′ before endings beginning with y or è: wielk-y:
     //       wielk′-y/i, spelled wielki; wielk-è: wielk′-e, spelled wielkie
-    if (stem.match(/[kg]$/)){
+
+    // F gets its own stem below so this is irrelevant for F
+    if (gender !== 'f' && stem.match(/[kg]$/)){
         stem = stem + 'i';
     }
     var masculineEnding = this.masculineEnding(); // "i" or "y"
@@ -149,6 +151,8 @@ Adjective.prototype.accusativeSingularForGender = function (gender){
     var result = '';
     switch(gender) {
         case 'f': 
+            stem = this.nominativeSingularForGender('f');
+            stem = stem.replace(/a$/, '');
             result = stem + endings[2];
             break;
         case 'n':

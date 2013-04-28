@@ -37,8 +37,6 @@ describe('adjective', function(){
         );
         it('(f) should be niebieskiej for niebieski', function(){
             niebieski.genitiveSingularForGender('f').should.equal('niebieskiej');
-            
-          //[1,2,3].indexOf(5).should.equal(-1);
         });
         it('(n) should be niebieskiego for niebieski', function(){
             niebieski.genitiveSingularForGender('n').should.equal('niebieskiego');
@@ -47,6 +45,20 @@ describe('adjective', function(){
             niebieski.genitiveSingularForGender('m').should.equal('niebieskiego');
             niebieski.genitiveSingularForGender('m-animate').should.equal('niebieskiego');
             niebieski.genitiveSingularForGender('m-personal').should.equal('niebieskiego');
+        });
+    })
+    describe('accusativeSingularForFeminineStemsEndingIn-k', function(){
+        var niebieski = new Adjective(
+            ['blue',   'niebieski',  'niebieska',  'niebieskie', 'niebiescy' ]
+        );
+        it('(f) should be niebieską for niebieski', function(){
+            niebieski.accusativeSingularForGender('f').should.equal('niebieską');
+        });
+        it('other singulars for niebieski should stay the same', function(){
+            niebieski.accusativeSingularForGender('n').should.equal('niebieskie');
+            niebieski.accusativeSingularForGender('m').should.equal('niebieski');
+            niebieski.accusativeSingularForGender('m-animate').should.equal('niebieskiego');
+            niebieski.accusativeSingularForGender('m-personal').should.equal('niebieskiego');
         });
     })
 
@@ -59,8 +71,6 @@ describe('adjective', function(){
         );
         it('(m-pers) should be tanich, not taniich', function(){
             tani.genitivePluralForGender('m-personal').should.equal('tanich');
-            
-          //[1,2,3].indexOf(5).should.equal(-1);
         });
         it('other plurals for tani should stay the same', function(){
             tani.genitivePluralForGender('f').should.equal('tanich');
