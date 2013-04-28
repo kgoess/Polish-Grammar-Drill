@@ -1,7 +1,10 @@
 
-var yui3 = require('yui');
-var YUI = yui3.YUI;
-exports.foox = 123;
+// needed for our unit tests in mocha
+var exports;
+if (typeof exports === "undefined"){
+    exports = {};
+} 
+
 
 /**
  * Can be attached to the subject or the direct object, or turned off on either/both of those
@@ -17,7 +20,6 @@ function Adjective(args){
     this.wordId = this.m; // like a primary key for all the words here
 }
 //Y.extend(Adjective, Word);
-
 
 
 exports.Adjective = Adjective;
@@ -133,7 +135,7 @@ Adjective.prototype.masculineEnding = function(){
 };
 Adjective.prototype.accusativeSingularForGender = function (gender){
     var stem = this.stem();
-    // for e.g. niskie ryby, should move this logit into the stem method?
+    // for e.g. niskie ryby, should move this logic into the stem method?
     //       k and g go to k′ and g′ before endings beginning with y or è: wielk-y:
     //       wielk′-y/i, spelled wielki; wielk-è: wielk′-e, spelled wielkie
     if (stem.match(/[kg]$/)){

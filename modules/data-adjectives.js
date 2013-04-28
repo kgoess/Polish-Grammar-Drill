@@ -41,6 +41,7 @@ var adjectiveData = [
  //[ 'heavy', 'ci
  //light lekka ...
  //powolne
+ //mili nice
 ];
 adjectiveData.findRow = function(english){
     var i;
