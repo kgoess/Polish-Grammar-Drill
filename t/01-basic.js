@@ -4,14 +4,15 @@ var yui3 = require('yui');
 
 var YUI = yui3.YUI;
 
-exports = require ('../modules/adjective.js');
 
+var adjective_exports = require ('../modules/adjective.js');
+var Adjective = adjective_exports.Adjective;
+var word_exports = require ('../modules/word.js');
+var Word = word_exports.Word;
 
-//var Y = YUI().use('adjective', function(Y){});
-var Y;
+var Y = YUI().use();
+//Y.extend(Adjective, Word);
 
-
-var Adjective = exports.Adjective;
 
 describe('adjective', function(){
     describe('genitiveSingularForStemsEndingIn-k', function(){

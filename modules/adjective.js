@@ -19,6 +19,8 @@ function Adjective(args){
 
     this.wordId = this.m; // like a primary key for all the words here
 }
+//augment would be better than extend anyway
+//http://yuilibrary.com/yui/docs/yui/yui-augment.html
 //Y.extend(Adjective, Word);
 
 
