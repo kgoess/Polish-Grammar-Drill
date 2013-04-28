@@ -151,6 +151,7 @@ Adjective.prototype.accusativeSingularForGender = function (gender){
     var result = '';
     switch(gender) {
         case 'f': 
+            // note we're re-assigning to stem
             stem = this.nominativeSingularForGender('f');
             stem = stem.replace(/a$/, '');
             result = stem + endings[2];
