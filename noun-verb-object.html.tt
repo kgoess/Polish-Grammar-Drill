@@ -74,6 +74,11 @@ var pronounData = [
 
 [% INCLUDE modules/verb.js %]
 
+// See notes in 01-basic.js for why we have to do this here
+// and not in the modules.
+// Possibly change this to use 'augment' instead of 'extend'?
+Y.extend(Adjective, Word);
+
 
 // this stuff should be in its own function so we can scope the variables
 var tester = new Tester();

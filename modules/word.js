@@ -3,9 +3,18 @@
  * This is the base class for Noun, Verb, Adjective, and Pronoun.
  * @class Word
  */    
+
+// "exports" is needed for our unit tests in mocha
+var exports;
+if (typeof exports === "undefined"){
+    exports = {};
+} 
+
 function Word(){
 
 }
+
+exports.Word = Word;
 
 Word.prototype.wrapInTooltipDivsTemplate = function (args){
     var str              = args.polishStr;

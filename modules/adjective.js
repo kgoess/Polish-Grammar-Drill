@@ -1,5 +1,6 @@
 
-// needed for our unit tests in mocha
+// "exports" is needed for our unit tests in mocha
+// this fakes it up in case we're *not* in mocha
 var exports;
 if (typeof exports === "undefined"){
     exports = {};
