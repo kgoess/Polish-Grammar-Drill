@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /* TODO:
    see notes in adj re "should move this logic into the stem method?"
    add wszytsky, wpoł, kilo, więcej, mniej, litr, butelka, paczka for more genitive
+   add verbs that take the genitive: potrzebować, zapomnieć, używać, bać się
    Będziemy lubili taniich ojców. fix that taniich to tanich
    Support pronouns as direct objects
    Allow multiple subjects
@@ -352,7 +353,7 @@ radio {
                 <div class="input">
                     <label><input type="checkbox" name="object-adjectives" checked="1">Attach adjectives to the direct object</label>
                 </div>
-            <!-- could add "include verbs whose d/o takes the genitive (e.g. chcieć) -->
+            <!-- could add "include verbs whose d/o takes the genitive (e.g. potrzebować, (chcieć?) ) -->
             </fieldset>
             <fieldset class="buttony-legend">
                 <legend>
