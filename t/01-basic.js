@@ -82,4 +82,4 @@ describe('adjective', function(){
             niebieski.genitivePluralForGender('n').should.equal('niebieskich');
         });
     })
-})
+});
