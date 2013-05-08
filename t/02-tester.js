@@ -9,6 +9,8 @@ var adjective_exports = require ('../modules/adjective.js');
 var Adjective = adjective_exports.Adjective;
 var word_exports = require ('../modules/word.js');
 var Word = word_exports.Word;
+var tester_exports = require ('../modules/tester.js');
+var Tester = tester_exports.Tester;
 
 var Y;
 
