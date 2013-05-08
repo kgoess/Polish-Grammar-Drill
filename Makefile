@@ -13,7 +13,8 @@ install-dev:
 install-dev-patch-yui3:
 
 test:
-	mocha -r should t/01-basic.js
+	mocha -r should t/01-adjective.js
+	mocha -r should t/02-tester.js
 
 #http://toolbox.no.de/packages/yui3-mocha ?
 

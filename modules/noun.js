@@ -1,4 +1,11 @@
 
+// "exports" is needed for our unit tests in mocha
+// this fakes it up in case we're *not* in mocha
+var exports;
+if (typeof exports === "undefined"){
+    exports = {};
+} 
+
 /**
  * Can be the subject or the direct object
  * @class Noun
@@ -18,7 +25,10 @@ function Noun(args){
 
     this.wordId = this.nom_sing; // like a primary key for all the words here
 }
-Y.extend(Noun, Word);
+
+exports.Noun = Noun;
+
+//Y.extend(Noun, Word);
 
 Noun.prototype.getGender = function(){
     return this.gender;

@@ -11,6 +11,10 @@ var word_exports = require ('../modules/word.js');
 var Word = word_exports.Word;
 var tester_exports = require ('../modules/tester.js');
 var Tester = tester_exports.Tester;
+var noun_exports = require ('../modules/noun.js');
+var Noun = noun_exports.Noun;
+var verb_exports = require ('../modules/verb.js');
+var Verb = verb_exports.Verb;
 
 var Y;
 
@@ -23,10 +27,15 @@ before (function (done) {
         modules: {
             Word: {},
             Adjective: {},
+            Tester: {},
+            Noun: {},
+            Verb: {},
         }
     }).use(['base'], function () {
         //make this 'augment' instead of 'extend'?
         Y.extend(Adjective, Word);
+        Y.extend(Noun, Word);
+        Y.extend(Verb, Word);
         done();
     });
 });
@@ -37,6 +46,34 @@ describe('adjective', function(){
         var niebieski = new Adjective(
             ['blue',   'niebieski',  'niebieska',  'niebieskie', 'niebiescy' ]
         );
+        var córka = new Noun(
+            [ 'daughter',   'daughters',    'córka',    'córki',     'córki',    'córek',     'córkę',    'córki',     'f',          'i-agent' ] 
+        );
+        var czytać = new Verb(
+            { infinitive: [ 'czytać', "to read" ],
+              english_past: 'was reading',
+              english_future: 'will be reading',
+              transitive: true,
+              ok_subjects: 'i-agent',
+              objects: [ 'książka', 'gazeta', 'list', 'słownik', 'znak' 
+              ],
+              present_tense: {
+                s: [ 'czytam', 'czytasz', 'czyta' ],
+                p: [ 'czytamy', 'czytacie', 'czytają' ]
+              },
+              past_tense: {
+                s: [ 'czytałem/czytałam', 'czytałeś/czytałaś', 'czytał/czytała/czytało' ],
+                p: [ 'czytaliśmy/czytałyśmy', 'czytaliście/czytałyście', 'czytali/czytały' ]
+              },
+              future_tense: {
+                s: [ 'czytał', 'czytała' ],
+                p: [ 'czytali', 'czytały']
+              }
+            }
+        );
+        var Tester = new Tester();
+        tester.adjectives.push(adjective);
+
         it('(f) should be niebieskiej for niebieski', function(){
             niebieski.genitiveSingularForGender('f').should.equal('niebieskiej');
         });

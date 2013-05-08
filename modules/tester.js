@@ -1,4 +1,11 @@
 
+// "exports" is needed for our unit tests in mocha
+// this fakes it up in case we're *not* in mocha
+var exports;
+if (typeof exports === "undefined"){
+    exports = {};
+} 
+
 /**
  * This is the controller class that drives the page, keeps track of the 
  * current sentence and checks the answer.
@@ -20,6 +27,9 @@ function Tester(){
     this.subjectIsPronoun = false; // for the current sentence
     this.isNegated = false;
 };
+
+exports.Tester = Tester;
+
 
 
 Tester.prototype.addNoun = function(noun){

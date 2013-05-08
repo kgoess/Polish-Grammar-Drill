@@ -1,4 +1,11 @@
 
+// "exports" is needed for our unit tests in mocha
+// this fakes it up in case we're *not* in mocha
+var exports;
+if (typeof exports === "undefined"){
+    exports = {};
+} 
+
 /**
  * @class Verb
  */
@@ -17,7 +24,8 @@ function Verb(args){
 
     this.pinned        = false;
 };
-Y.extend(Verb, Word);
+//Y.extend(Verb, Word);
+exports.Verb = Verb;
 
 // This breaks down for pan/pani, since that's 3rd person
 // but should read "you were running" since it's

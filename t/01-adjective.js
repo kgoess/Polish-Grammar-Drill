@@ -51,6 +51,9 @@ describe('adjective', function(){
         var niebieski = new Adjective(
             ['blue',   'niebieski',  'niebieska',  'niebieskie', 'niebiescy' ]
         );
+        var długi = new Adjective(
+            [ 'long',   'długi',      'długa',      'długie',     'dłudzy'     ] 
+        );
         it('(f) should be niebieską for niebieski', function(){
             niebieski.accusativeSingularForGender('f').should.equal('niebieską');
         });
@@ -59,6 +62,25 @@ describe('adjective', function(){
             niebieski.accusativeSingularForGender('m').should.equal('niebieski');
             niebieski.accusativeSingularForGender('m-animate').should.equal('niebieskiego');
             niebieski.accusativeSingularForGender('m-personal').should.equal('niebieskiego');
+        });
+        it('makePolishStr should give niebieską for niebieski', function(){
+            niebieski.makePolishStr({
+                    caseMethodName:    "accusativeSingularForGender", 
+                    gender:            'f',
+                    isInitialWord:     false,
+                    wrapInTooltipDivs: false,
+                }).should.equal('niebieską')
+        });
+        it('(f) should be długą for długi', function(){
+            długi.accusativeSingularForGender('f').should.equal('długą');
+        });
+        it('makePolishStr should give długą for długi', function(){
+            długi.makePolishStr({
+                    caseMethodName:    "accusativeSingularForGender", 
+                    gender:            'f',
+                    isInitialWord:     false,
+                    wrapInTooltipDivs: false,
+                }).should.equal('długą')
         });
     })
 
