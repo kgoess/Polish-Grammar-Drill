@@ -1,7 +1,7 @@
 
 /* TODO:
    bug: Konie będą biegły. s/b Konie będą biegały.
-   bug: where's the adjective? you (formal, fem.) + was reading + the long newspaper = Pani czytała gazetę.
+   bug: you (formal, masc.) + to not eat + the expensive carrot. Pan nie je drogej marchwi. s/b drogiej.
    add wpol, kilo, więcej, mniej, litr, butelka, paczka for more genitive
    Support pronouns as direct objects
    Allow multiple subjects
