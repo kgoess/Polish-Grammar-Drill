@@ -33,92 +33,82 @@ before (function (done) {
         }
     }).use(['base'], function () {
         //make this 'augment' instead of 'extend'?
+console.log("******** doing the extends**************");
         Y.extend(Adjective, Word);
-        Y.extend(Noun, Word);
+        Y.augment(Noun, Word);
         Y.extend(Verb, Word);
         done();
     });
 });
 
 
-describe('adjective', function(){
-    describe('genitiveSingularForStemsEndingIn-k', function(){
-        var niebieski = new Adjective(
-            ['blue',   'niebieski',  'niebieska',  'niebieskie', 'niebiescy' ]
-        );
-        var córka = new Noun(
-            [ 'daughter',   'daughters',    'córka',    'córki',     'córki',    'córek',     'córkę',    'córki',     'f',          'i-agent' ] 
-        );
-        var czytać = new Verb(
-            { infinitive: [ 'czytać', "to read" ],
-              english_past: 'was reading',
-              english_future: 'will be reading',
-              transitive: true,
-              ok_subjects: 'i-agent',
-              objects: [ 'książka', 'gazeta', 'list', 'słownik', 'znak' 
-              ],
-              present_tense: {
-                s: [ 'czytam', 'czytasz', 'czyta' ],
-                p: [ 'czytamy', 'czytacie', 'czytają' ]
-              },
-              past_tense: {
-                s: [ 'czytałem/czytałam', 'czytałeś/czytałaś', 'czytał/czytała/czytało' ],
-                p: [ 'czytaliśmy/czytałyśmy', 'czytaliście/czytałyście', 'czytali/czytały' ]
-              },
-              future_tense: {
-                s: [ 'czytał', 'czytała' ],
-                p: [ 'czytali', 'czytały']
-              }
-            }
-        );
-        var Tester = new Tester();
-        tester.adjectives.push(adjective);
+// load some words to test with
+var niebieski = new Adjective(
+    ['blue',   'niebieski',  'niebieska',  'niebieskie', 'niebiescy' ]
+);
+var córka = new Noun(
+    [ 'daughter',   'daughters',    'córka',    'córki',     'córki',    'córek',     'córkę',    'córki',     'f',          'i-agent' ] 
+);
+var książka = new Noun(
+    [ 'book',       'books',        'książka',  'książki',   'książki',  'książek',   'książkę',  'książki',   'f',          'no-agent' ] 
+);
+var spodnica = new Noun(
+    [ 'skirt',      'skirts',       'spódnica', 'spódnice',  'spódnicy', 'spódnic',   'spódnicę', 'spódnice',  'f',          'no-agent' ] 
+);
 
-        it('(f) should be niebieskiej for niebieski', function(){
-            niebieski.genitiveSingularForGender('f').should.equal('niebieskiej');
-        });
-        it('(n) should be niebieskiego for niebieski', function(){
-            niebieski.genitiveSingularForGender('n').should.equal('niebieskiego');
-        });
-        it('other singulars for niebieski should stay the same', function(){
-            niebieski.genitiveSingularForGender('m').should.equal('niebieskiego');
-            niebieski.genitiveSingularForGender('m-animate').should.equal('niebieskiego');
-            niebieski.genitiveSingularForGender('m-personal').should.equal('niebieskiego');
-        });
-    })
-    describe('accusativeSingularForFeminineStemsEndingIn-k', function(){
-        var niebieski = new Adjective(
-            ['blue',   'niebieski',  'niebieska',  'niebieskie', 'niebiescy' ]
-        );
-        it('(f) should be niebieską for niebieski', function(){
-            niebieski.accusativeSingularForGender('f').should.equal('niebieską');
-        });
-        it('other singulars for niebieski should stay the same', function(){
-            niebieski.accusativeSingularForGender('n').should.equal('niebieskie');
-            niebieski.accusativeSingularForGender('m').should.equal('niebieski');
-            niebieski.accusativeSingularForGender('m-animate').should.equal('niebieskiego');
-            niebieski.accusativeSingularForGender('m-personal').should.equal('niebieskiego');
-        });
-    })
+var czytać = new Verb(
+    { infinitive: [ 'czytać', "to read" ],
+      english_past: 'was reading',
+      english_future: 'will be reading',
+      transitive: true,
+      ok_subjects: 'i-agent',
+      objects: [ 'książka', 'gazeta', 'list', 'słownik', 'znak' 
+      ],
+      present_tense: {
+        s: [ 'czytam', 'czytasz', 'czyta' ],
+        p: [ 'czytamy', 'czytacie', 'czytają' ]
+      },
+      past_tense: {
+        s: [ 'czytałem/czytałam', 'czytałeś/czytałaś', 'czytał/czytała/czytało' ],
+        p: [ 'czytaliśmy/czytałyśmy', 'czytaliście/czytałyście', 'czytali/czytały' ]
+      },
+      future_tense: {
+        s: [ 'czytał', 'czytała' ],
+        p: [ 'czytali', 'czytały']
+      }
+    }
+);
 
-    describe('genitivePluralForStemsEndingIn-i', function(){
-        var tani = new Adjective(
-            [ 'cheap',     'tani',    'tania',      'tanie',      'tani'       ]
-        );
-        var niebieski = new Adjective(
-            ['blue',   'niebieski',  'niebieska',  'niebieskie', 'niebiescy' ]
-        );
-        it('(m-pers) should be tanich, not taniich', function(){
-            tani.genitivePluralForGender('m-personal').should.equal('tanich');
+describe('tester', function(){
+    var tester = new Tester();
+
+    // need a "addAdjective" method that does this
+    tester.adjectives.push(niebieski);
+    tester.addVerb(czytać);
+    tester.addNoun(córka);
+    tester.addNoun(książka);
+
+    tester.currentVerb = czytać;
+    tester.currentTense = 'present';
+    tester.isNegated = false;
+
+    tester.subjectNumber = 'singular';
+    tester.currentPerson = 3;
+    tester.currentSubject = córka;
+    tester.subjectIsPronoun = false;
+
+    tester.currentObject = null;
+    tester.objectAdjective = null;
+    tester.objectNumber = null;
+
+    describe('currentEnglishSentence', function(){
+        it('should be xxx for córka czyta', function(){
+            tester.currentEnglishSentence().should.equal('yyy');
         });
-        it('other plurals for tani should stay the same', function(){
-            tani.genitivePluralForGender('f').should.equal('tanich');
-            tani.genitivePluralForGender('n').should.equal('tanich');
-            tani.genitivePluralForGender('m').should.equal('tanich');
-            tani.genitivePluralForGender('m-animate').should.equal('tanich');
+    });
+    describe('currentPolishSentence', function(){
+        it('should be xxx for córka czyta', function(){
+            tester.currentPolishSentence().should.equal('yyyy');
         });
-        it('(n) doubl-checking niebieski', function(){
-            niebieski.genitivePluralForGender('n').should.equal('niebieskich');
-        });
-    })
+    });
 });
