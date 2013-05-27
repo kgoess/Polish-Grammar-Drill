@@ -1,4 +1,11 @@
 
+// "exports" is needed for our unit tests in mocha
+// this fakes it up in case we're *not* in mocha
+var exports;
+if (typeof exports === "undefined"){
+    exports = {};
+} 
+
 /**
  * @class Pronoun
  */
@@ -11,7 +18,8 @@ function Pronoun(args){
     this.nom_sing = args[4] || '';
     this.nom_pl = args[4] || '';
 }
-Y.extend(Pronoun, Word);
+exports.Pronoun = Pronoun;
+
 
 Pronoun.prototype.getGender = function(){
     var g = '';
