@@ -11,11 +11,21 @@ if (typeof exports === "undefined"){
     exports = {};
 } 
 
+var Y;
+
+
+
 function Word(){
 
 }
-
 exports.Word = Word;
+
+// for unit tests
+function addYUI(incomingY){
+    Y = incomingY;
+}
+exports.addYUI = addYUI;
+
 
 Word.prototype.wrapInTooltipDivsTemplate = function (args){
     var str              = args.polishStr;
@@ -49,9 +59,10 @@ Word.prototype.wrapInPushpinDivs = function(englishStr, partOfSpeech){
         onOffClass: (this.pinned ? 'pushpin-on' : 'pushpin-off')
     };
         
-    // apparently Y.sub is deprecated, the docs say:
+    // apparently Y.substitute is deprecated, the docs say:
     // Use Y.Lang.sub or Y.Template instead.
     // http://yuilibrary.com/yui/docs/api/classes/YUI~substitute.html
-    return Y.substitute(this.pushpinTemplate, stash);
+    //return Y.substitute(this.pushpinTemplate, stash);
+    return Y.Lang.sub(this.pushpinTemplate, stash);
 };
 

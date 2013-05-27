@@ -9,6 +9,7 @@ var adjective_exports = require ('../modules/adjective.js');
 var Adjective = adjective_exports.Adjective;
 var word_exports = require ('../modules/word.js');
 var Word = word_exports.Word;
+var WordYuiAdder = word_exports.addYUI;
 var tester_exports = require ('../modules/tester.js');
 var Tester = tester_exports.Tester;
 var noun_exports = require ('../modules/noun.js');
@@ -36,7 +37,9 @@ before (function (done) {
 console.log("******** doing the extends**************");
         Y.extend(Adjective, Word);
         Y.augment(Noun, Word);
-        Y.extend(Verb, Word);
+        Y.augment(Verb, Word);
+console.log("Y is " + Y);
+        WordYuiAdder(Y);
         done();
     });
 });
@@ -103,12 +106,12 @@ describe('tester', function(){
 
     describe('currentEnglishSentence', function(){
         it('should be xxx for córka czyta', function(){
-            tester.currentEnglishSentence().should.equal('yyy');
+            tester.currentEnglishSentence({wrapInPushpinDivs: false}).should.equal('yyy');
         });
     });
     describe('currentPolishSentence', function(){
-        it('should be xxx for córka czyta', function(){
-            tester.currentPolishSentence().should.equal('yyyy');
+        it('should be córka czyta', function(){
+            tester.currentPolishSentence().should.equal('Córka czyta.');
         });
     });
 });

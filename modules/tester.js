@@ -317,7 +317,8 @@ Tester.prototype.generateRandomPraise = function(){
 }
 
 Tester.prototype.currentPolishSentence = function(args){
-    var wrapInTooltipDivs = args.wrapInTooltipDivs;  //true/false
+    var wrapInTooltipDivs = //true/false
+        ( typeof args === "undefined" ? false : args.wrapInTooltipDivs );  
 
     var subject = this.currentSubject;
     var subjectAdjective = this.subjectAdjective;
