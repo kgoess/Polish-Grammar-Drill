@@ -23,6 +23,12 @@ function Verb(args){
     this.wordId = args.infinitive[0]; // like a primary key for all the words here
 
     this.pinned        = false;
+
+    // can't we put this into data-verbs?
+    this.byćPast = {
+        s: [ 'będę',     'będziesz',  'będzie' ],
+        p: [ 'będziemy', 'będziecie', 'będą' ]
+    };
 };
 //Y.extend(Verb, Word);
 exports.Verb = Verb;
@@ -103,7 +109,7 @@ Verb.prototype.getFutureTense = function(verbArgs){
             default:
                 alert("I don't know gender '" + verbArgs.gender + "'");
         }
-        str = byćPast['s'][verbArgs.person-1] + ' ' + str;
+        str = this.byćPast['s'][verbArgs.person-1] + ' ' + str;
     }else{
         switch(verbArgs.gender){
             case 'm-personal':
@@ -113,7 +119,7 @@ Verb.prototype.getFutureTense = function(verbArgs){
             default:
                 str = this.futureTense['p'][1];
         }
-        str = byćPast['p'][verbArgs.person-1] + ' ' + str;
+        str = this.byćPast['p'][verbArgs.person-1] + ' ' + str;
     }
 
     return str;

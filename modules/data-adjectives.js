@@ -43,6 +43,12 @@ var adjectiveData = [
  //powolne
  //mili nice
 ];
+// "exports" is needed for our unit tests in mocha
+// this fakes it up in case we're *not* in mocha
+var exports;
+if (typeof exports === "undefined"){
+    exports = {};
+} 
 adjectiveData.findRow = function(english){
     var i;
     for (i = 0; i < this.length; ++i){
@@ -52,3 +58,4 @@ adjectiveData.findRow = function(english){
     }
     return false;
 };
+exports.adjectiveData = adjectiveData;

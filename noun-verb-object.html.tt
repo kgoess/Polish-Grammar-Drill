@@ -41,19 +41,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 YUI().use('node', 'event-key', 'anim', 'substitute', function(Y) {
 
     
-var pronounData = [
- [ 1, 's', '',           'I', ''],
- [ 2, 's', '',           'you', ''],
- [ 3, 's', 'm',          'he', ''], //what about m-personal?
- [ 3, 's', 'f',          'she', ''],
- [ 3, 's', 'm-personal', 'you (formal, masc.)', 'pan'],
- [ 3, 's', 'f',          'you (formal, fem.)', 'pani'],
- [ 1, 'p', '',           'we'],
- [ 2, 'p', '',           'you all'],
- [ 3, 'p', '',           'they'   ]
- //[ 3, 'p',               'you all (formal, masc.)'],
- //[ 3, 'p',               'you all (formal, mixed.)'], ????
-];
+
+[% INCLUDE modules/data-pronouns.js %]
   
 [% INCLUDE modules/data-nouns.js %]
 

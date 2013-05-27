@@ -61,5 +61,22 @@ var nounData = [
 
 
 
+// "exports" is needed for our unit tests in mocha
+// this fakes it up in case we're *not* in mocha
+var exports;
+if (typeof exports === "undefined"){
+    exports = {};
+} 
+nounData.findRow = function(english){
+    var i;
+    for (i = 0; i < this.length; ++i){
+        if (this[i][0] === english){
+            return this[i];
+        }
+    }
+    throw("Error: " + english + " not found in noun_data");
+};
+exports.nounData = nounData;
+
 
 

@@ -1,9 +1,5 @@
 
 
-var byćPast = {
-    s: [ 'będę',     'będziesz',  'będzie' ],
-    p: [ 'będziemy', 'będziecie', 'będą' ]
-};
 
 var verbData = [
     { infinitive: [ 'czytać', "to read" ],
@@ -197,3 +193,19 @@ var verbData = [
     }
 ];
 
+// "exports" is needed for our unit tests in mocha
+// this fakes it up in case we're *not* in mocha
+var exports;
+if (typeof exports === "undefined"){
+    exports = {};
+} 
+verbData.findRow = function(english){
+    var i;
+    for (i = 0; i < this.length; ++i){
+        if (this[i]['infinitive'][1] === english){
+            return this[i];
+        }
+    }
+    throw("Error: no verb match for '" + english + "'");
+};
+exports.verbData = verbData;

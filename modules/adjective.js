@@ -101,7 +101,9 @@ Adjective.prototype.genitiveSingularForGender = function (gender){
 Adjective.prototype.addEndingToStemGenitiveSingular = function (ending){
     var stem = this.stem(),
         result;
-    if (stem.charAt(stem.length-1) == 'k'){
+    if (stem.charAt(stem.length-1) == 'k' ||
+        stem.charAt(stem.length-1) == 'g'   // I think is right, długiej and drogiej
+       ){
         result = stem + 'i' + ending;  //e.g. bliskiego
     }else{
         result = stem + ending;
