@@ -60,11 +60,10 @@ before (function (done) {
     }).use(['base'], function () {
         //make this 'augment' instead of 'extend'?
         // console.log("doing the extends");
-        Y.extend(Adjective, Word);
+        Y.augment(Adjective, Word);
         Y.augment(Noun, FormatterStub);
         Y.augment(Verb, FormatterStub);
         Y.augment(Pronoun, FormatterStub);
-console.log("Y is " + Y);
         WordYuiAdder(Y);
         done();
     });

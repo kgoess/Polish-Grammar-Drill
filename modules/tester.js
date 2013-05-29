@@ -684,6 +684,10 @@ Tester.prototype.populateCheckboxWordLists = function() {
 
     for (i in verbData){
         row = verbData[i];
+        // to skip the findRow method we added
+        if (typeof row !== 'object'){
+            continue;
+        }
         word = new Verb(row);
         stash = { 
             english: word.infinitive[1],
@@ -699,6 +703,10 @@ Tester.prototype.populateCheckboxWordLists = function() {
     // the subjects (only agents or i-agents are subjects for verbs)
     for (i in nounData){
         row = nounData[i];
+        // to skip the findRow method we added
+        if (typeof row !== 'object'){
+            continue;
+        }
         word = new Noun(row);
         if (word.agentType === 'no-agent'){
             continue;

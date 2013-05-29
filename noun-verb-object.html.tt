@@ -65,7 +65,10 @@ YUI().use('node', 'event-key', 'anim', 'substitute', function(Y) {
 // See notes in 01-basic.js for why we have to do this here
 // and not in the modules.
 // Possibly change this to use 'augment' instead of 'extend'?
-Y.extend(Adjective, Word);
+Y.augment(Adjective, Word);
+Y.augment(Noun, Word);
+Y.augment(Verb, Word);
+Y.augment(Pronoun, Word);
 
 
 // this stuff should be in its own function so we can scope the variables
@@ -73,23 +76,39 @@ var tester = new Tester();
 var i, row, noun, pronoun, adjective, verb;
 for (i in nounData){
     row = nounData[i];
+    // to skip the findRow method we added
+    if (typeof row !== 'object'){
+        continue;
+    }
     noun = new Noun(row);
     tester.addNoun(noun);
 }
 for (i in pronounData){
     row = pronounData[i];
+    // to skip the findRow method we added
+    if (typeof row !== 'object'){
+        continue;
+    }
     pronoun = new Pronoun(row);
     tester.pronouns.push(pronoun);
 }
 
 for (i in adjectiveData){
     row = adjectiveData[i];
+    // to skip the findRow method we added
+    if (typeof row !== 'object'){
+        continue;
+    }
     adjective = new Adjective(row);
     tester.adjectives.push(adjective);
 }
 
 for (i in verbData){
     row = verbData[i];
+    // to skip the findRow method we added
+    if (typeof row !== 'object'){
+        continue;
+    }
     verb = new Verb(row);
     tester.addVerb(verb);
 }

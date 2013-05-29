@@ -24,7 +24,7 @@ before (function (done) {
         }
     }).use(['base'], function () {
         //make this 'augment' instead of 'extend'?
-        Y.extend(Adjective, Word);
+        Y.augment(Adjective, Word);
         done();
     });
 });
