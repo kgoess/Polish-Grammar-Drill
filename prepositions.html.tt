@@ -1,0 +1,355 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<!--
+Copyright (c) 2011 Kevin M. Goess
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<title>polish adjective agreement: subject-verb-object</title>
+
+<script type="text/javascript" src="http://yui.yahooapis.com/3.3.0/build/yui/yui-min.js"></script>
+
+<script type="text/javascript">
+
+
+YUI().use('node', 'event-key', 'anim', 'substitute', function(Y) {
+
+
+[% INCLUDE modules/data-pronouns.js %]
+  
+[% INCLUDE modules/data-nouns.js %]
+
+[% INCLUDE modules/data-adjectives.js %]
+
+[% INCLUDE modules/data-verbs.js %]
+
+[% INCLUDE modules/preposition-tester.js %]
+
+[% INCLUDE modules/word.js %]
+
+[% INCLUDE modules/noun.js %]
+
+[% INCLUDE modules/pronoun.js %]
+
+[% INCLUDE modules/adjective.js %]
+
+[% INCLUDE modules/verb.js %]
+
+// See notes in 01-basic.js for why we have to do this here
+// and not in the modules.
+// Since we changed this from extend to augment, maybe also change the class
+// from Word to something like DisplayFormatter?
+Y.augment(Adjective, Word);
+Y.augment(Noun, Word);
+Y.augment(Verb, Word);
+Y.augment(Pronoun, Word);
+
+
+// this stuff should be in its own function so we can scope the variables
+var tester = new Tester();
+var i, row, noun, pronoun, adjective, verb;
+for (i in nounData){
+    row = nounData[i];
+    // to skip the findRow method we added
+    if (typeof row !== 'object'){
+        continue;
+    }
+    noun = new Noun(row);
+    tester.addNoun(noun);
+}
+for (i in pronounData){
+    row = pronounData[i];
+    // to skip the findRow method we added
+    if (typeof row !== 'object'){
+        continue;
+    }
+    pronoun = new Pronoun(row);
+    tester.pronouns.push(pronoun);
+}
+
+for (i in adjectiveData){
+    row = adjectiveData[i];
+    // to skip the findRow method we added
+    if (typeof row !== 'object'){
+        continue;
+    }
+    adjective = new Adjective(row);
+    tester.adjectives.push(adjective);
+}
+
+for (i in verbData){
+    row = verbData[i];
+    // to skip the findRow method we added
+    if (typeof row !== 'object'){
+        continue;
+    }
+    verb = new Verb(row);
+    tester.addVerb(verb);
+}
+
+Y.on("domready", function() { 
+    // need to setup the checkboxes before we can generate the question
+    tester.populateCheckboxWordLists();
+    tester.askQuestion(); 
+});
+
+var returnPressed = 'down:13';
+Y.on('key', function(e) {
+    tester.checkAnswer();
+}, '#input', returnPressed, Y);
+
+Y.on('click', function(e){
+    tester.giveHint();
+   }, '#give-hint', Y
+);
+Y.on('click', function(e){
+    tester.askQuestion();
+    }, '#go-again', Y
+);
+Y.on('click', function(e){
+    tester.showAnswer();
+    }, '#show-answer', Y
+);
+Y.on('click', function(e){
+    tester.showHideWordList(e.currentTarget);
+    }, '.buttony-legend-input', Y
+);
+
+// delegating to the outer element since the inner ones come and go with each question
+Y.delegate('click', function(e){
+    tester.pushpinPushed(e.currentTarget);
+    }, '#question', ".pushpin",  Y
+);
+
+});
+
+
+</script>
+
+<style>
+body {
+    background: white;
+}
+
+.outer-box {
+    border: 1px solid red; 
+    margin: 50px; 
+    padding: 50px;
+    height: 600px;
+    width: 900px;
+}
+
+.left-box div {
+    padding: 10px;
+}
+.left-box {
+    float: left;
+    font-size: 200%;
+    width: 65%;
+}
+.test-box {
+    border: 1px solid black;
+}
+
+
+.graydot {
+    color: lightgrey;
+    padding: 4px;
+}
+
+.instructions {
+    color: grey;
+    font-size: 50%;
+}
+
+.settings-box {
+    border: 1px solid yellow;
+    float: right;
+    width: 30%;
+}
+
+.input {
+    margin: 0px;
+    padding: 0px;
+}
+.input label {
+    margin: 0px;
+    padding: 0px;
+}
+.input label.radiobuttons {
+    font-size: 75%;
+}
+input {
+    font-size: 75%;
+}
+radio {
+    margin: 0px;
+    padding: 0px;
+
+}
+
+.answer-word {
+    position: relative; /* //http://psacake.com/web/jl.asp */
+    z-index: 24;
+    text-decoration: none;
+    color: #000;
+}
+.answer-word:hover {
+    z-index: 25;
+}
+.tooltip {
+    display: none;
+    padding: 5px 10px 5px 10px;
+}
+.answer-word:hover .tooltip {
+    display: block;
+    position: absolute;
+    font-size: 50%;
+    border:1px solid #0cf;
+    background-color: lightgray; 
+    white-space: nowrap;
+    top:2em; left:2em;  /* these two are required, not sure why */
+}
+
+.question-word:hover .pushpin {
+    display: inline;
+}
+
+
+.pushpin {
+    /* display: block; */
+
+}
+
+.pushpin-hidden {
+    display: none;
+}
+
+.buttony-legend .buttony-legend-input {
+    display: none;
+}
+.buttony-legend .buttony-legend-text {
+    display: inline;
+}
+.buttony-legend:hover .buttony-legend-input {
+    display: inline;
+}
+.buttony-legend:hover .buttony-legend-text {
+    display: none;
+}
+
+/* the initially hidden list of vocabulary word checkboxes */
+.section-word-list {
+    overflow: auto; 
+    height: 5em; 
+    width: 80%; 
+    border: 1px solid gray;
+}
+
+.hidden {
+    display: none;
+}
+
+.answer-history {
+	overflow: auto;
+	height: 7em;
+	/* width:80%;  */
+	border: 1px solid green;
+	font-size: 50%;
+	padding: 10px;
+    margin-top: 10px;
+}
+.answer-history div {
+    margin: 1px;
+    padding: 1px;
+    color: grey;
+}
+
+.footer {
+    color: grey;
+    padding: 40px;
+    margin: 10px;
+    font-style: italic;
+}
+
+#last-updated {
+    float: left;
+}
+#original-source {
+    float: right;
+}
+
+
+</style>
+</head>
+<body>
+
+<div class="outer-box">
+    <div class="left-box">
+        <div class="test-box">
+            <div id="question">
+            </div>
+            <div id="input">
+                <input type="text" size="36" id="input-element">
+            </div>
+            <div id="output">
+            </div>
+            <div id="result">
+            </div>
+            <div class="buttons">
+                <button id="give-hint">Give me a hint?</button>
+                <button id="show-answer">Tell me the answer</button>
+                <br/>
+                <button id="go-again">Another test</button>
+            </div>
+            <div class="instructions">
+                <p>Type your answer in the box and press 'enter'.</p>
+                <p>Mouse-over the words in the <strong>question</strong> to pin particular words you want to focus on.</p>
+                <p>Mouse-over the words in the <strong>answer</strong> for additional details and a link to Wiktionary.org.</p>
+    
+            </div>
+        </div>
+        <div class="answer-history">
+
+        </div>
+    </div> <!-- end left box container -->
+    <div class="settings-box">
+        <form name="settings">
+            <fieldset>
+                <legend>Some Setting</legend>
+                <div class="input">
+                    <label><input type="radio" name="gender-of-speaker" value="m-personal" checked="1"/>Male</label>
+                    <label><input type="radio" name="gender-of-speaker" value="f"            />Female</label>
+                </div>
+            </fieldset>
+        </form>
+	</div>
+</div>
+
+<div class="footer">
+    <span id="last-updated">
+    Last Updated: [% DateTime.now.ymd %]
+    </span>
+    <span id="original-source">
+        Source Code: <a href="https://github.com/kgoess/Polish-Grammar-Drill">https://github.com/kgoess/Polish-Grammar-Drill</a>
+    </span>
+</div>
+
+</body>
+</html>
