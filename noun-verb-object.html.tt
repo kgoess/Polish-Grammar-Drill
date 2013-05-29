@@ -291,6 +291,20 @@ radio {
     color: grey;
 }
 
+.footer {
+    color: grey;
+    padding: 40px;
+    margin: 10px;
+    font-style: italic;
+}
+
+#last-updated {
+    float: left;
+}
+#original-source {
+    float: right;
+}
+
 
 </style>
 </head>
@@ -390,6 +404,14 @@ radio {
 	</div>
 </div>
 
+<div class="footer">
+    <span id="last-updated">
+    Last Updated: [% DateTime.now.ymd %]
+    </span>
+    <span id="original-source">
+        Source Code: <a href="https://github.com/kgoess/Polish-Grammar-Drill">https://github.com/kgoess/Polish-Grammar-Drill</a>
+    </span>
+</div>
 
 </body>
 </html>

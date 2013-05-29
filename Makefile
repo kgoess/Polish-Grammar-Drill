@@ -1,4 +1,6 @@
 
+BUILT_AT=$(shell date "+%Y-%m-%d")
+
 default:
 	@echo "usage: make (test|build|install-dev|...)"
 
@@ -19,6 +21,7 @@ test:
 #http://toolbox.no.de/packages/yui3-mocha ?
 
 build:
+	echo $(BUILT_AT)
 	perl -np -e '                      '\
 	'	if (/\[% INCLUDE (\S+) %\]/){  '\
 	'		my $$filename = $$1;       '\
@@ -26,4 +29,5 @@ build:
 	'			unless -e $$filename;  '\
 	'		$$_ = `cat $$filename`;    '\
 	'	}                              '\
+	'	s/\[% DateTime.now.ymd %\]/$(BUILT_AT)/'\
 	 noun-verb-object.html.tt > noun-verb-object.html
