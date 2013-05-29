@@ -1,6 +1,8 @@
 
 /* TODO:
    potrzebować takes the genitive/dopełniać, is disabled now, fix that.
+   add verbs that take the genitive: potrzebować, zapomnieć, używać, bać się
+   add wszytsky, wpoł, kilo, więcej, mniej, litr, butelka, paczka for more genitive
    bug: you (formal, masc.) + to not eat + the expensive carrot. Pan nie je drogej marchwi. s/b drogiej.
    bug: The animal + was not returning. Zwierzę nie . Where's the verb?
    bug: no repro? The woman + will be having + the hot sausage. Kobieta będzie miała kiełbasę. where's the adjective?
@@ -10,5 +12,6 @@
    If they pin the subject we need to disable the "include * subjects" checkboxes
    otherwise they might change it and generate an adjective for a pronoun.
    Change 'augments' to 'extends', Word should be a formatter class, not a base class.
+   see notes in adj re "should move this logic into the stem method?"
 */
 
