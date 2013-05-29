@@ -16,7 +16,7 @@ var nounData = [
  [ 'watch',      'watches',      'zegarek',  'zegarki',   'zegarka',  'zegarków',  'zegarek',  'zegarki',   'm',          'no-agent' ],
  [ 'room',       'rooms',        'pokój',    'pokoje',    'pokoju',   'pokojów',   'pokój',    'pokoje',    'm',          'no-agent' ],
  [ 'boy',        'boys',         'chłopiec', 'chłopcy',   'chłopca',  'chłopców',  'chłopca',  'chłopców',  'm-personal', 'i-agent' ], 
- [ 'pen',        'pens',         'długopis', 'długopisy', 'długopis', 'długopisów','długopis', 'długopisy', 'm',          'no-agent' ], 
+ [ 'pen',        'pens',         'długopis', 'długopisy', 'długopisu','długopisów','długopis', 'długopisy', 'm',          'no-agent' ], 
  [ 'shoe',       'shoes',        'but',      'buty',      'buta',     'butów',     'but',      'buty',      'm',          'no-agent' ], 
  [ 'sandwich',   'sandwiches',   'kanapka',  'kanapki',   'kanapki',  'kanapek',   'kanapkę',  'kanapki',   'f',          'no-agent' ],
  [ 'toy',        'toys',         'zabawka',  'zabawki',   'zabawki',  'zabawek',   'zabawkę',  'zabawki',   'f',          'no-agent' ],
