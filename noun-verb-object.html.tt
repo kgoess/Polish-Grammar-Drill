@@ -50,7 +50,7 @@ YUI().use('node', 'event-key', 'anim', 'substitute', function(Y) {
 
 [% INCLUDE modules/data-verbs.js %]
 
-[% INCLUDE modules/tester.js %]
+[% INCLUDE modules/nvo-tester.js %]
 
 [% INCLUDE modules/word.js %]
 
