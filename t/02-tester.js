@@ -286,7 +286,6 @@ describe("testing bug: The animal + was not returning. Zwierzę nie . Where's th
     tester.addNoun(zwierzę);
 
     tester.currentVerb = wracać;
-    tester.currentTense = 'past';
     tester.isNegated = true;
 
     tester.subjectNumber = 'singular';
@@ -294,20 +293,33 @@ describe("testing bug: The animal + was not returning. Zwierzę nie . Where's th
     tester.currentSubject = zwierzę;
     tester.subjectIsPronoun = false;
 
-    //tester.currentObject = kiełbasa;
-    //tester.objectAdjective = gorący;
-    //tester.objectNumber = 'singular';
-
     describe('currentEnglishSentence', function(){
-        it('should be The animal + was not returning.', function(){
+        it('past tense should be The animal + was not returning.', function(){
+            tester.currentTense = 'past';
             tester.currentEnglishSentence({wrapInPushpinDivs: false}).
                    should.equal('The animal + was not returning');
         });
     });
     describe('currentPolishSentence', function(){
-        it('should be Zwierzę nie wracało.', function(){
+        it('past tense should be Zwierzę nie wracało.', function(){
+            tester.currentTense = 'past';
             tester.currentPolishSentence().
                    should.equal('Zwierzę nie wracało.');
+        });
+    });
+
+    describe('currentEnglishSentence', function(){
+        it('future tense should be The animal + will not be returning.', function(){
+            tester.currentTense = 'future';
+            tester.currentEnglishSentence({wrapInPushpinDivs: false}).
+                   should.equal('The animal + will not be returning');
+        });
+    });
+    describe('currentPolishSentence', function(){
+        it('future tense should be Zwierzę nie będzie wracało.', function(){
+            tester.currentTense = 'future';
+            tester.currentPolishSentence().
+                   should.equal('Zwierzę nie będzie wracało.');
         });
     });
 });
