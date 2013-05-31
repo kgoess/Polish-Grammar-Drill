@@ -1,6 +1,5 @@
 
 /* TODO:
-   potrzebować takes the genitive/dopełniać, is disabled now, fix that.
    add verbs that take the genitive: potrzebować, zapomnieć, używać, bać się
    add wszytsky, wpoł, kilo, więcej, mniej, litr, butelka, paczka for more genitive
    bug: you (formal, masc.) + to not eat + the expensive carrot. Pan nie je drogej marchwi. s/b drogiej.
@@ -13,5 +12,7 @@
    otherwise they might change it and generate an adjective for a pronoun.
    Change 'augments' to 'extends', Word should be a formatter class, not a base class.
    see notes in adj re "should move this logic into the stem method?"
+   put a data shim in so we don't have to reference 'document' directly
+   currentPolishSentence method is way to long and repetitive
 */
 

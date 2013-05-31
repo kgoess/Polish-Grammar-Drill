@@ -316,6 +316,7 @@ Tester.prototype.generateRandomPraise = function(){
     return praises[roll];
 }
 
+// this method is way too long and there's too much stuff repeated
 Tester.prototype.currentPolishSentence = function(args){
     var wrapInTooltipDivs = //true/false
         ( typeof args === "undefined" ? false : args.wrapInTooltipDivs );  
@@ -391,11 +392,14 @@ Tester.prototype.currentPolishSentence = function(args){
         if (this.objectNumber === 'singular'){
             objectStr = object.makePolishStr({
                 wrapInTooltipDivs: wrapInTooltipDivs,
-                caseAccessor:      this.isNegated ? "gen_sing" : "acc_sing"
+                caseAccessor:      
+                    this.isNegated  || this.currentVerb.takesGenitive()
+                    ? "gen_sing" : "acc_sing"
             });
             if (objectAdjective){
                 objectAdjectiveStr =  objectAdjective.makePolishStr({
-                    caseMethodName:    this.isNegated ? "genitiveSingularForGender" : "accusativeSingularForGender", 
+                    caseMethodName:    this.isNegated || this.currentVerb.takesGenitive() 
+                                        ? "genitiveSingularForGender" : "accusativeSingularForGender", 
                     gender:            object.getGender(),
                     isInitialWord:     false,
                     wrapInTooltipDivs: wrapInTooltipDivs
@@ -406,11 +410,13 @@ Tester.prototype.currentPolishSentence = function(args){
         }else{
             objectStr = object.makePolishStr({
                 wrapInTooltipDivs: wrapInTooltipDivs,
-                caseAccessor:      this.isNegated ? "gen_pl" : "acc_pl"
+                caseAccessor:      this.isNegated  || this.currentVerb.takesGenitive()
+                                    ? "gen_pl" : "acc_pl"
             });
             if (objectAdjective){
                 objectAdjectiveStr =  objectAdjective.makePolishStr({
-                    caseMethodName:    this.isNegated ? "genitivePluralForGender" : "accusativePluralForGender", 
+                    caseMethodName:    this.isNegated || this.currentVerb.takesGenitive()
+                                        ? "genitivePluralForGender" : "accusativePluralForGender", 
                     gender:            object.getGender(),
                     isInitialWord:     false,
                     wrapInTooltipDivs: wrapInTooltipDivs

@@ -19,6 +19,7 @@ function Verb(args){
     this.englishPast   = args.english_past;
     this.englishFuture = args.english_future;
     this.futureTense   = args.future_tense;
+    this.objectCase    = args.object_case || 'accusative'; 
 
     this.wordId = args.infinitive[0]; // like a primary key for all the words here
 
@@ -132,5 +133,9 @@ Verb.prototype.wrapInTooltipDivs = function(str){
         wikiLookup: this.infinitive[0],
         tooltipStr: this.infinitive[0] + ', ' + this.presentTense.s[0] + ', ' + this.presentTense.s[1]
     });
+};
+
+Verb.prototype.takesGenitive = function() {
+    return this.objectCase === 'genitive' ? true : false;
 };
     

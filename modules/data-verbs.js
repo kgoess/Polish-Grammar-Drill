@@ -119,6 +119,7 @@ var verbData = [
       english_past: 'was needing', 
       english_future: 'will be needing',
       transitive: true,
+      object_case: 'genitive',
       ok_subjects: 'i-agent',
       objects: 'any',
       present_tense: {
