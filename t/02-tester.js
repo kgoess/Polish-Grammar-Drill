@@ -79,10 +79,12 @@ var książka  = new Noun(nounData.findRow("book"));
 var spódnica = new Noun(nounData.findRow("skirt"));
 var kobieta  = new Noun(nounData.findRow("woman"));
 var kiełbasa  = new Noun(nounData.findRow("sausage"));
+var zwierzę = new Noun(nounData.findRow("animal"));
 var marchew = new Noun(nounData.findRow("carrot"));
 var koń = new Noun(nounData.findRow("horse"));
 var krzeszła = new Noun(nounData.findRow("chair"));
 var czytać = new Verb(verbData.findRow("to read"));
+var wracać = new Verb(verbData.findRow("to return"));
 var mieć = new Verb(verbData.findRow("to have"));
 var biegać = new Verb(verbData.findRow("to run"));
 var potrzebować = new Verb(verbData.findRow("to need"));
@@ -275,4 +277,37 @@ describe("potrzebować takes the genitive", function(){
             });
         });
     })
+});
+
+describe("testing bug: The animal + was not returning. Zwierzę nie . Where's the verb?", function(){
+    var tester = new Tester();
+
+    tester.addVerb(wracać);
+    tester.addNoun(zwierzę);
+
+    tester.currentVerb = wracać;
+    tester.currentTense = 'past';
+    tester.isNegated = true;
+
+    tester.subjectNumber = 'singular';
+    tester.currentPerson = 3;
+    tester.currentSubject = zwierzę;
+    tester.subjectIsPronoun = false;
+
+    //tester.currentObject = kiełbasa;
+    //tester.objectAdjective = gorący;
+    //tester.objectNumber = 'singular';
+
+    describe('currentEnglishSentence', function(){
+        it('should be The animal + was not returning.', function(){
+            tester.currentEnglishSentence({wrapInPushpinDivs: false}).
+                   should.equal('The animal + was not returning');
+        });
+    });
+    describe('currentPolishSentence', function(){
+        it('should be Zwierzę nie wracało.', function(){
+            tester.currentPolishSentence().
+                   should.equal('Zwierzę nie wracało.');
+        });
+    });
 });

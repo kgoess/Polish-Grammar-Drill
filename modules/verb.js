@@ -67,7 +67,8 @@ Verb.prototype.getPastTense = function(verbArgs){
                 break;
             case 'n':
                 // only 3rd pers sing has a neuter
-                verbStr = parts[2]; 
+                verbStr = parts[1]; 
+                verbStr = verbStr.replace(/ła$/, 'ło');
                 break;
             case undefined:
                 // remaining pronouns, also taking the easy way out for now, 
