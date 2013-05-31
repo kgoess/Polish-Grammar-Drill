@@ -2,7 +2,6 @@
 /* TODO:
    add verbs that take the genitive: potrzebować, zapomnieć, używać, bać się
    add wszytsky, wpoł, kilo, więcej, mniej, litr, butelka, paczka for more genitive
-   bug: you (formal, masc.) + to not eat + the expensive carrot. Pan nie je drogej marchwi. s/b drogiej.
    bug: no repro? The woman + will be having + the hot sausage. Kobieta będzie miała kiełbasę. where's the adjective?
    add wpol, kilo, więcej, mniej, litr, butelka, paczka for more genitive
    Support pronouns as direct objects
