@@ -243,40 +243,35 @@ describe("potrzebować takes the genitive", function(){
     tester.currentObject = krzeszła;
     tester.objectAdjective = niebieski;
 
-    describe('as singular', function(){
-
-        describe('currentEnglishSentence', function(){
-            it('should be You + to need + the blue chair', function(){
-                tester.objectNumber = 'singular';
-                tester.currentEnglishSentence({wrapInPushpinDivs: false}).
-                       should.equal('You + to need + the blue chair.');
-            });
+    describe('currentEnglishSentence singular', function(){
+        it('should be You + to need + the blue chair', function(){
+            tester.objectNumber = 'singular';
+            tester.currentEnglishSentence({wrapInPushpinDivs: false}).
+                   should.equal('You + to need + the blue chair.');
         });
-        describe('currentPolishSentence', function(){
-            it('should be Potrzebuję niebieskiego krzesła.', function(){
-                tester.objectNumber = 'singular';
-                tester.currentPolishSentence().
-                       should.equal('Potrzebujesz niebieskiego krzesła.');
-            });
+    });
+    describe('currentPolishSentence singular', function(){
+        it('should be Potrzebujesz niebieskiego krzesła.', function(){
+            tester.objectNumber = 'singular';
+            tester.currentPolishSentence().
+                   should.equal('Potrzebujesz niebieskiego krzesła.');
         });
     });
 
-    describe('as plural', function(){
-        describe('currentEnglishSentence', function(){
-            it('should be You + to need + the blue chairs', function(){
-                tester.objectNumber = 'plural';
-                tester.currentEnglishSentence({wrapInPushpinDivs: false}).
-                       should.equal('You + to need + the blue chairs.');
-            });
+    describe('currentEnglishSentence plural', function(){
+        it('should be You + to need + the blue chairs', function(){
+            tester.objectNumber = 'plural';
+            tester.currentEnglishSentence({wrapInPushpinDivs: false}).
+                   should.equal('You + to need + the blue chairs.');
         });
-        describe('currentPolishSentence', function(){
-            it('should be Potrzebuję niebieskich krzeseł.', function(){
-                tester.objectNumber = 'plural';
-                tester.currentPolishSentence().
-                       should.equal('Potrzebujesz niebieskich krzeseł.');
-            });
+    });
+    describe('currentPolishSentence plural', function(){
+        it('should be Potrzebujesz niebieskich krzeseł.', function(){
+            tester.objectNumber = 'plural';
+            tester.currentPolishSentence().
+                   should.equal('Potrzebujesz niebieskich krzeseł.');
         });
-    })
+    });
 });
 
 describe("testing bug: The animal + was not returning. Zwierzę nie . Where's the verb?", function(){
