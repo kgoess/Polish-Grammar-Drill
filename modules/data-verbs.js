@@ -184,7 +184,7 @@ var verbData = [
         p: [ 'widzimy', 'widzicie', 'widzą' ]
       },
       past_tense: {
-        s: [ 'widzałem/widzałam','widzałeś/widzałaś','widział/widziała' ],
+        s: [ 'widziałem/widziałam','widziałeś/widziałaś','widział/widziała' ],
         p: [ 'widzieliśmy/widziełyśmy', 'widzieliście/widziełyscie', 'widzieli/widziały' ]
       },
       future_tense: {
