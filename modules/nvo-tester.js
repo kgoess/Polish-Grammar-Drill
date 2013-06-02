@@ -665,7 +665,8 @@ Tester.prototype.unsetPushpin = function(pushpinSpanEl, partOfSentence){
     var pushpinImgEl = pushpinSpanEl.one('img');
 
     pushpinImgEl.set('src', 'push_pin-off.png');
-    // don't hide it right away, too abrupt, pushpinSpanEl.addClass('pushpin-hidden');
+    pushpinSpanEl.addClass('pushpin-off');
+    pushpinSpanEl.removeClass('pushpin-on');
 
     switch (partOfSentence){
         case 'verb':
