@@ -102,13 +102,27 @@ describe('tester', function(){
 
     describe('picked PP Noun', function(){
         it('should be szkoła', function(){
-            tester.pickPPNoun(przed);
+            tester.pickPPNoun(przed).english_sing.should.equal('school');
         });
     });
 
     describe('picked PP Adjective', function(){
         it('should be niebieski', function(){
-            tester.pickPPAdjective(szkoła);
+            tester.pickPPAdjective(szkoła).english.should.equal('blue');
+        });
+    });
+
+    describe('generated question', function(){
+        tester.generateQuestion();
+        describe('english', function(){
+            it('should be in front of the blue school', function(){
+                tester.currentEnglishSentence().should.equal('in front of the blue school');
+            });
+        });
+        describe('polish', function(){
+            it('should be przed niebieskim szkołą', function(){
+                tester.currentPolishSentence().should.equal('przed niebieską szkołą');
+            });
         });
     });
 });

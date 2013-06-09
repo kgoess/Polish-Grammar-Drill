@@ -12,5 +12,8 @@
    see notes in adj re "should move this logic into the stem method?"
    put a data shim in so we don't have to reference 'document' directly
    currentPolishSentence method is way to long and repetitive
+
+prepositions:
+   phrasal prepositions, e.g. w czasie during (the time of) (see Swan)
 */
 

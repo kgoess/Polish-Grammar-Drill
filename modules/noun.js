@@ -24,6 +24,9 @@ function Noun(args){
     this.agentType    = args[9];
 
     this.wordId = this.nom_sing; // like a primary key for all the words here
+
+    this.inst_sing     = this.calculateInstrumentalSingular();
+    this.inst_pl       = this.calculateInstrumentalPlural();
 }
 
 exports.Noun = Noun;

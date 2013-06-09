@@ -54,6 +54,13 @@ Tester.prototype.addVerb = function(verb){
 };
 
 Tester.prototype.askQuestion = function(){
+    var questionStr;
+
+    this.generateQuestion();
+    this.updateUIWithQuestion();
+};
+
+Tester.prototype.generateQuestion = function(){
     var preposition, s, failsafe, ppNoun;
     if (this.currentPreposition && this.currentPreposition.pinned){
         preposition = this.currentPreposition;
@@ -67,14 +74,18 @@ Tester.prototype.askQuestion = function(){
 
     ppAdjective = this.pickPPAdjective(ppNoun);
     this.currentPPAdjective = ppAdjective;
+};
 
-    var questionDiv = Y.one('#question');
+Tester.prototype.updateUIWithQuestion = function(){
+    var questionDiv, outputDiv, inputEl;
+
+    questionDiv = Y.one('#question');
     questionDiv.set('innerHTML', this.currentEnglishSentence());
 
-    var outputDiv = Y.one('#output');
+    outputDiv = Y.one('#output');
     outputDiv.set('innerHTML', '');
 
-    var inputEl = Y.one('#input input');
+    inputEl = Y.one('#input input');
     inputEl.focus();
     inputEl.set('value', '');
 
@@ -330,6 +341,16 @@ Tester.prototype.generateRandomPraise = function(){
 }
 
 Tester.prototype.currentPolishSentence = function(args){
+    var str = '';
+    var preposition = this.currentPreposition;
+    var adjective = this.currentPPAdjective;
+    var noun = this.currentPPNoun;
+
+    str = preposition.polish + ' '
+         + adjective.instrumentalSingularForGender(noun.gender) + ' '
+         + noun.inst_sing;
+
+    return str;
 //    var wrapInTooltipDivs = //true/false
 //        ( typeof args === "undefined" ? false : args.wrapInTooltipDivs );  
 //
@@ -555,15 +576,12 @@ Tester.prototype.showHideWordList = function(buttonEl){
 };
     
 Tester.prototype.currentEnglishSentence = function(){
-    var s = '';
+    var s;
     var subjectNoun = '';
 
-    s = this.currentPreposition.english + ' ';
-
+    s = this.currentPreposition.english;
     s = s + ' the ' + this.currentPPAdjective.english;
-
     s = s + ' ' + this.currentPPNoun.english_sing;
-
 
     return s;
 };

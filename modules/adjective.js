@@ -131,6 +131,54 @@ Adjective.prototype.genitivePluralForGender = function (gender) {
     return result.replace(/i?\*/, masculineEnding);
 };
 
+Adjective.prototype.instrumentalSingularForGender = function(gender){
+    var stem = this.stem(), result;
+
+    if (gender === 'f'){
+        result = stem + 'ą'; // this is the different bit for instrumental
+    }else { 
+        if (stem.charAt(stem.length-1) == 'k' ||
+            stem.charAt(stem.length-1) == 'g'   
+           ){
+            result = stem + 'im'; 
+        }else{
+            result = stem + 'ym';
+        }
+    }
+
+    return result;
+}
+Adjective.prototype.instrumentalPluralForGender = function(gender){
+    var stem = this.stem(), result;
+    if (stem.charAt(stem.length-1) == 'k' ||
+        stem.charAt(stem.length-1) == 'g'   
+       ){
+        result = stem + 'imi'; 
+    }else{
+        result = stem + 'ymi';
+    }
+}
+
+Adjective.prototype.locativeSingularForGender = function(gender){
+    var stem = this.stem(), result;
+
+    if (gender === 'f'){
+        result = stem + 'ej'; //<<== this is the different bit for locative
+    }else { 
+        if (stem.charAt(stem.length-1) == 'k' ||
+            stem.charAt(stem.length-1) == 'g'   
+           ){
+            result = stem + 'im'; 
+        }else{
+            result = stem + 'ym';
+        }
+    }
+    return result;
+}
+
+Adjective.prototype.locativePluralForGender= function(gender){
+    return this.genitivePluralForGender(gender);
+}
 
 Adjective.prototype.stem = function (){
     return this.f.replace(/a$/, '');
