@@ -28,10 +28,10 @@ if (typeof exports === "undefined"){
 prepositionData.findRow = function(english){
     var i;
     for (i = 0; i < this.length; ++i){
-       //fixme if (this[i][3] === english){
-       //fixme    return this[i];
-       //fixme  }
+       if (this[i][0] === english){
+       return this[i];
+       }
     }
-    throw("Error: no pronoun match for '" + english + "'");
+    throw("Error: no preposition match for '" + english + "'");
 };
-exports.pronounData = pronounData;
+exports.prepositionData = prepositionData;

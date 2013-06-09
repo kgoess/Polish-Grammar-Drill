@@ -12,6 +12,7 @@ if (typeof exports === "undefined"){
  * @class Tester
  */
 function Tester(){
+    this.prepositions = [];
     this.nouns = [];
     this.pronouns = [];
     this.adjectives = [];
@@ -19,6 +20,9 @@ function Tester(){
     this.agents = [];
     this.intelligentAgents = [];
     this.nounLookup = {};
+    this.currentPreposition = null;
+    this.currentPPAdjectve = null;
+    this.currentPPNoun = null;
     this.currentVerb  = null;
     this.currentTense = null;
     this.currentPerson = null;
@@ -30,7 +34,9 @@ function Tester(){
 
 exports.Tester = Tester;
 
-
+Tester.prototype.addPreposition = function(preposition){
+    this.prepositions.push(preposition);
+}
 
 Tester.prototype.addNoun = function(noun){
     this.nouns.push(noun);
@@ -48,50 +54,20 @@ Tester.prototype.addVerb = function(verb){
 };
 
 Tester.prototype.askQuestion = function(){
-    var verb, s, failsafe;
-    if (this.currentVerb && this.currentVerb.pinned){
-        verb = this.currentVerb;
+    var preposition, s, failsafe, ppNoun;
+    if (this.currentPreposition && this.currentPreposition.pinned){
+        preposition = this.currentPreposition;
     }else{
-        verb = this.pickRandomActiveVerb();
+        preposition = this.pickRandomActivePreposition();
+        this.currentPreposition = preposition;
     }
 
-    if (this.currentSubject && this.currentSubject.pinned){
-        s = this.currentSubject;
-        failsafe = 0;
-        while (s.agentType && s.agentType !== verb.subjectType && failsafe++ < 20){
-            verb = this.verbs [ Math.floor(Math.random()*this.verbs.length) ];
-        }
-    }else{
-        this.generateSubject(verb);
-    }
-    this.currentVerb = verb;
+    ppNoun = this.pickPPNoun(preposition);
+    this.currentPPNoun = ppNoun;
 
-    this.generateSubjectAdjective();
+    ppAdjective = this.pickPPAdjective(ppNoun);
+    this.currentPPAdjective = ppAdjective;
 
-    this.setNegation();
-
-    if (verb.isTransitive){
-        var okObjects = verb.okObjects;
-        if (okObjects === 'any'){
-            this.currentObject = this.nouns[ Math.floor( Math.random()*this.nouns.length ) ];
-        }else{
-            var okObjectKey = okObjects[ Math.floor( Math.random()*okObjects.length ) ];
-            this.currentObject = this.nounLookup[ okObjectKey ];
-            if (! this.currentObject){
-                alert("couldn't find noun for '" + okObjectKey + "'");
-            }
-        }
-        this.objectAdjective = this.generateObjectAdjective();
-        this.objectNumber    = Math.floor( Math.random()*(2) +1 ) % 2 === 0 ? 'singular' : 'plural';
-    }else{
-        this.currentObject = null;
-        this.objectAdjective = null;
-        this.objectNumber = null;
-    }
-
-    this.currentTense = this.pickTense();
-
-    
     var questionDiv = Y.one('#question');
     questionDiv.set('innerHTML', this.currentEnglishSentence());
 
@@ -103,6 +79,29 @@ Tester.prototype.askQuestion = function(){
     inputEl.set('value', '');
 
 };
+
+Tester.prototype.pickRandomActivePreposition = function(){
+    var aPreposition, activePrepositions;
+
+    activePrepositions = [];
+
+//    // hmm, wonder how this will scale with more verbs...
+//    for (i in this.verbs){
+//        aVerb = this.verbs[i];
+//        checkboxEl = Y.one("#wordlist-checkbox-" + aVerb.wordId);
+//        if (checkboxEl.get('checked')){
+//            activeVerbs.push(aVerb);
+//        }
+//    }
+//    // ...if the user has unchecked all the boxes...
+//    if (activeVerbs.length === 0){
+        activePrepositions = this.prepositions;
+//    }
+//
+    aPreposition = activePrepositions [ Math.floor(Math.random()*activePrepositions.length) ];
+
+    return aPreposition;
+}
 
 Tester.prototype.pickRandomActiveVerb = function(){
     var aVerb, activeVerbs;
@@ -127,6 +126,20 @@ Tester.prototype.pickRandomActiveVerb = function(){
     return aVerb;
 };
 
+Tester.prototype.pickPPAdjective = function(preposition){
+    var anAdjective;
+
+    anAdjective = this.adjectives [ Math.floor(Math.random()*this.adjectives.length) ];
+
+    return anAdjective;
+};
+Tester.prototype.pickPPNoun = function(preposition){
+    var aNoun;
+
+    aNoun = this.nouns [ Math.floor(Math.random()*this.nouns.length) ];
+
+    return aNoun;
+};
 
 Tester.prototype.generateSubject = function(verb){
     var okSubjectType, okSubjects;
@@ -317,116 +330,116 @@ Tester.prototype.generateRandomPraise = function(){
 }
 
 Tester.prototype.currentPolishSentence = function(args){
-    var wrapInTooltipDivs = //true/false
-        ( typeof args === "undefined" ? false : args.wrapInTooltipDivs );  
-
-    var subject = this.currentSubject;
-    var subjectAdjective = this.subjectAdjective;
-    var tense = this.currentTense; //present, past, future, etc...
-    var verbArgs = {
-        tense:             this.currentTense, //present, past, future, etc...
-        number:            null,   // s or p
-        person:            this.currentPerson, //1, 2, 3
-        gender:            this.currentSubject.getGender(),
-        wrapInTooltipDivs: wrapInTooltipDivs,
-        isNegated:         this.isNegated
-    };
-    var subjectStr, subjectAdjectiveStr, verbStr;
-    if (this.subjectNumber === 'singular'){
-        subjectStr = subject.makePolishStr({
-            wrapInTooltipDivs: wrapInTooltipDivs,
-            caseAccessor:      "nom_sing",
-            isInitialWord:     (! subjectAdjective)
-        });
-
-        verbArgs.number = 's';
-        verbArgs.isInitialWord = (! subjectStr);
-        verbStr = this.currentPolishVerbStr(verbArgs);
-
-        if (subjectAdjective){
-            subjectAdjectiveStr = subjectAdjective.makePolishStr({
-                caseMethodName:    "nominativeSingularForGender", 
-                gender:            subject.getGender(),
-                isInitialWord:     true,
-                wrapInTooltipDivs: wrapInTooltipDivs
-            }) + ' ';
-        }else{
-            subjectAdjectiveStr = '';
-        }
-        if (! subjectAdjectiveStr && ! subjectStr){
-            verbStr = verbStr.charAt(0).toUpperCase() + verbStr.slice(1);
-        }
-
-    }else{
-        subjectStr = subject.makePolishStr({
-            wrapInTooltipDivs: wrapInTooltipDivs,
-            caseAccessor:      "nom_pl",
-            isInitialWord:     (! subjectAdjective)
-        });
-
-        verbArgs.number = 'p';
-        verbArgs.isInitialWord = (! subjectStr);
-        verbStr = this.currentPolishVerbStr(verbArgs);
-
-        if (subjectAdjective){
-            subjectAdjectiveStr =  subjectAdjective.makePolishStr({
-                caseMethodName:    "nominativePluralForGender", 
-                gender:            subject.getGender(),
-                isInitialWord:     true,
-                wrapInTooltipDivs: wrapInTooltipDivs
-            }) + ' ';
-        }else{
-            subjectAdjectiveStr = '';
-        }
-    }
-
-    var str = subjectAdjectiveStr + subjectStr + ' ' + verbStr;
-    str = str.replace(/^ +/, '');
-
-
-    if (this.currentObject){
-        var object = this.currentObject;
-        var objectAdjective = this.objectAdjective;
-        var objectStr, objectAdjectiveStr;
-        if (this.objectNumber === 'singular'){
-            objectStr = object.makePolishStr({
-                wrapInTooltipDivs: wrapInTooltipDivs,
-                caseAccessor:      this.isNegated ? "gen_sing" : "acc_sing"
-            });
-            if (objectAdjective){
-                objectAdjectiveStr =  objectAdjective.makePolishStr({
-                    caseMethodName:    this.isNegated ? "genitiveSingularForGender" : "accusativeSingularForGender", 
-                    gender:            object.getGender(),
-                    isInitialWord:     false,
-                    wrapInTooltipDivs: wrapInTooltipDivs
-                });
-            }else{
-                objectAdjectiveStr = '';
-            }
-        }else{
-            objectStr = object.makePolishStr({
-                wrapInTooltipDivs: wrapInTooltipDivs,
-                caseAccessor:      this.isNegated ? "gen_pl" : "acc_pl"
-            });
-            if (objectAdjective){
-                objectAdjectiveStr =  objectAdjective.makePolishStr({
-                    caseMethodName:    this.isNegated ? "genitivePluralForGender" : "accusativePluralForGender", 
-                    gender:            object.getGender(),
-                    isInitialWord:     false,
-                    wrapInTooltipDivs: wrapInTooltipDivs
-                });
-            }else{
-                objectAdjectiveStr = '';
-            }
-        }
-        if (objectAdjectiveStr){
-            objectAdjectiveStr = ' ' + objectAdjectiveStr ;
-        }
-        str = str + objectAdjectiveStr +  ' ' + objectStr;
-    }
-    str = str.replace(/ +$/, '') + '.';
-
-    return str;
+//    var wrapInTooltipDivs = //true/false
+//        ( typeof args === "undefined" ? false : args.wrapInTooltipDivs );  
+//
+//    var subject = this.currentSubject;
+//    var subjectAdjective = this.subjectAdjective;
+//    var tense = this.currentTense; //present, past, future, etc...
+//    var verbArgs = {
+//        tense:             this.currentTense, //present, past, future, etc...
+//        number:            null,   // s or p
+//        person:            this.currentPerson, //1, 2, 3
+//        gender:            this.currentSubject.getGender(),
+//        wrapInTooltipDivs: wrapInTooltipDivs,
+//        isNegated:         this.isNegated
+//    };
+//    var subjectStr, subjectAdjectiveStr, verbStr;
+//    if (this.subjectNumber === 'singular'){
+//        subjectStr = subject.makePolishStr({
+//            wrapInTooltipDivs: wrapInTooltipDivs,
+//            caseAccessor:      "nom_sing",
+//            isInitialWord:     (! subjectAdjective)
+//        });
+//
+//        verbArgs.number = 's';
+//        verbArgs.isInitialWord = (! subjectStr);
+//        verbStr = this.currentPolishVerbStr(verbArgs);
+//
+//        if (subjectAdjective){
+//            subjectAdjectiveStr = subjectAdjective.makePolishStr({
+//                caseMethodName:    "nominativeSingularForGender", 
+//                gender:            subject.getGender(),
+//                isInitialWord:     true,
+//                wrapInTooltipDivs: wrapInTooltipDivs
+//            }) + ' ';
+//        }else{
+//            subjectAdjectiveStr = '';
+//        }
+//        if (! subjectAdjectiveStr && ! subjectStr){
+//            verbStr = verbStr.charAt(0).toUpperCase() + verbStr.slice(1);
+//        }
+//
+//    }else{
+//        subjectStr = subject.makePolishStr({
+//            wrapInTooltipDivs: wrapInTooltipDivs,
+//            caseAccessor:      "nom_pl",
+//            isInitialWord:     (! subjectAdjective)
+//        });
+//
+//        verbArgs.number = 'p';
+//        verbArgs.isInitialWord = (! subjectStr);
+//        verbStr = this.currentPolishVerbStr(verbArgs);
+//
+//        if (subjectAdjective){
+//            subjectAdjectiveStr =  subjectAdjective.makePolishStr({
+//                caseMethodName:    "nominativePluralForGender", 
+//                gender:            subject.getGender(),
+//                isInitialWord:     true,
+//                wrapInTooltipDivs: wrapInTooltipDivs
+//            }) + ' ';
+//        }else{
+//            subjectAdjectiveStr = '';
+//        }
+//    }
+//
+//    var str = subjectAdjectiveStr + subjectStr + ' ' + verbStr;
+//    str = str.replace(/^ +/, '');
+//
+//
+//    if (this.currentObject){
+//        var object = this.currentObject;
+//        var objectAdjective = this.objectAdjective;
+//        var objectStr, objectAdjectiveStr;
+//        if (this.objectNumber === 'singular'){
+//            objectStr = object.makePolishStr({
+//                wrapInTooltipDivs: wrapInTooltipDivs,
+//                caseAccessor:      this.isNegated ? "gen_sing" : "acc_sing"
+//            });
+//            if (objectAdjective){
+//                objectAdjectiveStr =  objectAdjective.makePolishStr({
+//                    caseMethodName:    this.isNegated ? "genitiveSingularForGender" : "accusativeSingularForGender", 
+//                    gender:            object.getGender(),
+//                    isInitialWord:     false,
+//                    wrapInTooltipDivs: wrapInTooltipDivs
+//                });
+//            }else{
+//                objectAdjectiveStr = '';
+//            }
+//        }else{
+//            objectStr = object.makePolishStr({
+//                wrapInTooltipDivs: wrapInTooltipDivs,
+//                caseAccessor:      this.isNegated ? "gen_pl" : "acc_pl"
+//            });
+//            if (objectAdjective){
+//                objectAdjectiveStr =  objectAdjective.makePolishStr({
+//                    caseMethodName:    this.isNegated ? "genitivePluralForGender" : "accusativePluralForGender", 
+//                    gender:            object.getGender(),
+//                    isInitialWord:     false,
+//                    wrapInTooltipDivs: wrapInTooltipDivs
+//                });
+//            }else{
+//                objectAdjectiveStr = '';
+//            }
+//        }
+//        if (objectAdjectiveStr){
+//            objectAdjectiveStr = ' ' + objectAdjectiveStr ;
+//        }
+//        str = str + objectAdjectiveStr +  ' ' + objectStr;
+//    }
+//    str = str.replace(/ +$/, '') + '.';
+//
+//    return str;
 };
 
 Tester.prototype.currentPolishVerbStr = function (verbArgs){
@@ -545,29 +558,12 @@ Tester.prototype.currentEnglishSentence = function(){
     var s = '';
     var subjectNoun = '';
 
-    if (this.subjectAdjective){
-        s = this.subjectAdjective.english + ' ';
-    }
-    if (this.subjectNumber === 'singular'){
-        subjectNoun = this.currentSubject.english_sing;
-    }else{
-        subjectNoun = this.currentSubject.english_pl;
-    }
-    if (! this.currentSubject.constructor.toString().match(/Pronoun/)){
-        s = 'The ' + s;
-    }
-    s = s + this.currentSubject.wrapInPushpinDivs(subjectNoun, 'subject');
+    s = this.currentPreposition.english + ' ';
 
-    s = s + ' + ' + this.currentVerb.wrapInPushpinDivs(this.getEnglishVerb(), 'verb') ;
+    s = s + ' the ' + this.currentPPAdjective.english;
 
-    if (this.currentObject){
-        if (this.objectNumber === 'singular'){
-            s = s + ' + the ' + this.getObjectAdjectiveEnglishStr() + ' ' + this.currentObject.english_sing + '.';
-        }else{
-            s = s + ' + the ' + this.getObjectAdjectiveEnglishStr() + ' ' + this.currentObject.english_pl + '.';
-        }
-    }
-    s = s.charAt(0).toUpperCase() + s.slice(1);
+    s = s + ' ' + this.currentPPNoun.english_sing;
+
 
     return s;
 };
@@ -678,48 +674,48 @@ Tester.prototype.unsetPushpin = function(pushpinSpanEl, partOfSentence){
 
 Tester.prototype.checkboxWordListTemplate = '<input id="wordlist-checkbox-{wordId}" type="checkbox" checked="1"/>{english}</input><br/>';
 Tester.prototype.populateCheckboxWordLists = function() {
-    var i, row, word, template, stash, html;
-
-    template = this.checkboxWordListTemplate;
-
-    for (i in verbData){
-        row = verbData[i];
-        // to skip the findRow method we added
-        if (typeof row !== 'object'){
-            continue;
-        }
-        word = new Verb(row);
-        stash = { 
-            english: word.infinitive[1],
-            wordId: word.wordId
-        };
-        html = Y.substitute(template, stash);
-        el = Y.Node.create(html);
-
-        sectionEl = Y.one('#verb-section-list');
-        sectionEl.append(el);  
-    }
-
-    // the subjects (only agents or i-agents are subjects for verbs)
-    for (i in nounData){
-        row = nounData[i];
-        // to skip the findRow method we added
-        if (typeof row !== 'object'){
-            continue;
-        }
-        word = new Noun(row);
-        if (word.agentType === 'no-agent'){
-            continue;
-        }
-        stash = {
-            english: word.english_sing,
-            wordId: word.wordId
-        };
-        html = Y.substitute(template, stash);
-        el = Y.Node.create(html);
-
-        sectionEl = Y.one('#subject-section-list');
-        sectionEl.append(el);
-    }
+//    var i, row, word, template, stash, html;
+//
+//    template = this.checkboxWordListTemplate;
+//
+//    for (i in verbData){
+//        row = verbData[i];
+//        // to skip the findRow method we added
+//        if (typeof row !== 'object'){
+//            continue;
+//        }
+//        word = new Verb(row);
+//        stash = { 
+//            english: word.infinitive[1],
+//            wordId: word.wordId
+//        };
+//        html = Y.substitute(template, stash);
+//        el = Y.Node.create(html);
+//
+//        sectionEl = Y.one('#verb-section-list');
+//        sectionEl.append(el);  
+//    }
+//
+//    // the subjects (only agents or i-agents are subjects for verbs)
+//    for (i in nounData){
+//        row = nounData[i];
+//        // to skip the findRow method we added
+//        if (typeof row !== 'object'){
+//            continue;
+//        }
+//        word = new Noun(row);
+//        if (word.agentType === 'no-agent'){
+//            continue;
+//        }
+//        stash = {
+//            english: word.english_sing,
+//            wordId: word.wordId
+//        };
+//        html = Y.substitute(template, stash);
+//        el = Y.Node.create(html);
+//
+//        sectionEl = Y.one('#subject-section-list');
+//        sectionEl.append(el);
+//    }
 };
 
