@@ -20,14 +20,21 @@ test:
 
 #http://toolbox.no.de/packages/yui3-mocha ?
 
-build:
-	echo $(BUILT_AT)
-	perl -np -e '                      '\
-	'	if (/\[% INCLUDE (\S+) %\]/){  '\
-	'		my $$filename = $$1;       '\
-	'		die "bad filename $$_"     '\
-	'			unless -e $$filename;  '\
-	'		$$_ = `cat $$filename`;    '\
-	'	}                              '\
-	'	s/\[% DateTime.now.ymd %\]/$(BUILT_AT)/'\
+build: build-nvo build-prepositions
+
+FAKE_TEMPLATE= '                  \
+	if (/\[% INCLUDE (\S+) %\]/){ \
+		my $$filename = $$1;      \
+		die "bad filename $$_"    \
+			unless -e $$filename; \
+		$$_ = `cat $$filename`;   \
+	}                             \
+	s/\[% DateTime.now.ymd %\]/$(BUILT_AT)/ '
+
+build-nvo:
+	perl -np -e $(FAKE_TEMPLATE) \
 	 noun-verb-object.html.tt > noun-verb-object.html
+
+build-prepositions:
+	perl -np -e $(FAKE_TEMPLATE) \
+	 prepositions.html.tt > prepositions.html
