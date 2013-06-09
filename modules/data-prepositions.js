@@ -5,6 +5,7 @@ var prepositionData = [
  [ 'above', 'nad', 'instrumental' ],
  [ 'behind', 'za', 'instrumental' ],
  [ 'in front of', 'przed', 'instrumental' ],
+ [ 'through', 'przez', 'accusative' ],
  [ 'before (chronologically)', 'przed', 'instrumental' ],
  [ 'under',         'pod', 'instrumental' ],
  [ 'with',          'z', 'instrumental' ],
