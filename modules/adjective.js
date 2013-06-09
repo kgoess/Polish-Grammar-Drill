@@ -163,7 +163,13 @@ Adjective.prototype.locativeSingularForGender = function(gender){
     var stem = this.stem(), result;
 
     if (gender === 'f'){
-        result = stem + 'ej'; //<<== this is the different bit for locative
+        if (stem.charAt(stem.length-1) == 'k' ||
+            stem.charAt(stem.length-1) == 'g'   
+           ){
+            result = stem + 'iej'; 
+        }else{
+            result = stem + 'ej';
+        }
     }else { 
         if (stem.charAt(stem.length-1) == 'k' ||
             stem.charAt(stem.length-1) == 'g'   

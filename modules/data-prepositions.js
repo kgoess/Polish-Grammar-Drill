@@ -12,7 +12,7 @@ var prepositionData = [
  [ 'from, away from', 'od', 'genitive' ],
  [ 'to',            'do', 'genitive' ],
  [ 'without',       'bez', 'genitive' ],
- [ 'between',       'między', 'instrumental' ], 
+ // needs two nouns[ 'between',       'między', 'instrumental' ], 
  [ 'about (concerning)', 'o', 'locative' ],
  [ 'next to (hard by)', 'przy', 'locative' ],
  [ 'next to', 'obok', 'genitive' ],

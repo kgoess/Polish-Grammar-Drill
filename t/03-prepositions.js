@@ -90,8 +90,13 @@ describe('irregular instrumentals loading przyjaciel', function(){
 });
 describe('irregular locatives loading przyjaciel', function(){
     it('should be przyjacielu/przyjacołach', function(){
-        przyjaciel.loc_sing.should.equal('przyjacielu')
-        przyjaciel.loc_pl.should.equal('przyjaciołach')
+        przyjaciel.loc_sing.should.equal('przyjacielu');
+        przyjaciel.loc_pl.should.equal('przyjaciołach');
+    });
+});
+describe('locative feminine for niebieski', function(){
+    it('should be niebieskiej', function(){
+        niebieski.locativeSingularForGender('f').should.equal('niebieskiej');
     });
 });
 
