@@ -81,6 +81,7 @@ var szkoła  = new Noun(nounData.findRow("school"));
 var mydło = new Noun(nounData.findRow("soap"));
 var stół = new Noun(nounData.findRow("table"));
 var przyjaciel = new Noun(nounData.findRow("friend"));
+var tani = new Adjective(adjectiveData.findRow('cheap'));
 
 describe('irregular instrumentals loading przyjaciel', function(){
     it('should be przyjacielem/przyjaciółmi', function (){
@@ -99,6 +100,15 @@ describe('locative feminine for niebieski', function(){
         niebieski.locativeSingularForGender('f').should.equal('niebieskiej');
     });
 });
+describe('tani', function(){
+    describe('inst, loc masc should be tanim', function(){
+        it('should be tanim', function(){
+            tani.instrumentalSingularForGender('m').should.equal('tanim');
+            tani.locativeSingularForGender('m').should.equal('tanim');
+        });
+    });
+});
+        
 
 
 describe('tester', function(){

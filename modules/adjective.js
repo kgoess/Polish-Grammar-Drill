@@ -33,6 +33,8 @@ var adjectiveEndings = {
     "genitive-s":   [ 'ego',  'ego',  'ej', 'ego' ],
     "dative-s":     [ 'emu',  'emu',  'ej', 'emu' ],
     "accusative-s": [ 'ego',  '=nom', 'ą',  'e'   ],
+    "instrumental-s":['*m',   '*m',   'ą',  '*m'  ], 
+    "locative-s":   [ '*m',   '*m',   'ej', '*m'  ], 
             //      m-pers    m       f    n 
     "nominative-p": [ 'IRR',   '=nas', '=nas', '=nas'],
     "genitive-p":   [ '*ch',   '*ch',  '*ch',  '*ch'] ,
@@ -132,22 +134,36 @@ Adjective.prototype.genitivePluralForGender = function (gender) {
 };
 
 Adjective.prototype.instrumentalSingularForGender = function(gender){
-    var stem = this.stem(), result;
+    var result = '',
+        stem = this.stem();
 
-    if (gender === 'f'){
-        result = stem + 'ą'; // this is the different bit for instrumental
-    }else { 
-        if (stem.charAt(stem.length-1) == 'k' ||
-            stem.charAt(stem.length-1) == 'g'   
-           ){
-            result = stem + 'im'; 
-        }else{
-            result = stem + 'ym';
-        }
+    var endings = this.adjectiveEndings['instrumental-s'];
+
+    switch(gender){
+        case 'f':
+            result = stem + endings[2];
+            break;
+        case 'm':
+        case 'm-animate':
+        case 'm-personal':
+        case 'n':
+            result = stem + endings[0];
+            if (stem.charAt(stem.length-1) == 'k' ||
+                stem.charAt(stem.length-1) == 'g'   
+               ){
+                result = result.replace(/\*/, 'i');
+            }else{
+                result = result.replace(/\*/, 'y');
+            }
+            // for e.g. tani we don't want to end up with taniym
+            result = result.replace(/iym/, 'im');
+            break;
+        default:
+            alert("Hey, what gender is '" + gender + "' supposed to be?");
     }
-
     return result;
 }
+
 Adjective.prototype.instrumentalPluralForGender = function(gender){
     var stem = this.stem(), result;
     if (stem.charAt(stem.length-1) == 'k' ||
@@ -161,23 +177,20 @@ Adjective.prototype.instrumentalPluralForGender = function(gender){
 
 Adjective.prototype.locativeSingularForGender = function(gender){
     var stem = this.stem(), result;
+    var endings = this.adjectiveEndings['locative-s'];
+    var ending;
 
     if (gender === 'f'){
+        ending = endings[2];
         if (stem.charAt(stem.length-1) == 'k' ||
             stem.charAt(stem.length-1) == 'g'   
            ){
-            result = stem + 'iej'; 
+            result = stem + 'i' + ending; 
         }else{
-            result = stem + 'ej';
+            result = stem + ending;
         }
     }else { 
-        if (stem.charAt(stem.length-1) == 'k' ||
-            stem.charAt(stem.length-1) == 'g'   
-           ){
-            result = stem + 'im'; 
-        }else{
-            result = stem + 'ym';
-        }
+        result = this.instrumentalSingularForGender(gender);
     }
     return result;
 }
