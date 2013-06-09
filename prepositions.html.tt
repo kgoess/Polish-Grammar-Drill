@@ -84,6 +84,9 @@ for (i in nounData){
     if (typeof row !== 'object'){
         continue;
     }
+    if (row[0] !== "friend"){
+        continue;
+    }
     noun = new Noun(row);
     tester.addNoun(noun);
 }

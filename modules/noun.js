@@ -55,8 +55,8 @@ Noun.prototype.recalculateLocatives = function(){
 
     // irregular ones were explicitly specified in the data
     if (typeof s !== 'string'){
-        this.inst_sing = s[0];
-        this.inst_pl   = s[1];
+        this.loc_sing = s[0];
+        this.loc_pl   = s[1];
         return;
     }
 

@@ -342,9 +342,33 @@ Tester.prototype.currentPolishSentence = function(args){
     var adjective = this.currentPPAdjective;
     var noun = this.currentPPNoun;
 
-    str = preposition.polish + ' '
-         + adjective.instrumentalSingularForGender(noun.gender) + ' '
-         + noun.inst_sing;
+    // this is ugly, better way to do the routing?
+    // fix it when I have to handle plurals
+    switch(preposition.takes){
+        case "genitive" :
+            str = preposition.polish + ' '
+                 + adjective.genitiveSingularForGender(noun.gender) + ' '
+                 + noun.gen_sing;
+            break;
+        case "accusative" :
+            str = preposition.polish + ' '
+                 + adjective.accusativeSingularForGender(noun.gender) + ' '
+                 + noun.acc_sing;
+            break;
+        case "instrumental" :
+            str = preposition.polish + ' '
+                 + adjective.instrumentalSingularForGender(noun.gender) + ' '
+                 + noun.inst_sing;
+            break;
+        case "locative" :
+            str = preposition.polish + ' '
+                 + adjective.locativeSingularForGender(noun.gender) + ' '
+                 + noun.loc_sing;
+            break;
+        default :
+            throw("Error: preposition takes '" + preposition.takes + "'? WTF is that?");
+    }
+
 
     return str;
 //    var wrapInTooltipDivs = //true/false

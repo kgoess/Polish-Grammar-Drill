@@ -80,6 +80,20 @@ var niebieski = new Adjective(adjectiveData.findRow('blue'));
 var szkoła  = new Noun(nounData.findRow("school"));
 var mydło = new Noun(nounData.findRow("soap"));
 var stół = new Noun(nounData.findRow("table"));
+var przyjaciel = new Noun(nounData.findRow("friend"));
+
+describe('irregular instrumentals loading przyjaciel', function(){
+    it('should be przyjacielem/przyjaciółmi', function (){
+        przyjaciel.inst_sing.should.equal('przyjacielem')
+        przyjaciel.inst_pl.should.equal('przyjaciółmi')
+    });
+});
+describe('irregular locatives loading przyjaciel', function(){
+    it('should be przyjacielu/przyjacołach', function(){
+        przyjaciel.loc_sing.should.equal('przyjacielu')
+        przyjaciel.loc_pl.should.equal('przyjaciołach')
+    });
+});
 
 
 describe('tester', function(){

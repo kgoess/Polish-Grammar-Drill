@@ -14,7 +14,7 @@ if (typeof exports === "undefined"){
 function Preposition(args){
     this.english  = args[0];
     this.polish   = args[1];
-    this.gcase    = args[2]; // grammatical case ("case" is a js keyword)
+    this.takes    = args[2]; // i.e. which case it takes
 
     this.wordId = this.nom_sing; // like a primary key for all the words here
 }
