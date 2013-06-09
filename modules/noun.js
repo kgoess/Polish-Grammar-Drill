@@ -20,14 +20,61 @@ function Noun(args){
     this.gen_pl       = args[5];
     this.acc_sing     = args[6];
     this.acc_pl       = args[7];
-    this.gender       = args[8];
-    this.agentType    = args[9];
+    this.inst_sing    = args[8];
+    this.loc_sing     = args[9];
+    this.gender       = args[10];
+    this.agentType    = args[11];
 
     this.wordId = this.nom_sing; // like a primary key for all the words here
 
-    this.inst_sing     = this.calculateInstrumentalSingular();
-    this.inst_pl       = this.calculateInstrumentalPlural();
-}
+    this.inst_pl = '';
+    this.loc_pl = '';
+
+    this.recalculateInstrumentals();
+    this.recalculateLocatives();
+};
+
+
+Noun.prototype.recalculateInstrumentals = function(){
+    var s = this.inst_sing,
+         pl, stem;
+
+    // irregular ones were explicitly specified in the data
+    if (typeof s !== 'string'){
+        this.inst_sing = s[0];
+        this.inst_pl   = s[1];
+        return;
+    }
+
+    stem = this.calculateStem();
+    this.inst_pl = stem + 'ami';
+};
+
+Noun.prototype.recalculateLocatives = function(){
+    var s = this.loc_sing;
+
+    // irregular ones were explicitly specified in the data
+    if (typeof s !== 'string'){
+        this.inst_sing = s[0];
+        this.inst_pl   = s[1];
+        return;
+    }
+
+    stem = this.calculateStem();
+    this.inst_pl = stem + 'ach';
+};
+
+    
+    
+// this seems to be a pretty reliable way to do it, for calculating
+// inst pl and loc pl at least...
+Noun.prototype.calculateStem = function(){
+    var stem, s = this.inst_sing;
+    stem = s.replace(/(ą|i?em)$/, '');
+    return stem;
+};
+
+
 
 exports.Noun = Noun;
 
