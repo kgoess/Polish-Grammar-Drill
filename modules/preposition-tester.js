@@ -313,10 +313,6 @@ Tester.prototype.checkAnswer = function(){
         anim.run();
         this.addToHistory(answer);
 
-    }else if (answer.charAt(0).toUpperCase() !== answer.charAt(0)){
-        alert('Capitalization is important...');
-    }else if (answer.charAt( answer.length-1 ) !== '.'){
-        alert('Punctuation is important...');
     }else{
         alert('Nie, zła odpowiedź, spróbuj ponownie!');
         //alert(this.currentPolishSentence({wrapInTooltipDivs: false}));
