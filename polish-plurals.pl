@@ -71,7 +71,7 @@ my @adj_defs = qw/
   blue niebieski niebieska niebieskie
   tall wysoki wysoka wysokie
   short(low) niski niska niskie
-  polish polski polksa polskie
+  polish polski polska polskie
   long długi długa długie
   expensive drogi droga drogie
   short(hair) krótki krótka krótkie	
