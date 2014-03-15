@@ -191,6 +191,29 @@ var verbData = [
         s: [ 'widział', 'widziała'  ],
         p: [ 'widzieli', 'widziały' ] 
       }
+    },
+    { infinitive: ['słuchać', 'to listen to' ],
+      english_past: 'was listening to', 
+      english_future: 'will be listening to',
+      transitive: true,
+      ok_subjects: 'agent',
+      object_case: 'genitive',
+      objects: [ 'kot', 'samochód', 'rower', 'pociąg', 'samolot', 'zegar', 
+                 'zegarek', 'chłopiec', 'zabawka', 'koń', 'kobieta', 'siostra', 
+                 'żona', 'córka', 'zwierzę', 'ojciec', 'mąż', 'dziadek', 
+                 'niedźwiedź', 'ptak', 'żółw', 'wąż', 'żaba', 'krowa' ],
+      present_tense: {
+        s: [ 'słucham',  'słuchasz', 'słucha' ],
+        p: [ 'słuchamy', 'słuchacie', 'słuchają' ]
+      },
+      past_tense: {
+        s: [ 'słuchałem/słuchałam',     'słuchałeś/słuchałaś',       'słuchał/słuchała' ],
+        p: [ 'słuchaliśmy/słuchałyśmy', 'słuchaliście/słuchałyście', 'słuchali/słuchały' ]
+      },
+      future_tense: {
+        s: [ 'słuchał',  'słuchała'  ],
+        p: [ 'słuchali', 'słuchały' ] 
+      }
     }
 ];
 

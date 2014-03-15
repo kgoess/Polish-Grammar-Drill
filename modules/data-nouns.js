@@ -26,6 +26,7 @@ var nounData = [
  [ 'plate',      'plates',       'talerz',   'talerze',   'talerza',  'talerzy',   'talerz',   'talerze',   'm',          'no-agent' ], 
  [ 'hat',        'hats',         'kapelusz', 'kapelusze', 'kapelusza','kapeluszy', 'kapelusz', 'kapelusze', 'm',          'no-agent' ], 
  [ 'horse',      'horses',       'koń',      'konie',     'konia',    'koni',      'konia',    'konie',     'm-animate',  'agent' ], 
+ [ 'deer',       'deer (pl.)',         'jeleń',    'jelenie',   'jeleni',   'jeleni',    'jelenia',  'jelenie',   'm-animate',   'agent'    ],
  [ 'woman',      'women',        'kobieta',  'kobiety',   'kobiety',  'kobiet',    'kobietę',  'kobiety',   'f',          'i-agent' ], 
  [ 'school',     'schools',      'szkoła',   'szkoły',    'szkoły',   'szkół',     'szkołę',   'szkoły',    'f',          'no-agent' ], 
  [ 'sister',     'sisters',      'siostra',  'siostry',   'siostry',  'siostr',    'siostrę',  'siostry',   'f',          'i-agent' ], 
@@ -55,9 +56,20 @@ var nounData = [
  [ 'carrot',     'carrots',      'marchew',  'marchwie',  'marchwi',  'marchwi',   'marchew',  'marchwie',  'f',          'no-agent' ],
  [ 'sausage',    'sausages',     'kiełbasa', 'kiełbasy',  'kiełbasy', 'kiełbas',   'kiełbasę', 'kiełbasy',  'f',          'no-agent' ],
  [ 'bridge',     'bridges',      'most',     'mosty',     'mostu',    'mostów',    'most',     'mosty',     'm',          'no-agent' ],
- [ 'friend',     'friends',      'przyjaciel','przyjaciele','przyjaciela','przyjaciół','przyjaciela','przyjaciół','m-personal',     'i-agent' ],
- [ 'cabbage',    'cabbages',     'kapusta',  'kapusty',   'kapusty',  'kapust',    'kapustę',  'kapusty',   'f',          'no-agent' ]
-] ;
+ [ 'friend',     'friends',      'przyjaciel','przyjaciele','przyjaciela','przyjaciół','przyjaciela','przyjaciół','m-personal', 'i-agent' ],
+ [ 'cabbage',    'cabbages',     'kapusta',  'kapusty',   'kapusty',  'kapust',    'kapustę',  'kapusty',   'f',          'no-agent' ],
+ [ 'bear',       'bears',        'niedźwiedź','niedźwiedzie', 'niedźwiedzia', 'niedżwiedzi', 'niedźwidzia', 'niedźwiedzie', 'm-animate', 'agent' ],
+// mysz is one of those irregular feminine sz words, like twarz
+// [ 'mouse',      'mice',         'mysz',     'myszy',     'myszy',    'myszy',     'mysz',     'myszy',     'f',          'agent',  ],
+// ptak is irregular in acc. sing: ptaka?
+ [ 'bird',       'birds',        'ptak',     'ptaki',     'ptaka',    'ptaków',    'ptaka',    'ptaki',     'm-animate',  'agent'    ],
+// ...and so is żółw
+ [ 'turtle',     'turtles',      'żółw',     'żółwie',    'żółwia',   'żółwi',     'żółwia',   'żółwie',    'm-animate',  'agent'    ],
+// wąż has two possibilities for gen pl: węży/wężów.
+ [ 'snake',      'snakes',       'wąż',      'węże',      'węża',     'wężów',     'węża',    'węże',      'm-animate',   'agent'    ],
+ [ 'frog',       'frogs',        'żaba',     'żaby',      'żaby',     'żab',       'żabę',    'żaby',      'f',           'agent'    ],
+ [ 'cow',        'cows',         'krowa',    'krowy',     'krowy',    'krów',      'krowę',   'krowy',     'f',           'agent'    ]
+];
 
 
 
