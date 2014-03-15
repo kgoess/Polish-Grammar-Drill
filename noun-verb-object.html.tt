@@ -111,7 +111,6 @@ var returnPressed = 'down:13';
 Y.on('key', function(e) {
     tester.checkAnswer();
 }, '#input', returnPressed, Y);
-
 Y.on('click', function(e){
     tester.giveHint();
    }, '#give-hint', Y
@@ -120,6 +119,10 @@ Y.on('click', function(e){
     tester.askQuestion();
     }, '#go-again', Y
 );
+Y.one('doc').on('key', function (e){
+    tester.askQuestion();
+   }, 'down:78+ctrl', Y
+); 
 Y.on('click', function(e){
     tester.showAnswer();
     }, '#show-answer', Y
@@ -314,7 +317,7 @@ radio {
                 <button id="give-hint">Give me a hint?</button>
                 <button id="show-answer">Tell me the answer</button>
                 <br/>
-                <button id="go-again">Another test</button>
+                <button id="go-again">Another test (ctrl-n)</button>
             </div>
             <div class="instructions">
                 <p>Type your answer in the box and press 'enter'.</p>
