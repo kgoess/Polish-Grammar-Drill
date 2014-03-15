@@ -1,6 +1,8 @@
 
 BUILT_AT=$(shell date "+%Y-%m-%d")
 
+help: default
+
 default:
 	@echo "usage: make (test|build|install-dev|...)"
 
