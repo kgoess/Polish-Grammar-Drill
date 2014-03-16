@@ -12,5 +12,21 @@
    see notes in adj re "should move this logic into the stem method?"
    put a data shim in so we don't have to reference 'document' directly
    currentPolishSentence method is way to long and repetitive
+
+   Prepositions:
+     * reformat all the noun data? need to add inst, locative. Just get it 
+       from wiktionary?
+     * best way to have different sets of nouns and verbs for the different tests?
+     * need to be able to write tests for pickPreposition &c.
+     
+    The rules are going to be:
+     1) pick a preposition
+     2) that limits the number of verbs
+     3) pick a verb
+     4) (pick direct object?)
+     5) the verb determines the case and limits the valid targets
+     6) pick a target and its number
+
+    I think nouns will need to be qualified as "locations" and "non-locations".
 */
 
