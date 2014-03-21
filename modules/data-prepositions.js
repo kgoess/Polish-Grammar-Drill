@@ -1,23 +1,24 @@
 
 var prepositionData = [
- [ 'on',    'na',  'locative' ],
- [ 'onto',  'na',  'accusative' ],
- [ 'above', 'nad', 'instrumental' ],
- [ 'behind', 'za', 'instrumental' ],
+ [ 'on',          'na',    'locative' ],
+ [ 'onto',        'na',    'accusative' ],
+ [ 'above',       'nad',   'instrumental' ],
+ [ 'to',          'nad',   'accusative' ],
+ [ 'behind',      'za',    'instrumental' ],
  [ 'in front of', 'przed', 'instrumental' ],
- [ 'through', 'przez', 'accusative' ],
+ [ 'through',     'przez', 'accusative' ],
+ [ 'under',       'pod',    'instrumental' ],
+ [ 'with',        'z',      'instrumental' ],
+ [ 'from',        'z',      'genitive' ],
+ [ 'from',        'od',     'genitive' ],
+ [ 'to',          'do',     'genitive' ],
+ [ 'without',     'bez',    'genitive' ],
+ [ 'between',     'między', 'instrumental' ], 
+ [ 'next to',     'obok',   'genitive' ],
+ [ 'in',          'w',      'locative' ],
+ [ 'about (concerning)',    'o',  'locative' ],
+ [ 'next to (hard by)',     'przy', 'locative' ],
  [ 'before (chronologically)', 'przed', 'instrumental' ],
- [ 'under',         'pod', 'instrumental' ],
- [ 'with',          'z', 'instrumental' ],
- [ 'from',     'z',   'genitive' ],
- [ 'from',          'od', 'genitive' ],
- [ 'to',            'do', 'genitive' ],
- [ 'without',       'bez', 'genitive' ],
- [ 'between',       'między', 'instrumental' ], 
- [ 'about (concerning)', 'o', 'locative' ],
- [ 'next to (hard by)', 'przy', 'locative' ],
- [ 'next to', 'obok', 'genitive' ],
- [ 'in',       'w',   'locative' ],
 ];
 
 // "exports" is needed for our unit tests in mocha
@@ -26,13 +27,17 @@ var exports;
 if (typeof exports === "undefined"){
     exports = {};
 } 
-prepositionData.findRow = function(english){
+prepositionData.findRow = function(polish_plus_case){
+    var splitStr = polish_plus_case.split('+');
+    var polishPreposition = splitStr[0];
+    var governingCase = splitStr[1];
     var i;
     for (i = 0; i < this.length; ++i){
-       //fixme if (this[i][3] === english){
-       //fixme    return this[i];
-       //fixme  }
+       if (this[i][1] === polishPreposition && 
+           this[i][2] == governingCase ){
+          return this[i];
+        }
     }
-    throw("Error: no pronoun match for '" + english + "'");
+    throw("Error: no preposition match for '" + english + "'");
 };
-exports.pronounData = pronounData;
+exports.prepositionData = prepositionData;
