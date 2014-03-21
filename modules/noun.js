@@ -12,16 +12,20 @@ if (typeof exports === "undefined"){
  */
 
 function Noun(args){
-    this.english_sing = args[0];
-    this.english_pl   = args[1];
-    this.nom_sing     = args[2];
-    this.nom_pl       = args[3];
-    this.gen_sing     = args[4];
-    this.gen_pl       = args[5];
-    this.acc_sing     = args[6];
-    this.acc_pl       = args[7];
-    this.gender       = args[8];
-    this.agentType    = args[9];
+    this.english_sing = args.shift();
+    this.english_pl   = args.shift();
+    this.nom_sing     = args.shift();
+    this.nom_pl       = args.shift();
+    this.gen_sing     = args.shift();
+    this.gen_pl       = args.shift();
+    this.acc_sing     = args.shift();
+    this.acc_pl       = args.shift();
+    // a little shim until I update all the data
+    if (args.length === 3){
+        this.loc_sing     = args.shift();
+    }
+    this.gender       = args.shift();
+    this.agentType    = args.shift();
 
     this.wordId = this.nom_sing; // like a primary key for all the words here
 }
@@ -42,10 +46,18 @@ Noun.prototype.wrapInTooltipDivs = function(str){
     });
 } 
 
+// can take either caseAccessor, e.g. nom_sing
+// *or* caseWanted + numWanted, e.g. "locative", "sing"
 Noun.prototype.makePolishStr = function(args){
     var wrapInTooltipDivs = args.wrapInTooltipDivs; //true/false
     var caseAccessor      = args.caseAccessor; //e.g. "nom_sing"
     var isInitialWord     = args.isInitialWord;
+    var caseWanted        = args.caseWanted;
+    var numWanted         = args.numWanted;
+
+    if (! caseAccessor ){
+        caseAccessor = this.makeCaseAccessorFromCaseAndNumber(caseWanted, numWanted);
+    }
 
     var nounStr = this[caseAccessor];
 
@@ -59,5 +71,28 @@ Noun.prototype.makePolishStr = function(args){
 
     return nounStr;
 };
+
+var caseAbbr = {
+   "nominative": "nom",
+   "genitive": "gen",
+   "dative": "dat",
+   "accusative": "acc",
+   "instrumental": "inst",
+   "locative": "loc"
+};
+var numAbbr = {
+    "singular" : "sing",
+    "sing" : "sing",
+    "s" : "sing",
+    "plural" : "pl",
+    "pl" : "pl",
+    "p" : "pl"
+};
+Noun.prototype.makeCaseAccessorFromCaseAndNumber = function (caseWanted, numWanted){
+    // no args checking, maybe add later
+    return caseAbbr[caseWanted] + '_' + numAbbr[numWanted];
+};
+
+
 
 
