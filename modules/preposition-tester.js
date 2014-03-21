@@ -16,9 +16,13 @@ function Tester(){
     this.pronouns = [];
     this.adjectives = [];
     this.verbs = [];
+    this.prepositions = [];
     this.agents = [];
     this.intelligentAgents = [];
     this.nounLookup = {};
+    // or should I do a separate "prepositionalPhrase?
+    this.currentPreposition = null;
+    this.prepositionalNoun = null;
     this.currentVerb  = null;
     this.currentTense = null;
     this.currentPerson = null;
@@ -46,6 +50,9 @@ Tester.prototype.addNoun = function(noun){
 Tester.prototype.addVerb = function(verb){
     this.verbs.push(verb);
 };
+Tester.prototype.addPreposition = function(preposition){
+    this.prepositions.push(preposition);
+}
 
 Tester.prototype.askQuestion = function(){
     var verb, s, failsafe;
@@ -331,7 +338,7 @@ Tester.prototype.currentPolishSentence = function(args){
         wrapInTooltipDivs: wrapInTooltipDivs,
         isNegated:         this.isNegated
     };
-    var subjectStr, subjectAdjectiveStr, verbStr;
+    var subjectStr, subjectAdjectiveStr, verbStr, prepositionalNounStr;
     if (this.subjectNumber === 'singular'){
         subjectStr = subject.makePolishStr({
             wrapInTooltipDivs: wrapInTooltipDivs,
@@ -384,46 +391,53 @@ Tester.prototype.currentPolishSentence = function(args){
     str = str.replace(/^ +/, '');
 
 
-    if (this.currentObject){
-        var object = this.currentObject;
-        var objectAdjective = this.objectAdjective;
-        var objectStr, objectAdjectiveStr;
-        if (this.objectNumber === 'singular'){
-            objectStr = object.makePolishStr({
-                wrapInTooltipDivs: wrapInTooltipDivs,
-                caseAccessor:      this.isNegated ? "gen_sing" : "acc_sing"
-            });
-            if (objectAdjective){
-                objectAdjectiveStr =  objectAdjective.makePolishStr({
-                    caseMethodName:    this.isNegated ? "genitiveSingularForGender" : "accusativeSingularForGender", 
-                    gender:            object.getGender(),
-                    isInitialWord:     false,
-                    wrapInTooltipDivs: wrapInTooltipDivs
-                });
-            }else{
-                objectAdjectiveStr = '';
-            }
-        }else{
-            objectStr = object.makePolishStr({
-                wrapInTooltipDivs: wrapInTooltipDivs,
-                caseAccessor:      this.isNegated ? "gen_pl" : "acc_pl"
-            });
-            if (objectAdjective){
-                objectAdjectiveStr =  objectAdjective.makePolishStr({
-                    caseMethodName:    this.isNegated ? "genitivePluralForGender" : "accusativePluralForGender", 
-                    gender:            object.getGender(),
-                    isInitialWord:     false,
-                    wrapInTooltipDivs: wrapInTooltipDivs
-                });
-            }else{
-                objectAdjectiveStr = '';
-            }
-        }
-        if (objectAdjectiveStr){
-            objectAdjectiveStr = ' ' + objectAdjectiveStr ;
-        }
-        str = str + objectAdjectiveStr +  ' ' + objectStr;
-    }
+//    if (this.currentObject){
+//        var object = this.currentObject;
+//        var objectAdjective = this.objectAdjective;
+//        var objectStr, objectAdjectiveStr;
+//        if (this.objectNumber === 'singular'){
+//            objectStr = object.makePolishStr({
+//                wrapInTooltipDivs: wrapInTooltipDivs,
+//                caseAccessor:      this.isNegated ? "gen_sing" : "acc_sing"
+//            });
+//            if (objectAdjective){
+//                objectAdjectiveStr =  objectAdjective.makePolishStr({
+//                    caseMethodName:    this.isNegated ? "genitiveSingularForGender" : "accusativeSingularForGender", 
+//                    gender:            object.getGender(),
+//                    isInitialWord:     false,
+//                    wrapInTooltipDivs: wrapInTooltipDivs
+//                });
+//            }else{
+//                objectAdjectiveStr = '';
+//            }
+//        }else{
+//            objectStr = object.makePolishStr({
+//                wrapInTooltipDivs: wrapInTooltipDivs,
+//                caseAccessor:      this.isNegated ? "gen_pl" : "acc_pl"
+//            });
+//            if (objectAdjective){
+//                objectAdjectiveStr =  objectAdjective.makePolishStr({
+//                    caseMethodName:    this.isNegated ? "genitivePluralForGender" : "accusativePluralForGender", 
+//                    gender:            object.getGender(),
+//                    isInitialWord:     false,
+//                    wrapInTooltipDivs: wrapInTooltipDivs
+//                });
+//            }else{
+//                objectAdjectiveStr = '';
+//            }
+//        }
+//        if (objectAdjectiveStr){
+//            objectAdjectiveStr = ' ' + objectAdjectiveStr ;
+//        }
+//        str = str + objectAdjectiveStr +  ' ' + objectStr;
+//    }
+    prepositionalNounStr = this.prepositionalNoun.makePolishStr({
+        wrapInTooltipDivs: wrapInTooltipDivs,
+        caseWanted: this.currentPreposition.governingCase,
+        numWanted: 's',
+        isInitialWord: false
+    })
+    str = str + ' ' + this.currentPreposition.polish + ' ' + prepositionalNounStr;
     str = str.replace(/ +$/, '') + '.';
 
     return str;
@@ -545,9 +559,9 @@ Tester.prototype.currentEnglishSentence = function(){
     var s = '';
     var subjectNoun = '';
 
-    if (this.subjectAdjective){
-        s = this.subjectAdjective.english + ' ';
-    }
+//    if (this.subjectAdjective){
+//        s = this.subjectAdjective.english + ' ';
+//    }
     if (this.subjectNumber === 'singular'){
         subjectNoun = this.currentSubject.english_sing;
     }else{
@@ -560,13 +574,14 @@ Tester.prototype.currentEnglishSentence = function(){
 
     s = s + ' + ' + this.currentVerb.wrapInPushpinDivs(this.getEnglishVerb(), 'verb') ;
 
-    if (this.currentObject){
-        if (this.objectNumber === 'singular'){
-            s = s + ' + the ' + this.getObjectAdjectiveEnglishStr() + ' ' + this.currentObject.english_sing + '.';
-        }else{
-            s = s + ' + the ' + this.getObjectAdjectiveEnglishStr() + ' ' + this.currentObject.english_pl + '.';
-        }
-    }
+//    if (this.currentObject){
+//        if (this.objectNumber === 'singular'){
+//            s = s + ' + the ' + this.getObjectAdjectiveEnglishStr() + ' ' + this.currentObject.english_sing + '.';
+//        }else{
+//            s = s + ' + the ' + this.getObjectAdjectiveEnglishStr() + ' ' + this.currentObject.english_pl + '.';
+//        }
+//    }
+    s = s + ' + ' + this.currentPreposition.english + ' the ' + this.prepositionalNoun.english_sing;
     s = s.charAt(0).toUpperCase() + s.slice(1);
 
     return s;
