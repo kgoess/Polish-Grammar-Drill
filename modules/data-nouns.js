@@ -1,9 +1,9 @@
 
 //http://en.wikibooks.org/wiki/Polish/Masculine_noun_declension
 //http://en.wiktionary.org/wiki/chłopiec
-//  eng sing     eng pl          nom_sing    nom_pl       gen_sing    gen_pl       acc_sing    acc_pl       inst_sing     inst_pl   loc_sing      loc_pl
+//  eng sing     eng pl          nom_sing    nom_pl       gen_sing    gen_pl       acc_sing    acc_pl       inst_sing     inst_pl    loc_sing      loc_pl    gender  agent       is_place
 var nounData = [
- [ 'house',      'houses',       'dom',      'domy',      'domu',     'domów',     'dom',      'domy',      'domem',      'domami',  'domu',       'domach',  'm',          'no-agent' ], 
+ [ 'house',      'houses',       'dom',      'domy',      'domu',     'domów',     'dom',      'domy',      'domem',      'domami',  'domu',       'domach',  'm',   'no-agent', true ], 
  [ 'cat',        'cats',         'kot',      'koty',      'kota',     'kotów',     'kota',     'koty',      'm-animate',  'agent' ], 
  [ 'table',      'tables',       'stół',     'stoły',     'stołu',    'stołów',    'stół',     'stoły',     'm',          'no-agent'  ], 
  [ 'store',      'stores',       'sklep',    'sklepy',    'sklepu',   'sklepów',   'sklep',    'sklepy',    'm',          'no-agent' ], 
