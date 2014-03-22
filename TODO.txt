@@ -28,5 +28,10 @@
      6) pick a target and its number
 
     I think nouns will need to be qualified as "locations" and "non-locations".
+
+    BUGS:
+     -  "we + to return + to the house" is "Wracamy nad dom"? Should be "do domu.
+        We need to link prepositions to the prepositional nouns next.   
+        See the chart from accent, and my notes.
 */
 
