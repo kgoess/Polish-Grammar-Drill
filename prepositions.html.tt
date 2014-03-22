@@ -39,6 +39,8 @@ YUI().use('node', 'event-key', 'anim', 'substitute', function(Y) {
 
 [% INCLUDE modules/data-verbs.js %]
 
+[% INCLUDE modules/data-prepositions.js %]
+
 [% INCLUDE modules/preposition-tester.js %]
 
 [% INCLUDE modules/word.js %]
@@ -51,6 +53,8 @@ YUI().use('node', 'event-key', 'anim', 'substitute', function(Y) {
 
 [% INCLUDE modules/verb.js %]
 
+[% INCLUDE modules/preposition.js %]
+
 // See notes in 01-basic.js for why we have to do this here
 // and not in the modules.
 // Since we changed this from extend to augment, maybe also change the class
@@ -59,11 +63,12 @@ Y.augment(Adjective, Word);
 Y.augment(Noun, Word);
 Y.augment(Verb, Word);
 Y.augment(Pronoun, Word);
+Y.augment(Preposition, Word);
 
 
 // this stuff should be in its own function so we can scope the variables
 var tester = new Tester();
-var i, row, noun, pronoun, adjective, verb;
+var i, row, noun, pronoun, adjective, verb, preposition;
 for (i in nounData){
     row = nounData[i];
     // to skip the findRow method we added
@@ -101,6 +106,15 @@ for (i in verbData){
     }
     verb = new Verb(row);
     tester.addVerb(verb);
+}
+
+for (i in prepositionData){
+    row = prepositionData[i];
+    if (typeof row !== 'object'){
+        continue;
+    }
+    preposition = new Preposition(row);
+    tester.addPreposition(preposition);
 }
 
 Y.on("domready", function() { 
