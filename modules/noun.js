@@ -22,7 +22,8 @@ function Noun(args){
     this.acc_sing     = args[i++];
     this.acc_pl       = args[i++];
     // a little shim until I update all the data
-    if (args.length === 6){
+    var lengthWithPrepositionData = 7;
+    if (args.length - i  === lengthWithPrepositionData){
         this.inst_sing  = args[i++];
         this.inst_pl    = args[i++];
         this.loc_sing   = args[i++];
@@ -30,6 +31,8 @@ function Noun(args){
     }
     this.gender       = args[i++];
     this.agentType    = args[i++];
+
+    this.is_place     = args[i++];
 
     this.wordId = this.nom_sing; // like a primary key for all the words here
 }
@@ -62,7 +65,6 @@ Noun.prototype.makePolishStr = function(args){
     if (! caseAccessor ){
         caseAccessor = this.makeCaseAccessorFromCaseAndNumber(caseWanted, numWanted);
     }
-
     var nounStr = this[caseAccessor];
 
     if (isInitialWord){
