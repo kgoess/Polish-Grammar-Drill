@@ -24,6 +24,7 @@ test:
 #http://toolbox.no.de/packages/yui3-mocha ?
 
 build:
+	# stupid duplication, put this into a script
 	echo $(BUILT_AT)
 	perl -np -e '                      '\
 	'	if (/\[% INCLUDE (\S+) %\]/){  '\
@@ -34,3 +35,12 @@ build:
 	'	}                              '\
 	'	s/\[% DateTime.now.ymd %\]/$(BUILT_AT)/'\
 	 noun-verb-object.html.tt > noun-verb-object.html
+	perl -np -e '                      '\
+	'	if (/\[% INCLUDE (\S+) %\]/){  '\
+	'		my $$filename = $$1;       '\
+	'		die "bad filename $$_"     '\
+	'			unless -e $$filename;  '\
+	'		$$_ = `cat $$filename`;    '\
+	'	}                              '\
+	'	s/\[% DateTime.now.ymd %\]/$(BUILT_AT)/'\
+	 prepositions.html.tt > prepositions.html
