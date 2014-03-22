@@ -98,8 +98,10 @@ var czytać = new Verb(verbData.findRow("to read"));
 var wracać = new Verb(verbData.findRow("to return"));
 var biegać = new Verb(verbData.findRow("to run"));
 var jeść = new Verb(verbData.findRow("to eat"));
+var mieszkać = new Verb(verbData.findRow("to live"));
 
 var w_Locative = new Preposition(prepositionData.findRow("w+locative"));
+var do_Genitive = new Preposition(prepositionData.findRow("do+genitive"));
 var pod = new Preposition(prepositionData.findRow("pod+instrumental"));
 
 
@@ -112,6 +114,7 @@ describe('tester', function(){
     // need a "addAdjective" method that does this
     tester.adjectives.push(niebieski);
     tester.addVerb(czytać);
+    tester.addVerb(mieszkać);
     tester.addNoun(córka);
     tester.addNoun(książka);
     tester.addNoun(dom);
@@ -182,6 +185,14 @@ describe('tester', function(){
         });
     });
 
-
-
+    describe('randomActivePreposition', function(){
+        it('with only w in the list should be w', function() {
+            tester.pickRandomActivePreposition().polish.should.equal('w');
+        });
+    });
+    describe('available verbs', function(){
+        it('with w selected and only mieszkać in the list should be w', function() {
+            tester.pickVerbForPreposition(w_Locative).infinitive[0].should.equal('mieszkać');
+        });
+    });
 });

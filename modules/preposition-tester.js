@@ -77,9 +77,12 @@ Tester.prototype.askQuestion = function(){
 
     this.generateSubjectAdjective();
 
-    this.setNegation();
+    // don't worry about negation for now
+    //this.setNegation();
+    this.isNegated = false;
 
-    if (verb.isTransitive){
+// skipping transitive verbs for now
+/*    if (verb.isTransitive){
         var okObjects = verb.okObjects;
         if (okObjects === 'any'){
             this.currentObject = this.nouns[ Math.floor( Math.random()*this.nouns.length ) ];
@@ -97,9 +100,12 @@ Tester.prototype.askQuestion = function(){
         this.objectAdjective = null;
         this.objectNumber = null;
     }
+*/
 
     this.currentTense = this.pickTense();
 
+    this.currentPreposition = this.prepositions[0];
+    this.prepositionalNoun = this.nouns[0];
     
     var questionDiv = Y.one('#question');
     questionDiv.set('innerHTML', this.currentEnglishSentence());
@@ -113,33 +119,78 @@ Tester.prototype.askQuestion = function(){
 
 };
 
-Tester.prototype.pickRandomActiveVerb = function(){
-    var aVerb, activeVerbs;
+// Tester.prototype.pickRandomActiveVerb = function(){
+//    var aVerb, activeVerbs;
+//
+//    activeVerbs = [];
+//
+//    // hmm, wonder how this will scale with more verbs...
+//    for (i in this.verbs){
+//        //skipping transitives for now
+//        if (this.verbs[i].isTransitive){
+//            continue;
+//        }
+//        aVerb = this.verbs[i];
+//        checkboxEl = Y.one("#wordlist-checkbox-" + aVerb.wordId);
+//        if (checkboxEl.get('checked')){
+//            activeVerbs.push(aVerb);
+//        }
+//    }
+//    // ...if the user has unchecked all the boxes...
+//    if (activeVerbs.length === 0){
+//        activeVerbs = this.verbs;
+//    }
+//
+//    aVerb = activeVerbs [ Math.floor(Math.random()*activeVerbs.length) ];
+//
+//    return aVerb;
+//};
+Tester.prototype.pickRandomActivePreposition = function(){
+    var aPreposition, activePrepositions, validPrepositions, i, thisPreposition;
 
-    activeVerbs = [];
+    activePrepositions = [];
 
-    // hmm, wonder how this will scale with more verbs...
-    for (i in this.verbs){
-        aVerb = this.verbs[i];
-        checkboxEl = Y.one("#wordlist-checkbox-" + aVerb.wordId);
-        if (checkboxEl.get('checked')){
-            activeVerbs.push(aVerb);
-        }
+    for (i in this.prepositions){
+        aPreposition = this.prepositions[i];
+//        checkboxEl = Y.one("#wordlist-checkbox-" + aVerb.wordId);
+//        if (checkboxEl.get('checked')){
+//            activeVerbs.push(aVerb);
+//        }
     }
     // ...if the user has unchecked all the boxes...
-    if (activeVerbs.length === 0){
-        activeVerbs = this.verbs;
+    if (activePrepositions.length === 0){
+        activePrepositions = this.prepositions;
+    }
+
+    aPreposition = activePrepositions [ Math.floor(Math.random()*activePrepositions.length) ];
+
+    return aPreposition;
+};
+
+Tester.prototype.pickVerbForPreposition = function(preposition){
+    var aVerb, activeVerbs = [];
+
+    for (i in this.verbs){
+        thisVerb = this.verbs[i];
+        //skipping transitives for now
+        if (thisVerb.isTransitive){
+            continue;
+        }
+        if (thisVerb.prepositional_phrase === null || 
+            thisVerb.prepositional_phrase === 'never'){
+            continue;
+        }
+        activeVerbs.push(thisVerb);
     }
 
     aVerb = activeVerbs [ Math.floor(Math.random()*activeVerbs.length) ];
-
     return aVerb;
 };
 
 
+
 Tester.prototype.generateSubject = function(verb){
     var okSubjectType, okSubjects;
-
 
     if (this.doUsePronounSubject()){
         var pronoun = this.pronouns[ Math.floor(Math.random()*this.pronouns.length) ];
@@ -183,6 +234,9 @@ Tester.prototype.filterActiveSubjects = function(okSubjects){
 };
 
 Tester.prototype.generateSubjectAdjective = function(){
+
+return true;
+
     var subjectAdjectivesOk = document.settings["subject-adjectives"].checked;
 
     if (subjectAdjectivesOk){
@@ -263,6 +317,9 @@ Tester.prototype.generateObjectAdjective = function(){
 };
 
 Tester.prototype.doUsePronounSubject = function(){
+
+return true;
+
     var pronounsOk = document.settings["subject-pronouns"].checked;
     if (pronounsOk){
         if (this.canUseRegularSubject()){
@@ -480,9 +537,9 @@ Tester.prototype.currentPolishVerbStr = function (verbArgs){
 
 Tester.prototype.pickTense = function(){
     var roll = null;
-    var presentTenseOk = document.settings["verbs-present"].checked;
-    var pastTenseOk    = document.settings["verbs-past"].checked;
-    var futureTenseOk  = document.settings["verbs-future"].checked;
+    var presentTenseOk =  true; //document.settings["verbs-present"].checked;
+    var pastTenseOk    =  true; //document.settings["verbs-past"].checked;
+    var futureTenseOk  =  true; //document.settings["verbs-future"].checked;
 
     if (! (presentTenseOk || pastTenseOk || futureTenseOk)){
         document.settings["verbs-present"].checked = 1;
@@ -716,11 +773,11 @@ Tester.prototype.populateCheckboxWordLists = function() {
         el = Y.Node.create(html);
 
         sectionEl = Y.one('#verb-section-list');
-        sectionEl.append(el);  
+        //sectionEl.append(el);  
     }
 
     // the subjects (only agents or i-agents are subjects for verbs)
-    for (i in nounData){
+/*    for (i in nounData){
         row = nounData[i];
         // to skip the findRow method we added
         if (typeof row !== 'object'){
@@ -740,5 +797,6 @@ Tester.prototype.populateCheckboxWordLists = function() {
         sectionEl = Y.one('#subject-section-list');
         sectionEl.append(el);
     }
+*/
 };
 
