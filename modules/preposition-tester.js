@@ -29,6 +29,8 @@ function Tester(){
     this.currentSubject = null;
     this.currentObject = null;
     this.subjectIsPronoun = false; // for the current sentence
+    this.subjectNumber = null;
+    this.prepositionalNounNumber = null;
     this.isNegated = false;
 };
 
@@ -431,10 +433,11 @@ Tester.prototype.currentPolishSentence = function(args){
 //        }
 //        str = str + objectAdjectiveStr +  ' ' + objectStr;
 //    }
+
     prepositionalNounStr = this.prepositionalNoun.makePolishStr({
         wrapInTooltipDivs: wrapInTooltipDivs,
         caseWanted: this.currentPreposition.governingCase,
-        numWanted: 's',
+        numWanted: this.prepositionalNounNumber,
         isInitialWord: false
     })
     str = str + ' ' + this.currentPreposition.polish + ' ' + prepositionalNounStr;
@@ -581,7 +584,8 @@ Tester.prototype.currentEnglishSentence = function(){
 //            s = s + ' + the ' + this.getObjectAdjectiveEnglishStr() + ' ' + this.currentObject.english_pl + '.';
 //        }
 //    }
-    s = s + ' + ' + this.currentPreposition.english + ' the ' + this.prepositionalNoun.english_sing;
+    s = s + ' + ' + this.currentPreposition.english + ' the ' 
+        + this.prepositionalNoun.getEnglishForNumber(this.prepositionalNounNumber);
     s = s.charAt(0).toUpperCase() + s.slice(1);
 
     return s;

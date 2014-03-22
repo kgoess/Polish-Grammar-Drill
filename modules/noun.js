@@ -21,8 +21,9 @@ function Noun(args){
     this.acc_sing     = args.shift();
     this.acc_pl       = args.shift();
     // a little shim until I update all the data
-    if (args.length === 3){
+    if (args.length === 4){
         this.loc_sing     = args.shift();
+        this.loc_pl       = args.shift();
     }
     this.gender       = args.shift();
     this.agentType    = args.shift();
@@ -90,9 +91,22 @@ var numAbbr = {
 };
 Noun.prototype.makeCaseAccessorFromCaseAndNumber = function (caseWanted, numWanted){
     // no args checking, maybe add later
+    if (numWanted === null){
+        numWanted = 'sing';
+    }
     return caseAbbr[caseWanted] + '_' + numAbbr[numWanted];
 };
 
+Noun.prototype.getEnglishForNumber = function (numWanted) {
+    var accessor;
+    if (numWanted === null){
+        numWanted = 'sing';
+    }
+    accessor = 'english_' + numAbbr[numWanted];
+
+    return this[accessor];
+}
+    
 
 
 

@@ -122,7 +122,6 @@ describe('tester', function(){
     tester.currentVerb = czytać;
     tester.currentTense = 'present';
     tester.isNegated = false; // let's not bother with negations for prepositions
-console.log("dom is " + dom);
 
     tester.subjectNumber = 'singular';
     tester.currentPerson = 3;
@@ -134,13 +133,26 @@ console.log("dom is " + dom);
     tester.objectNumber = null;
 
     describe('currentEnglishSentence', function(){
-        it('should be The daughter + to read + in the house for córka czyta', function(){
+        it('as singular should be The daughter + to read + in the house for córka czyta', function(){
+            tester.prepositionalNounNumber = 'singular';
             tester.currentEnglishSentence({wrapInPushpinDivs: false}).should.equal('The daughter + to read + in the house');
+        });
+        it('as plural should be The daughter + to read + in the houses for córka czyta', function(){
+            tester.prepositionalNounNumber = 'plural';
+            tester.currentEnglishSentence({wrapInTooltipDivs: false}).should.equal('The daughter + to read + in the houses');
         });
     });
     describe('currentPolishSentence', function(){
-        it('should be córka czyta w domu', function(){
-            tester.currentPolishSentence().should.equal('Córka czyta w domu.');
+        it('as plural should be córka czyta w domach', function(){
+            tester.prepositionalNounNumber = 'plural';
+            tester.currentPolishSentence().should.equal('Córka czyta w domach.');
+        });
+        it('as plural should be córka czyta w domach', function(){
+            tester.prepositionalNounNumber = 'plural';
+            tester.currentPolishSentence().should.equal('Córka czyta w domach.');
         });
     });
+
+
+
 });
