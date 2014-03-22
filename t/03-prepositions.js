@@ -100,7 +100,7 @@ var biegać = new Verb(verbData.findRow("to run"));
 var jeść = new Verb(verbData.findRow("to eat"));
 
 var w_Locative = new Preposition(prepositionData.findRow("w+locative"));
-var w_ = new Preposition(prepositionData.findRow("w+locative"));
+var pod = new Preposition(prepositionData.findRow("pod+instrumental"));
 
 
 
@@ -117,7 +117,6 @@ describe('tester', function(){
     tester.addNoun(dom);
     tester.addPreposition(w_Locative);
 
-    tester.currentPreposition = w_Locative;
     tester.prepositionalNoun = dom;
     tester.currentVerb = czytać;
     tester.currentTense = 'present';
@@ -132,24 +131,54 @@ describe('tester', function(){
     tester.objectAdjective = null;
     tester.objectNumber = null;
 
-    describe('currentEnglishSentence', function(){
-        it('as singular should be The daughter + to read + in the house for córka czyta', function(){
+    describe('currentEnglishSentence locative', function(){
+        it('as singular should be The daughter + to read + in the house', function(){
+            tester.currentPreposition = w_Locative;
             tester.prepositionalNounNumber = 'singular';
             tester.currentEnglishSentence({wrapInPushpinDivs: false}).should.equal('The daughter + to read + in the house');
         });
-        it('as plural should be The daughter + to read + in the houses for córka czyta', function(){
+        it('as plural should be The daughter + to read + in the houses', function(){
+            tester.currentPreposition = w_Locative;
             tester.prepositionalNounNumber = 'plural';
             tester.currentEnglishSentence({wrapInTooltipDivs: false}).should.equal('The daughter + to read + in the houses');
         });
     });
-    describe('currentPolishSentence', function(){
+    describe('currentPolishSentence locative', function(){
+        it('as singular should be córka czyta w domu', function(){
+            tester.currentPreposition = w_Locative;
+            tester.prepositionalNounNumber = 'singular';
+            tester.currentPolishSentence().should.equal('Córka czyta w domu.');
+        });
         it('as plural should be córka czyta w domach', function(){
+            tester.currentPreposition = w_Locative;
             tester.prepositionalNounNumber = 'plural';
             tester.currentPolishSentence().should.equal('Córka czyta w domach.');
         });
-        it('as plural should be córka czyta w domach', function(){
+    });
+
+
+    describe('currentEnglishSentence instrumental', function(){
+        it('as singular should be The daughter + to read + under the house for córka czyta', function(){
+            tester.currentPreposition = pod;
+            tester.prepositionalNounNumber = 'singular';
+            tester.currentEnglishSentence({wrapInPushpinDivs: false}).should.equal('The daughter + to read + under the house');
+        });
+        it('as plural should be The daughter + to read + under the houses for córka czyta', function(){
+            tester.currentPreposition = pod;
             tester.prepositionalNounNumber = 'plural';
-            tester.currentPolishSentence().should.equal('Córka czyta w domach.');
+            tester.currentEnglishSentence({wrapInTooltipDivs: false}).should.equal('The daughter + to read + under the houses');
+        });
+    });
+    describe('currentPolishSentence instrumental', function(){
+        it('as plural should be córka czyta pod domem', function(){
+            tester.currentPreposition = pod;
+            tester.prepositionalNounNumber = 'singular';
+            tester.currentPolishSentence().should.equal('Córka czyta pod domem.');
+        });
+        it('as plural should be córka czyta pod domami', function(){
+            tester.currentPreposition = pod;
+            tester.prepositionalNounNumber = 'plural';
+            tester.currentPolishSentence().should.equal('Córka czyta pod domami.');
         });
     });
 
