@@ -214,6 +214,28 @@ var verbData = [
         s: [ 'słuchał',  'słuchała'  ],
         p: [ 'słuchali', 'słuchały' ] 
       }
+    },
+    { infinitive: ['mieszkać', 'to live' ],
+      english_past: 'was living', 
+      english_future: 'will be living',
+      transitive: false,
+      ok_subjects: 'agent',
+      //object_case: 'genitive',
+      //objects: [ 'kot', 'samochód', 'rower', 'pociąg', 'samolot', 'zegar', 
+      present_tense: {
+        s: [ 'mieszkam',  'mieszkasz', 'mieszka' ],
+        p: [ 'mieszkamy', 'mieszkacie', 'mieszkają' ]
+      },
+      past_tense: {
+        s: [ 'mieszkałem/mieszkałam',     'mieszkałeś/mieszkałaś',       'mieszkał/mieszkała' ],
+        p: [ 'mieszkaliśmy/mieszkałyśmy', 'mieszkaliście/mieszkałyście', 'mieszkali/mieszkały' ]
+      },
+      future_tense: {
+        s: [ 'mieszkał',  'mieszkała'  ],
+        p: [ 'mieszkali', 'mieszkały' ] 
+      },
+      prepositional_phrase: 'required', // required/optional/never
+      prepositional_nouns: [ 'place' ]
     }
 ];
 
