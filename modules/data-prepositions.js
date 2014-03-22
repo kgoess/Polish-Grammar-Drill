@@ -1,24 +1,26 @@
 
 var prepositionData = [
- [ 'on',          'na',    'locative' ],
- [ 'onto',        'na',    'accusative' ],
- [ 'above',       'nad',   'instrumental' ],
- [ 'to',          'nad',   'accusative' ],
- [ 'behind',      'za',    'instrumental' ],
- [ 'in front of', 'przed', 'instrumental' ],
- [ 'through',     'przez', 'accusative' ],
- [ 'under',       'pod',    'instrumental' ],
- [ 'with',        'z',      'instrumental' ],
- [ 'from',        'z',      'genitive' ],
- [ 'from',        'od',     'genitive' ],
- [ 'to',          'do',     'genitive' ],
- [ 'without',     'bez',    'genitive' ],
- [ 'between',     'między', 'instrumental' ], 
- [ 'next to',     'obok',   'genitive' ],
- [ 'in',          'w',      'locative' ],
- [ 'about (concerning)',    'o',  'locative' ],
- [ 'next to (hard by)',     'przy', 'locative' ],
- [ 'before (chronologically)', 'przed', 'instrumental' ],
+// english        polish   gov'ing case     quality
+ [ 'on',          'na',    'locative',      null ],
+ [ 'onto',        'na',    'accusative',    'motion' ],
+ [ 'above',       'nad',   'instrumental',  null ],
+ [ 'to',          'nad',   'accusative',    'motion' ],
+ [ 'behind',      'za',    'instrumental',  null ],
+ [ 'in front of', 'przed', 'instrumental',  null ],
+ [ 'through',     'przez', 'accusative',    'motion' ],
+ [ 'under',       'pod',    'instrumental', null ],
+ [ 'with',        'z',      'instrumental', 'combination' ],
+ [ 'from',        'z',      'genitive',     'motion' ], // actually requires a 'place' if być:
+                                                        // jestem z kalifornii
+ [ 'from',        'od',     'genitive',     'motion' ],
+ [ 'to',          'do',     'genitive',     'motion' ],
+ [ 'without',     'bez',    'genitive',     'combination' ], // herbata bez cukru
+// [ 'between',     'między', 'instrumental', 'motion' ], 
+ [ 'next to',     'obok',   'genitive',     null ],
+ [ 'in',          'w',      'locative',     null ],
+ [ 'about (concerning)',    'o',  'locative', 'relation' ],
+ [ 'next to (hard by)',     'przy', 'locative', null ],
+// [ 'before (chronologically)', 'przed', 'instrumental', null ], //requires an event
 ];
 
 // "exports" is needed for our unit tests in mocha

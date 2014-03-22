@@ -10,9 +10,11 @@ if (typeof exports === "undefined"){
  * @class Preposition
  */
 function Preposition(args){
-    this.english       = args[0];
-    this.polish        = args[1];
-    this.governingCase = args[2];
+    var i = 0;
+    this.english       = args[i++];
+    this.polish        = args[i++];
+    this.governingCase = args[i++];
+    this.quality      = args[i++];
 
     this.wordId = this.polish + '+' + this.governingCase; // like a primary key for all the words here
 

@@ -135,25 +135,6 @@ var verbData = [
         p: [ 'potrzebowali', 'potrzebowały' ] 
       }
     },
-    { infinitive: ['wracać', 'to return' ],
-      english_past: 'was returning', 
-      english_future: 'will be returning',
-      transitive: false,
-      ok_subjects: 'agent',
-      //objects: 'any',
-      present_tense: {
-        s: [ 'wracam', 'wracasz', 'wraca' ],
-        p: [ 'wracamy', 'wracacie', 'wracają' ]
-      },
-      past_tense: {
-        s: [ 'wracałem/wracałam','wracałeś/wracałaś','wracał/wracała' ],
-        p: [ 'wracaliśmy/wracałyśmy', 'wracaliście/wracałyście', 'wracali/wracały' ]
-      },
-      future_tense: {
-        s: [ 'wracał', 'wracała'  ],
-        p: [ 'wracali', 'wracały' ] 
-      }
-    },
     { infinitive: ['mieć', 'to have' ],
       english_past: 'was having', 
       english_future: 'will be having',
@@ -236,6 +217,32 @@ var verbData = [
       },
       prepositional_phrase: 'required', // required/optional/never
       prepositional_nouns: [ 'place' ]
+    },
+    { infinitive: ['wracać', 'to return' ],
+      english_past: 'was returning', 
+      english_future: 'will be returning',
+      transitive: false,
+      ok_subjects: 'agent',
+      //object_case: 'genitive',
+      //objects: [ 'kot', 'samochód', 'rower', 'pociąg', 'samolot', 'zegar', 
+      present_tense: {
+        s: [ 'wracam',  'wracasz', 'wraca' ],
+        p: [ 'wracamy', 'wracacie', 'wracają' ]
+      },
+      past_tense: {
+        s: [ 'wracałem/wracałam',     'wracałeś/wracałaś',       'wracał/wracała' ],
+        p: [ 'wracaliśmy/wracałyśmy', 'wracaliście/wracałyście', 'wracali/wracały' ]
+      },
+      future_tense: {
+        s: [ 'wracał',  'wracała'  ],
+        p: [ 'wracali', 'wracały' ] 
+      },
+      prepositional_phrase: 'required', // required/optional/never
+      prepositional_nouns: [ 'place' ],
+      prepositional_motion: 'requires'  //requires/allows/never==null
+                                        // wracać *requires* like do or od
+                                        // biegać *allows* do or od
+                                        // siedzić never has do or od
     }
 ];
 

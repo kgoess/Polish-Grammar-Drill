@@ -21,6 +21,10 @@ function Verb(args){
     this.futureTense   = args.future_tense;
     this.objectCase    = args.object_case || 'accusative'; 
 
+    this.prepositionalPhrase  = args.prepositional_phrase;
+    this.prepositionalNouns   = args.prepositional_nouns;
+    this.prepositionalMotion = args.prepositional_motion;
+
     this.wordId = args.infinitive[0]; // like a primary key for all the words here
 
     this.pinned        = false;

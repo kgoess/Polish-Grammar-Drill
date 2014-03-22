@@ -58,11 +58,16 @@ Tester.prototype.addPreposition = function(preposition){
 
 Tester.prototype.askQuestion = function(){
     var verb, s, failsafe;
+
+    // if we're doing prepositions, this needs to happen before pickVerbForPreposition
+    this.currentPreposition = this.pickRandomActivePreposition();
     if (this.currentVerb && this.currentVerb.pinned){
         verb = this.currentVerb;
     }else{
-        verb = this.pickRandomActiveVerb();
+        //verb = this.pickRandomActiveVerb();
+        verb = this.pickVerbForPreposition(this.currentPreposition);
     }
+    this.currentVerb = verb;
 
     if (this.currentSubject && this.currentSubject.pinned){
         s = this.currentSubject;
@@ -73,7 +78,6 @@ Tester.prototype.askQuestion = function(){
     }else{
         this.generateSubject(verb);
     }
-    this.currentVerb = verb;
 
     this.generateSubjectAdjective();
 
@@ -104,7 +108,6 @@ Tester.prototype.askQuestion = function(){
 
     this.currentTense = this.pickTense();
 
-    this.currentPreposition = this.prepositions[0];
     this.prepositionalNoun = this.nouns[0];
     
     var questionDiv = Y.one('#question');
@@ -118,6 +121,19 @@ Tester.prototype.askQuestion = function(){
     inputEl.set('value', '');
 
 };
+
+
+ Tester.prototype.pickRandomActiveVerb = function(){
+    var aVerb, activeVerbs;
+
+    activeVerbs = [];
+
+    for (i in this.verbs){
+        if(this.verbs[i].infinitive[1] === 'to live'){
+            return this.verbs[i];
+        }
+    }
+}
 
 // Tester.prototype.pickRandomActiveVerb = function(){
 //    var aVerb, activeVerbs;
@@ -149,6 +165,7 @@ Tester.prototype.pickRandomActivePreposition = function(){
     var aPreposition, activePrepositions, validPrepositions, i, thisPreposition;
 
     activePrepositions = [];
+    validPrepositions = [];
 
     for (i in this.prepositions){
         aPreposition = this.prepositions[i];
@@ -162,25 +179,104 @@ Tester.prototype.pickRandomActivePreposition = function(){
         activePrepositions = this.prepositions;
     }
 
-    aPreposition = activePrepositions [ Math.floor(Math.random()*activePrepositions.length) ];
+    // filter out unimplemented ones for now
+    PREPOSITIONS:
+    for (i in this.prepositions){
+        aPreposition = this.prepositions[i];
+        switch(aPreposition.quality){
+            case "combination":
+                continue PREPOSITIONS;
+            case "relation":
+                continue PREPOSITIONS;
+        }
+        validPrepositions.push(aPreposition);
+    }
+
+    aPreposition = validPrepositions [ Math.floor(Math.random()*validPrepositions.length) ];
 
     return aPreposition;
 };
 
 Tester.prototype.pickVerbForPreposition = function(preposition){
-    var aVerb, activeVerbs = [];
+    var aVerb, activeVerbs = [], prepositionQuality;
 
+    VERBS:
     for (i in this.verbs){
         thisVerb = this.verbs[i];
         //skipping transitives for now
         if (thisVerb.isTransitive){
             continue;
         }
-        if (thisVerb.prepositional_phrase === null || 
-            thisVerb.prepositional_phrase === 'never'){
+        if (thisVerb.prepositionalPhrase === null || 
+            thisVerb.prepositionalPhrase === 'never'){
             continue;
         }
+
+        // null, motion, combination or relation
+        prepositionalQuality = preposition.quality;
+
+        switch(thisVerb.prepositionalMotion){
+            case "requires":
+                switch(prepositionalQuality){
+                    case "motion":
+                        break;
+                    case null:
+                    case undefined:
+                        break;
+                    case "combination":
+                        continue VERBS;
+                    case "relation":
+                        continue VERBS;
+                    default:
+                        console.log("unexpected prepositionalQuality " + prepositionalQuality + " in " + preposition.wordId);
+                        continue VERBS;
+                }
+                break;
+            case "allows":
+                continue VERBS;
+            case "never":
+            case null:
+            case undefined:
+                switch(prepositionalQuality){
+                    case "motion":
+                        continue VERBS;
+                    case null:
+                        break;
+                    //will check for other verb prepositional qualities further down
+                    //case "combination":
+                    //    continue VERBS;
+                    //case "relation":
+                    //    continue VERBS;
+                }
+                break;
+            default:
+                console.log("unexpected prepositionalMotion " + thisVerb.prepositionalMotion + " in " + thisVerb.wordId);
+        }
+        
+        if (prepositionQuality = preposition.quality){
+            switch(prepositionQuality){
+                case('motion'):
+                    switch (thisVerb.prepositionalMotion){
+                        case "requires":
+                        case "allows":
+                        default:
+                    }
+                    if (thisVerb.prepositional_motion === 'requires'){
+                        continue;
+                    }
+                    break;
+                case('combination'):
+                    // unimplemented
+                    continue; 
+                case('relation'):
+                    // unimplemented
+                    continue;
+           }
+        }
         activeVerbs.push(thisVerb);
+    }
+    if (activeVerbs.length == 0){
+        console.log("error! no active verbs found for " + preposition.wordId);
     }
 
     aVerb = activeVerbs [ Math.floor(Math.random()*activeVerbs.length) ];

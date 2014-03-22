@@ -187,11 +187,17 @@ describe('tester', function(){
 
     describe('randomActivePreposition', function(){
         it('with only w in the list should be w', function() {
+            tester.prepositions = [ w_Locative ]; // breaking encapsulation here
             tester.pickRandomActivePreposition().polish.should.equal('w');
         });
     });
     describe('available verbs', function(){
         it('with w selected and only mieszkać in the list should be w', function() {
+            tester.prepositions = [ w_Locative ]; // breaking encapsulation here
+            tester.pickVerbForPreposition(w_Locative).infinitive[0].should.equal('mieszkać');
+        });
+        it('with w and do selected and only mieszkać in the list should still be w', function() {
+            tester.prepositions = [ w_Locative, do_Genitive ]; // breaking encapsulation here
             tester.pickVerbForPreposition(w_Locative).infinitive[0].should.equal('mieszkać');
         });
     });
