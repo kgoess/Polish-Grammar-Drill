@@ -12,21 +12,24 @@ if (typeof exports === "undefined"){
  */
 
 function Noun(args){
-    this.english_sing = args.shift();
-    this.english_pl   = args.shift();
-    this.nom_sing     = args.shift();
-    this.nom_pl       = args.shift();
-    this.gen_sing     = args.shift();
-    this.gen_pl       = args.shift();
-    this.acc_sing     = args.shift();
-    this.acc_pl       = args.shift();
+    var i = 0;
+    this.english_sing = args[i++];
+    this.english_pl   = args[i++];
+    this.nom_sing     = args[i++];
+    this.nom_pl       = args[i++];
+    this.gen_sing     = args[i++];
+    this.gen_pl       = args[i++];
+    this.acc_sing     = args[i++];
+    this.acc_pl       = args[i++];
     // a little shim until I update all the data
-    if (args.length === 4){
-        this.loc_sing     = args.shift();
-        this.loc_pl       = args.shift();
+    if (args.length === 6){
+        this.inst_sing  = args[i++];
+        this.inst_pl    = args[i++];
+        this.loc_sing   = args[i++];
+        this.loc_pl     = args[i++];
     }
-    this.gender       = args.shift();
-    this.agentType    = args.shift();
+    this.gender       = args[i++];
+    this.agentType    = args[i++];
 
     this.wordId = this.nom_sing; // like a primary key for all the words here
 }
