@@ -108,7 +108,7 @@ Tester.prototype.askQuestion = function(){
 
     this.currentTense = this.pickTense();
 
-    this.prepositionalNoun = this.nouns[0];
+    this.prepositionalNoun = this.pickNounForPreposition(this.currentPreposition);
     
     var questionDiv = Y.one('#question');
     questionDiv.set('innerHTML', this.currentEnglishSentence());
@@ -196,6 +196,13 @@ Tester.prototype.pickRandomActivePreposition = function(){
 
     return aPreposition;
 };
+
+Tester.prototype.pickNounForPreposition = function(preposition){
+    var aNoun, activeNouns = [];
+
+    return this.nouns[0];
+
+}
 
 Tester.prototype.pickVerbForPreposition = function(preposition){
     var aVerb, activeVerbs = [], prepositionQuality;

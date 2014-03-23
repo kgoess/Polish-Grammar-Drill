@@ -105,10 +105,6 @@ var w_Locative = new Preposition(prepositionData.findRow("w+locative"));
 var do_Genitive = new Preposition(prepositionData.findRow("do+genitive"));
 var pod = new Preposition(prepositionData.findRow("pod+instrumental"));
 
-
-
-
-
 describe('tester', function(){
     var tester = new Tester();
 
@@ -207,5 +203,14 @@ describe('tester', function(){
             tester.pickNounForPreposition(w_Locative).wordId.should.equal('dom');
         });
     }); 
+
+    describe('okNouns', function(){
+        it('for do+genitive should include dom', function() {
+            do_Genitive.okNouns.should.include('dom');
+            do_Genitive.okNouns.should.not.include('spódnica');
+
+
+        });
+    });
             
 });

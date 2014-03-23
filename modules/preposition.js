@@ -14,7 +14,8 @@ function Preposition(args){
     this.english       = args[i++];
     this.polish        = args[i++];
     this.governingCase = args[i++];
-    this.quality      = args[i++];
+    this.quality       = args[i++];
+    this.okNouns       = args['okNouns'];
 
     this.wordId = this.polish + '+' + this.governingCase; // like a primary key for all the words here
 
