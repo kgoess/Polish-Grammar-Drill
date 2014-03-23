@@ -93,6 +93,7 @@ var kiełbasa  = new Noun(nounData.findRow("sausage"));
 var zwierzę = new Noun(nounData.findRow("animal"));
 var marchew = new Noun(nounData.findRow("carrot"));
 var koń = new Noun(nounData.findRow("horse"));
+var rzeka = new Noun(nounData.findRow("river"));
 var krzeszła = new Noun(nounData.findRow("chair"));
 var czytać = new Verb(verbData.findRow("to read"));
 var wracać = new Verb(verbData.findRow("to return"));
@@ -115,9 +116,8 @@ describe('tester', function(){
     tester.adjectives.push(niebieski);
     tester.addVerb(czytać);
     tester.addVerb(mieszkać);
-    tester.addNoun(córka);
-    tester.addNoun(książka);
     tester.addNoun(dom);
+    tester.addNoun(rzeka);
     tester.addPreposition(w_Locative);
 
     tester.prepositionalNoun = dom;
@@ -201,4 +201,11 @@ describe('tester', function(){
             tester.pickVerbForPreposition(w_Locative).infinitive[0].should.equal('mieszkać');
         });
     });
+
+    describe('pickNounForPreposition', function(){
+        it('for w against [dom, rzeka], should give dom', function() {
+            tester.pickNounForPreposition(w_Locative).wordId.should.equal('dom');
+        });
+    }); 
+            
 });

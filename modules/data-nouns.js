@@ -1,9 +1,15 @@
+// viewing these long lines in vim:
+// split the window, and shrink the top one to see the column headers
+// set scrollopt=hor
+// set scrollbind in each window
+
 
 //http://en.wikibooks.org/wiki/Polish/Masculine_noun_declension
 //http://en.wiktionary.org/wiki/chłopiec
 //  eng sing     eng pl          nom_sing    nom_pl       gen_sing    gen_pl       acc_sing    acc_pl       inst_sing     inst_pl    loc_sing      loc_pl    gender  agent       is_place
 var nounData = [
  [ 'house',      'houses',       'dom',      'domy',      'domu',     'domów',     'dom',      'domy',      'domem',      'domami',  'domu',       'domach',  'm',   'no-agent', true ], 
+ [ 'river',      'rivers',       'rzeka',    'rzeki',     'rzeki',    'rzek',      'rzekę',    'rzeki',     'rzeką',      'rzekami', 'rzece',      'rzekach', 'm',   'no-agent', true ], 
  [ 'cat',        'cats',         'kot',      'koty',      'kota',     'kotów',     'kota',     'koty',      'm-animate',  'agent' ], 
  [ 'table',      'tables',       'stół',     'stoły',     'stołu',    'stołów',    'stół',     'stoły',     'm',          'no-agent'  ], 
  [ 'store',      'stores',       'sklep',    'sklepy',    'sklepu',   'sklepów',   'sklep',    'sklepy',    'm',          'no-agent' ], 
@@ -26,7 +32,7 @@ var nounData = [
  [ 'plate',      'plates',       'talerz',   'talerze',   'talerza',  'talerzy',   'talerz',   'talerze',   'm',          'no-agent' ], 
  [ 'hat',        'hats',         'kapelusz', 'kapelusze', 'kapelusza','kapeluszy', 'kapelusz', 'kapelusze', 'm',          'no-agent' ], 
  [ 'horse',      'horses',       'koń',      'konie',     'konia',    'koni',      'konia',    'konie',     'm-animate',  'agent' ], 
- [ 'deer',       'deer (pl.)',         'jeleń',    'jelenie',   'jeleni',   'jeleni',    'jelenia',  'jelenie',   'm-animate',   'agent'    ],
+ [ 'deer',       'deer (pl.)',   'jeleń',    'jelenie',   'jeleni',   'jeleni',    'jelenia',  'jelenie',   'm-animate',   'agent'    ],
  [ 'woman',      'women',        'kobieta',  'kobiety',   'kobiety',  'kobiet',    'kobietę',  'kobiety',   'f',          'i-agent' ], 
  [ 'school',     'schools',      'szkoła',   'szkoły',    'szkoły',   'szkół',     'szkołę',   'szkoły',    'f',          'no-agent' ], 
  [ 'sister',     'sisters',      'siostra',  'siostry',   'siostry',  'siostr',    'siostrę',  'siostry',   'f',          'i-agent' ], 
